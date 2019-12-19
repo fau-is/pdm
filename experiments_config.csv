@@ -1,0 +1,2 @@
+data_set,dnn_architecture,encoding_cat,batch_size_train
+bpi2012_w_converted_sample.csv,1,int,1

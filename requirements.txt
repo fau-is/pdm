@@ -1,0 +1,12 @@
+pandas
+arrow
+nltk
+distance
+jellyfish
+numpy
+scikit-learn
+sklearn
+category_encoders
+keras-contrib
+keras
+tensorflow
