@@ -21,7 +21,7 @@ def write_to_file(file_path, data):
     file.close()
 
 
-name_event_log = "bpi2019_converted_sample.csv"
+name_event_log = "bpi2013i_converted_no_context.csv"
 data = load_data("../data/%s" % name_event_log)
 
 number_events_instances = []

@@ -68,4 +68,6 @@ class DataGenerator(keras.utils.Sequence):
                                                           next_events,
                                                           self.data_structure)
 
+
+
         return features_data_batch, labels_batch

@@ -14,6 +14,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as pyplot
 import seaborn as sns
 import uuid
+import copy
 
 output = {
     "accuracy_values": [],
@@ -45,9 +46,10 @@ output = {
 
 
 remote_server_uri = "databricks"  # databricks" set to your server URI
-experiment = "/Users/sven.weinzierl@fau.de/experiments"
+experiment = "/Users/sven.weinzierl@fau.de/dss-paper-bpi2013i"
 mlflow.set_tracking_uri(remote_server_uri)
 mlflow.set_experiment(experiment)
+
 
 
 def load(path):
@@ -55,7 +57,7 @@ def load(path):
 
 
 def load_output():
-    return output
+    return copy.deepcopy(output)
 
 
 def avg(numbers):

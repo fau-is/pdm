@@ -12,6 +12,7 @@ import tensorflow as tf
 def train(args, preprocessor):
 
     config = tf.ConfigProto()
+    config.gpu_options.allow_growth = True
     config.gpu_options.per_process_gpu_memory_fraction = 0.2
     keras.backend.tensorflow_backend.set_session(tf.Session(config=config))
 
@@ -104,12 +105,12 @@ def train(args, preprocessor):
         main_input = keras.layers.Input(shape=(max_length_process_instance, num_features), name='main_input')
 
         # layer 2
-        hidden_layer_1 = keras.layers.recurrent.LSTM(100, implementation=2, kernel_initializer='glorot_uniform', return_sequences=True, dropout=0.2)(main_input)
-        hidden_layer_1 = keras.layers.normalization.BatchNormalization()(hidden_layer_1)
+        hidden_layer_1 = keras.layers.recurrent.LSTM(100, implementation=2, kernel_initializer='glorot_uniform', return_sequences=False, dropout=0.2)(main_input)
+        hidden_layer_output = keras.layers.normalization.BatchNormalization()(hidden_layer_1)
 
         # layer 3
-        hidden_layer_2 = keras.layers.recurrent.LSTM(100, implementation=2, kernel_initializer='glorot_uniform', return_sequences=False, dropout=0.2)(hidden_layer_1)
-        hidden_layer_output = keras.layers.normalization.BatchNormalization()(hidden_layer_2)
+        # hidden_layer_2 = keras.layers.recurrent.LSTM(100, implementation=2, kernel_initializer='glorot_uniform', return_sequences=False, dropout=0.2)(hidden_layer_1)
+        # hidden_layer_output = keras.layers.normalization.BatchNormalization()(hidden_layer_2)
 
         optimizer = keras.optimizers.Nadam(lr=0.002, beta_1=0.9, beta_2=0.999, epsilon=1e-8, schedule_decay=0.004, clipvalue=3)
 
@@ -235,7 +236,7 @@ def train(args, preprocessor):
     history = model.fit_generator(
               generator=training_generator,
               validation_data=validation_generator,
-              use_multiprocessing=True,
+              workers=1,
               verbose=1,
               callbacks=[early_stopping, model_checkpoint, lr_reducer],
               epochs=args.dnn_num_epochs)

@@ -58,6 +58,7 @@ def execute_experiment(args, experiment_dict, init_data_structure):
     utils.end_run_mlflow()
 
 
+
 if __name__ == '__main__':
 
     args = config.load()
@@ -70,6 +71,6 @@ if __name__ == '__main__':
     for experiment_dict in experiments_dicts.items():
         execute_experiment(args, experiment_dict, copy.deepcopy(init_data_structure))
 
-
+    print(0)
 
 

@@ -28,7 +28,8 @@ class Preprocessor(object):
             'map_event_id_to_event_label': [],
             'map_event_type_to_event_id': [],
             'map_event_id_to_event_type': [],
-            'end_process_instance': '!'
+            'end_process_instance': '!',
+            'doc2vec_model': []
         },
 
         'encoding': {
@@ -760,6 +761,9 @@ class Preprocessor(object):
         if data_structure['encoding']['is_doc2vec_set']:
             data_set = self.get_data_tensor_from_doc2vec(args, cropped_process_instances, cropped_time_deltas,
                                                          cropped_context_attributes_process_instance, mode, data_structure)
+
+            return data_set
+
         else:
 
             if args.include_time_delta:
@@ -838,13 +842,15 @@ class Preprocessor(object):
 
                 return data_set
 
+
+
     def get_data_tensor_from_doc2vec(self, args, cropped_process_instances, cropped_time_deltas,
                                      cropped_context_attributes, mode, data_structure):
 
         event_sentences = self.collect_event_sentences_for_doc2vec(cropped_process_instances, cropped_time_deltas,
-                                                                   cropped_context_attributes)
+                                                                   cropped_context_attributes, data_structure)
 
-        encoded_event_sentences = self.apply_doc2vec_encoding(args, event_sentences)
+        encoded_event_sentences = self.apply_doc2vec_encoding(args, event_sentences, data_structure)
 
         if mode == 'train':
             data_set = numpy.zeros((
@@ -913,37 +919,54 @@ class Preprocessor(object):
 
             model.save(args.checkpoint_dir + str(0) + '_events_doc2vec_2d' + str(args.doc2vec_vec_size) + '.model',
                        sep_limit=2000000000)
+            self.data_structure['support']['doc2vec_model'] = model
+
 
 
 
     def collect_event_sentences_for_doc2vec(self, cropped_process_instances, cropped_time_deltas,
-                                            cropped_context_attributes):
+                                            cropped_context_attributes, data_structure):
 
         event_sentence = []
         event_sentences_process_instance = []
         event_sentences_process_instances = []
 
-        for cropped_process_instance, cropped_time_deltas_process_instance, cropped_context_attributes_process_instance in zip(
-                cropped_process_instances, cropped_time_deltas, cropped_context_attributes):
-            for event, time_delta, context_attributes in zip(cropped_process_instance,
-                                                             cropped_time_deltas_process_instance,
-                                                             cropped_context_attributes_process_instance):
-                event_sentence.append(event)
-                event_sentence.append(time_delta)
-                event_sentence.append(context_attributes)
+        if data_structure['meta']['num_attributes_context'] > 0:
+            for cropped_process_instance, cropped_time_deltas_process_instance, cropped_context_attributes_process_instance in zip(
+                    cropped_process_instances, cropped_time_deltas, cropped_context_attributes):
+                for event, time_delta, context_attributes in zip(cropped_process_instance,
+                                                                 cropped_time_deltas_process_instance,
+                                                                 cropped_context_attributes_process_instance):
+                    event_sentence.append(event)
+                    event_sentence.append(time_delta)
+                    event_sentence.append(context_attributes)
 
-                event_sentences_process_instance.append(event_sentence)
-                event_sentence = []
+                    event_sentences_process_instance.append(event_sentence)
+                    event_sentence = []
 
-            event_sentences_process_instances.append(event_sentences_process_instance)
-            event_sentences_process_instance = []
+                event_sentences_process_instances.append(event_sentences_process_instance)
+                event_sentences_process_instance = []
+        else:
+            for cropped_process_instance, cropped_time_deltas_process_instance in zip(
+                    cropped_process_instances, cropped_time_deltas):
+                for event, time_delta in zip(cropped_process_instance, cropped_time_deltas_process_instance):
+                    event_sentence.append(event)
+                    event_sentence.append(time_delta)
+
+                    event_sentences_process_instance.append(event_sentence)
+                    event_sentence = []
+
+                event_sentences_process_instances.append(event_sentences_process_instance)
+                event_sentences_process_instance = []
 
         return event_sentences_process_instances
 
-    def apply_doc2vec_encoding(self, args, data):
 
-        model = self.load_doc2vec_model(args)
-        prepared_data = self.prepare_data_for_doc2vec(data)
+    def apply_doc2vec_encoding(self, args, data, data_structure):
+
+        model = self.data_structure['support']['doc2vec_model']
+        # model = self.load_doc2vec_model(args)
+        prepared_data = self.prepare_data_for_doc2vec(args, data, data_structure)
         tagged_data = self.tag_data_for_doc2vec(prepared_data)
 
         encoded_data = []
@@ -960,7 +983,7 @@ class Preprocessor(object):
 
         return model
 
-    def prepare_data_for_doc2vec(self, data):
+    def prepare_data_for_doc2vec(self, args, data, data_structure):
 
         event_sentences = []
 
@@ -973,12 +996,18 @@ class Preprocessor(object):
                 event_id_tuple = event_list[0]
                 event_id = event_id_tuple[0]
                 time_delta = event_list[1]
-                context_attributes_values = event_list[2]
+
+                if data_structure['meta']['num_attributes_context'] > 0:
+                    context_attributes_values = event_list[2]
 
                 event.append(str(event_id))
-                event.append(str(time_delta))
-                for value in context_attributes_values:
-                    event.append(str(value))
+
+                if args.include_time_delta:
+                    event.append(str(time_delta))
+
+                if data_structure['meta']['num_attributes_context'] > 0:
+                    for value in context_attributes_values:
+                        event.append(str(value))
 
                 event_sentences.append(event)
 

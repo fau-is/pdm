@@ -24,17 +24,17 @@ def load():
     parser.add_argument('--encoding_num', default="min_max_norm", type=str)  # for numerical attributes
     parser.add_argument('--encoding_cat', default="onehot", type=str)  # for categorical attributes
     parser.add_argument('--num_hash_output', default=10, type=int)  # number of output columns of hash encoding; see work from Mehdiyev et al. (2017)
-    parser.add_argument('--doc2vec_num_epochs', default=10, type=int)
+    parser.add_argument('--doc2vec_num_epochs', default=1, type=int)
     parser.add_argument('--doc2vec_vec_size', default=32, type=int)
     parser.add_argument('--doc2vec_alpha', default=0.025, type=int)
-    parser.add_argument('--include_time_delta', default=False, type=utils.str2bool)
+    parser.add_argument('--include_time_delta', default=True, type=utils.str2bool)
 
     # all models
     parser.add_argument('--task', default="next_event")
     # parser.add_argument('--learning_rate', default=0.002, type=float)
 
     # evaluation
-    parser.add_argument('--num_folds', default=3, type=int)  # 10
+    parser.add_argument('--num_folds', default=10, type=int)  # 10
     parser.add_argument('--cross_validation', default=True, type=utils.str2bool)
     parser.add_argument('--split_rate_test', default=0.3, type=float)  # only if cross validation is deactivated
     parser.add_argument('--batch_size_train', default=1, type=int)  # 256
