@@ -54,33 +54,5 @@ The easiest way to setup an environment is to use Miniconda.
    5. Install tensorflow (tensorflow.org/install)
    6. Now you can run the project.
 
-# Structure of the project
-'''
-   ├── canepwdl                <- main folder
-   │   └── algorithms/
-   │       ├── dnc/ 
-   │         ├── test_dnc.py 
-   │         ├── train_dnc.py
-   │         ├── utility.py
-   │         ├── classes/
-   │           └── *.py
-   │       └── ngram.py
-   │   ├─ checkpoints/
-   │   ├─ data/        <- folder could contain different datasets
-   │   ├─ results/
-   │   ├─ tools/
-   │   ├─ config.py      <- file contain all params
-   │   ├─ main.py        <- main script 
-   │   ├─ predictor.py
-   │   ├─ preprocessor.py
-   │   ├─ trainer.py
-   │   ├─ utils.py       <- supporter funcs
-   ├── docs/         
-   ├── tests/
-   ├── ...   
-   ├── requirements.txt        
-   └── setup.py                <- setup
-'''
-
 
 
