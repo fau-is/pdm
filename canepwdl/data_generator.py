@@ -8,7 +8,7 @@ class DataGenerator(keras.utils.Sequence):
 
     """Generates data for Keras"""
     def __init__(self, _preprocessor, list_ids, cropped_process_instances, cropped_time_deltas, cropped_context_attributes,
-                 next_events, args, batch_size=32, shuffle=True):
+                 cropped_outcome_values, next_events, args, batch_size=32, shuffle=True):
         """Initialization"""
         self.batch_size = batch_size
         self.next_events = next_events
@@ -18,6 +18,7 @@ class DataGenerator(keras.utils.Sequence):
         self.cropped_process_instances = cropped_process_instances
         self.cropped_time_deltas = cropped_time_deltas
         self.cropped_context_attributes = cropped_context_attributes
+        self.cropped_outcome_values = cropped_outcome_values
         self.shuffle = shuffle
         self.on_epoch_end()
         self.args = args
@@ -51,23 +52,23 @@ class DataGenerator(keras.utils.Sequence):
         # select cropped instances for batch
         cropped_process_instances = [self.cropped_process_instances[_id] for _id in list_ids_temp]
         cropped_time_deltas = [self.cropped_time_deltas[_id] for _id in list_ids_temp]
+        cropped_outcome_values = [self.cropped_outcome_values[_id] for _id in list_ids_temp]
+
         if self.cropped_context_attributes:
             cropped_context_attributes = [self.cropped_context_attributes[_id] for _id in list_ids_temp]
         else:
             cropped_context_attributes = self.cropped_context_attributes
-        next_events = [self.next_events[_id] for _id in list_ids_temp]
 
         features_data_batch = self.preprocessor.get_data_tensor(self.args,
                                                                 cropped_process_instances,
                                                                 cropped_time_deltas,
                                                                 cropped_context_attributes,
+                                                                cropped_outcome_values,
                                                                 'train',
                                                                 self.data_structure)
 
         labels_batch = self.preprocessor.get_label_tensor(cropped_process_instances,
-                                                          next_events,
+                                                          cropped_outcome_values,
                                                           self.data_structure)
-
-
 
         return features_data_batch, labels_batch

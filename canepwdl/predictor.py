@@ -40,26 +40,24 @@ def test(args, preprocessor):
             utils.llprint("Prefix size: %d\n" % prefix_size)
 
             index = 0
-            for process_instance, time_deltas, event_id in zip(
+            for process_instance, time_deltas, outcome_value, id_process_instance in zip(
                     preprocessor.data_structure['data']['test']['process_instances'],
                     preprocessor.data_structure['data']['test']['time_deltas'],
-                    preprocessor.data_structure['data']['test']['event_ids']):
+                    preprocessor.data_structure['data']['test']['outcome_values'],
+                    preprocessor.data_structure['data']['test']['ids_process_instances']):
 
-                cropped_process_instance, cropped_time_deltas, cropped_context_attributes = preprocessor.get_cropped_instance(
+                cropped_process_instance, cropped_time_deltas, cropped_context_attributes, cropped_outcome_values = preprocessor.get_cropped_instance(
                     prefix_size,
                     index,
-                    process_instance, time_deltas)
+                    process_instance,
+                    time_deltas,
+                    outcome_value)
                 index = index + 1
 
-                # make no prediction for this case, since this case has ended already
-                encoded_end_mark = preprocessor.get_encoded_end_mark()
-                if encoded_end_mark in cropped_process_instance:
-                    continue
-
-                ground_truth = process_instance[prefix_size:prefix_size + prediction_size]
+                ground_truth = outcome_value[prefix_size:prefix_size + prediction_size]
                 prediction = []
 
-                # predict only next activity (i = 1)
+                # predict only next activity's outcome (i = 1)
                 for i in range(prediction_size):
 
                     if len(ground_truth) <= i:
@@ -70,28 +68,22 @@ def test(args, preprocessor):
                         cropped_process_instance,
                         cropped_time_deltas,
                         cropped_context_attributes,
+                        cropped_outcome_values,
                         preprocessor.data_structure
                     )
 
                     y = model.predict(test_data)
                     y_char = y[0][:]
 
-                    predicted_event = preprocessor.get_event_type(y_char)
+                    predicted_outcome = preprocessor.get_outcome_type(y_char)
 
-                    cropped_process_instance.append(predicted_event)
-                    prediction.append(predicted_event)
-
-                    if predicted_event == encoded_end_mark:
-                        print('! predicted, end of process instance ... \n')
-                        break
+                    cropped_process_instance.append(predicted_outcome)
+                    prediction.append(predicted_outcome)
 
                 output = []
                 if len(ground_truth) > 0:
-                    # TODO: how to encode results in order to use following evaluation metrics
-                    # print(preprocessor.data_structure['support']['map_event_label_to_event_id'][ground_truth[0]])
-                    # print(preprocessor.data_structure['support']['map_event_label_to_event_id'][prediction[0]])
 
-                    output.append(event_id)
+                    output.append(id_process_instance)
                     output.append(prefix_size)
                     output.append(str([int(i) for i in list(ground_truth[0])]).encode("utf-8"))
                     output.append(str([int(i) for i in list(prediction[0])]).encode("utf-8"))

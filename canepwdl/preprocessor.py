@@ -22,33 +22,31 @@ class Preprocessor(object):
             'test_index_per_fold': [],
             'iteration_cross_validation': 0,
             'elements_per_fold': 0,
-            'event_labels': [],
-            'event_types': [],
-            'map_event_label_to_event_id': [],
-            'map_event_id_to_event_label': [],
-            'map_event_type_to_event_id': [],
-            'map_event_id_to_event_type': [],
-            'end_process_instance': '!',
+            'outcome_types': [],
+            'map_outcome_type_to_outcome_value': [],
+            'map_outcome_value_to_outcome_type': [],
             'doc2vec_model': []
         },
 
         'encoding': {
             'eventlog_df': pandas.DataFrame,
-            'event_ids': {},
+            'length_event_ids': 0,
+            'length_context_attributes': 0,
+            'length_outcome_values': 0,
+            'mapping_outcome_values': {},
             'time_deltas': [],
-            'context_attributes': [],  # lengths of encoded attributes
             'num_values_control_flow': 0,
             'num_values_context': 0,
+            'num_values_outcome': 0,
             'num_values_features': 0,
             'is_doc2vec_set': False
         },
 
         'meta': {
-            'num_features': 0,
-            'num_event_ids': 0,
             'max_length_process_instance': 0,
             'num_attributes_context': 0,
             'num_attributes_control_flow': 3,  # process instance id, event id and timestamp
+            'num_attributes_outcome': 1,
             'num_process_instances': 0
         },
 
@@ -56,11 +54,13 @@ class Preprocessor(object):
             'process_instances': [],
             'ids_process_instances': [],
             'context_attributes_process_instances': [],
+            'outcome_values': [],
 
             'train': {
                 'process_instances': [],
                 'context_attributes': [],
-                'event_ids': [],
+                'outcome_values': [],
+                'ids_process_instances': [],
                 'time_deltas': [],
                 'features_data': numpy.array([]),
                 'labels': numpy.ndarray([])
@@ -69,7 +69,8 @@ class Preprocessor(object):
             'test': {
                 'process_instances': [],
                 'context_attributes': [],
-                'event_ids': [],
+                'outcome_values': [],
+                'ids_process_instances': [],
                 'time_deltas': []
             }
         }
@@ -87,39 +88,26 @@ class Preprocessor(object):
         encoded_eventlog_df = self.encode_data(args)
         # + 2 -> case + time
         self.data_structure['encoding']['num_values_control_flow'] = \
-            2 + self.data_structure['encoding']['event_ids']['length']
+            2 + self.data_structure['encoding']['length_event_ids']
+        self.data_structure['encoding']['num_values_outcome'] = \
+            self.data_structure['encoding']['length_outcome_values']
+
         self.get_sequences_from_encoded_eventlog(encoded_eventlog_df)
 
         self.data_structure['support']['elements_per_fold'] = \
             int(round(self.data_structure['meta']['num_process_instances'] /
                       self.data_structure['support']['num_folds']))
 
-        end_marked_process_instances = []
-        for process_instance in self.data_structure['data']['process_instances']:
-            process_instance.append(self.get_encoded_end_mark())
-            end_marked_process_instances.append(process_instance)
-
-        self.data_structure['data']['process_instances'] = end_marked_process_instances
         self.data_structure['meta']['max_length_process_instance'] = max(
             [len(x) for x in self.data_structure['data']['process_instances']])
 
-        self.data_structure['support']['event_labels'] = list(
-            self.data_structure['encoding']['event_ids']['mapping'].values())
+        self.data_structure['support']['outcome_types'] = list(
+            self.data_structure['encoding']['mapping_outcome_values'].values())
 
-        self.data_structure['support']['event_types'] = copy.copy(self.data_structure['support']['event_labels'])
-
-        self.data_structure['support']['map_event_label_to_event_id'] = dict(
-            (c, i) for i, c in enumerate(self.data_structure['support']['event_labels']))
-        self.data_structure['support']['map_event_id_to_event_label'] = dict(
-            (i, c) for i, c in enumerate(self.data_structure['support']['event_labels']))
-        self.data_structure['support']['map_event_type_to_event_id'] = dict(
-            (c, i) for i, c in enumerate(self.data_structure['support']['event_types']))
-        self.data_structure['support']['map_event_id_to_event_type'] = dict(
-            (i, c) for i, c in enumerate(self.data_structure['support']['event_types']))
-
-        self.data_structure['meta']['num_event_ids'] = len(self.data_structure['support']['event_labels'])
-        self.data_structure['meta']['num_features'] = self.data_structure['meta']['num_event_ids'] + \
-                                                      self.data_structure['meta']['num_attributes_context']
+        self.data_structure['support']['map_outcome_type_to_outcome_value'] = dict(
+            (c, i) for i, c in enumerate(self.data_structure['support']['outcome_types']))
+        self.data_structure['support']['map_outcome_value_to_outcome_type'] = dict(
+            (i, c) for i, c in enumerate(self.data_structure['support']['outcome_types']))
 
         if self.data_structure['encoding']['is_doc2vec_set']:
             self.data_structure['encoding']['num_values_features'] = 1 + args.doc2vec_vec_size  # case + event encoding
@@ -127,7 +115,9 @@ class Preprocessor(object):
             self.data_structure['encoding']['num_values_features'] = self.data_structure['encoding'][
                                                                          'num_values_control_flow'] + \
                                                                      self.data_structure['encoding'][
-                                                                         'num_values_context']
+                                                                         'num_values_context'] + \
+                                                                     self.data_structure['encoding'][
+                                                                         'num_values_outcome']
 
         if args.cross_validation:
             self.set_indices_k_fold_validation()
@@ -147,20 +137,19 @@ class Preprocessor(object):
                 'test_index_per_fold': [],
                 'iteration_cross_validation': 0,
                 'elements_per_fold': 0,
-                'event_labels': [],
-                'event_types': [],
-                'map_event_label_to_event_id': [],
-                'map_event_id_to_event_label': [],
-                'map_event_type_to_event_id': [],
-                'map_event_id_to_event_type': [],
-                'end_process_instance': '!'
+                'outcome_types': [],
+                'map_outcome_type_to_outcome_value': [],
+                'map_outcome_value_to_outcome_type': [],
+                'doc2vec_model': []
             },
 
             'encoding': {
                 'eventlog_df': pandas.DataFrame,
-                'event_ids': {},
+                'length_event_ids': 0,
+                'length_context_attributes': 0,
+                'length_outcome_values': 0,
+                'mapping_outcome_values': {},
                 'time_deltas': [],
-                'context_attributes': [],  # lengths of encoded attributes
                 'num_values_control_flow': 0,
                 'num_values_context': 0,
                 'num_values_features': 0,
@@ -168,8 +157,6 @@ class Preprocessor(object):
             },
 
             'meta': {
-                'num_features': 0,
-                'num_event_ids': 0,
                 'max_length_process_instance': 0,
                 'num_attributes_context': 0,
                 'num_attributes_control_flow': 3,  # process instance id, event id and timestamp
@@ -180,11 +167,13 @@ class Preprocessor(object):
                 'process_instances': [],
                 'ids_process_instances': [],
                 'context_attributes_process_instances': [],
+                'outcome_values': [],
 
                 'train': {
                     'process_instances': [],
                     'context_attributes': [],
-                    'event_ids': [],
+                    'outcome_values': [],
+                    'ids_process_instances': [],
                     'time_deltas': [],
                     'features_data': numpy.array([]),
                     'labels': numpy.ndarray([])
@@ -193,7 +182,8 @@ class Preprocessor(object):
                 'test': {
                     'process_instances': [],
                     'context_attributes': [],
-                    'event_ids': [],
+                    'outcome_values': [],
+                    'ids_process_instances': [],
                     'time_deltas': []
                 }
             }
@@ -213,13 +203,13 @@ class Preprocessor(object):
             self.data_structure['encoding']['is_doc2vec_set'] = True
             self.build_doc2vec_model(args)
 
-        # case
+        # add case ID unencoded to new df
         encoded_eventlog_df = pandas.DataFrame(eventlog_df.iloc[:, 0])
 
         for column_name in eventlog_df:
             column_index = eventlog_df.columns.get_loc(column_name)
 
-            # skip case
+            # skip case ID
             if column_index > 0:
 
                 column = eventlog_df[column_name]
@@ -233,11 +223,6 @@ class Preprocessor(object):
                     else:
                         encoded_column = self.encode_column(args, mode, 'event', column_name)
 
-                    if isinstance(encoded_column, pandas.DataFrame):
-                        self.set_length_of_event_encoding(len(encoded_column.columns))
-                    elif isinstance(encoded_column, pandas.Series):
-                        self.set_length_of_event_encoding(1)
-
                 elif column_index == 2:
                     # timestamp
                     self.collect_time_deltas(column_name)
@@ -246,21 +231,22 @@ class Preprocessor(object):
                     continue
 
                 else:
-                    # context attribute
-                    if self.data_structure['encoding']['is_doc2vec_set']:
-                        if column_data_type == 'cat':
-                            encoded_column = self.encode_column(args, 'int', 'context', column_name)
-
-                        elif column_data_type == 'num':
-                            encoded_column = self.encode_column(args, 'min_max_norm', 'context', column_name)
+                    if column_index == (len(eventlog_df.columns) - 1):
+                        attribute_type = 'outcome'
                     else:
-                        encoded_column = self.encode_column(args, mode, 'context', column_name)
+                        attribute_type = 'context'
+
+                    if self.data_structure['encoding']['is_doc2vec_set']:
+
+                        if column_data_type == 'cat':
+                            encoded_column = self.encode_column(args, 'int', attribute_type, column_name)
+                        elif column_data_type == 'num':
+                            encoded_column = self.encode_column(args, 'min_max_norm', attribute_type, column_name)
+
+                    else:
+                        encoded_column = self.encode_column(args, mode, attribute_type, column_name)
 
                 encoded_eventlog_df = encoded_eventlog_df.join(encoded_column)
-
-            else:
-                encoded_eventlog_df[column_name] = eventlog_df[column_name]
-
 
         encoded_eventlog_df.to_csv(self.data_structure['support']['encoded_data_dir'], sep=';', index=False)
 
@@ -374,23 +360,26 @@ class Preprocessor(object):
 
         dataframe = self.data_structure['encoding']['eventlog_df']
 
-        if attribute_type == 'event':
-            dataframe = self.add_end_mark_to_event_column(column_name)
-
         data = dataframe[column_name].fillna("missing")
         unique_values = data.unique().tolist()
         int_mapping = dict(zip(unique_values, range(len(unique_values))))
         encoded_data = data.map(int_mapping)
 
         if attribute_type == 'event':
-            self.save_mapping_of_encoded_events(data, encoded_data)
-            encoded_data = self.remove_end_mark_from_event_column(encoded_data)
+            if isinstance(encoded_data, pandas.DataFrame):
+                self.set_length_of_event_encoding(len(encoded_data.columns))
+            elif isinstance(encoded_data, pandas.Series):
+                self.set_length_of_event_encoding(1)
 
         elif attribute_type == 'context':
             if isinstance(encoded_data, pandas.DataFrame):
                 self.set_length_of_context_encoding(len(encoded_data.columns.tolist()))
             elif isinstance(encoded_data, pandas.Series):
                 self.set_length_of_context_encoding(1)
+
+        elif attribute_type == 'outcome':
+            self.save_mapping_of_encoded_outcome_values(data, encoded_data)
+            self.set_length_of_outcome_encoding(1)
 
         return encoded_data
 
@@ -403,15 +392,13 @@ class Preprocessor(object):
         encoded_data = (data - data.min()) / (data.max() - data.min())
 
         self.set_length_of_context_encoding(1)
+        self.set_length_of_outcome_encoding(1)
 
         return encoded_data
 
-
     def apply_one_hot_encoding(self, attribute_type, column_name):
-        dataframe = self.data_structure['encoding']['eventlog_df']
 
-        if attribute_type == 'event':
-            dataframe = self.add_end_mark_to_event_column(column_name)
+        dataframe = self.data_structure['encoding']['eventlog_df']
 
         onehot_encoder = category_encoders.OneHotEncoder(cols=[column_name])
         encoded_df = onehot_encoder.fit_transform(dataframe)
@@ -420,25 +407,29 @@ class Preprocessor(object):
             encoded_df.columns[pandas.Series(encoded_df.columns).str.startswith("%s_" % column_name)]]
 
         if attribute_type == 'event':
-            self.save_mapping_of_encoded_events(dataframe[column_name], encoded_data)
-            encoded_data = self.remove_end_mark_from_event_column(encoded_data)
+            if isinstance(encoded_data, pandas.DataFrame):
+                self.set_length_of_event_encoding(len(encoded_data.columns))
+            elif isinstance(encoded_data, pandas.Series):
+                self.set_length_of_event_encoding(1)
 
         elif attribute_type == 'context':
-
             if isinstance(encoded_data, pandas.DataFrame):
                 self.set_length_of_context_encoding(len(encoded_data.columns.tolist()))
             elif isinstance(encoded_data, pandas.Series):
                 self.set_length_of_context_encoding(1)
 
-        return encoded_data
+        elif attribute_type == 'outcome':
+            self.save_mapping_of_encoded_outcome_values(dataframe[column_name], encoded_data)
+            if isinstance(encoded_data, pandas.DataFrame):
+                self.set_length_of_outcome_encoding(len(encoded_data.columns.tolist()))
+            elif isinstance(encoded_data, pandas.Series):
+                self.set_length_of_outcome_encoding(1)
 
+        return encoded_data
 
     def apply_binary_encoding(self, attribute_type, column_name):
 
         dataframe = self.data_structure['encoding']['eventlog_df']
-
-        if attribute_type == 'event':
-            dataframe = self.add_end_mark_to_event_column(column_name)
 
         binary_encoder = category_encoders.BinaryEncoder(cols=[column_name])
         encoded_df = binary_encoder.fit_transform(dataframe)
@@ -447,24 +438,29 @@ class Preprocessor(object):
             encoded_df.columns[pandas.Series(encoded_df.columns).str.startswith("%s_" % column_name)]]
 
         if attribute_type == 'event':
-            self.save_mapping_of_encoded_events(dataframe[column_name], encoded_data)
-            encoded_data = self.remove_end_mark_from_event_column(encoded_data)
+            if isinstance(encoded_data, pandas.DataFrame):
+                self.set_length_of_event_encoding(len(encoded_data.columns))
+            elif isinstance(encoded_data, pandas.Series):
+                self.set_length_of_event_encoding(1)
 
         elif attribute_type == 'context':
-
             if isinstance(encoded_data, pandas.DataFrame):
                 self.set_length_of_context_encoding(len(encoded_data.columns.tolist()))
             elif isinstance(encoded_data, pandas.Series):
                 self.set_length_of_context_encoding(1)
+
+        elif attribute_type == 'outcome':
+            self.save_mapping_of_encoded_outcome_values(dataframe[column_name], encoded_data)
+            if isinstance(encoded_data, pandas.DataFrame):
+                self.set_length_of_outcome_encoding(len(encoded_data.columns.tolist()))
+            elif isinstance(encoded_data, pandas.Series):
+                self.set_length_of_outcome_encoding(1)
 
         return encoded_data
 
     def apply_hash_encoding(self, args, attribute_type, column_name):
 
         dataframe = self.data_structure['encoding']['eventlog_df']
-
-        if attribute_type == 'event':
-            dataframe = self.add_end_mark_to_event_column(column_name)
 
         dataframe[column_name] = dataframe[column_name].fillna("missing")
         hash_encoder = category_encoders.HashingEncoder(cols=[column_name], n_components=args.num_hash_output)
@@ -479,8 +475,10 @@ class Preprocessor(object):
         encoded_data = encoded_data.rename(columns=dict(zip(encoded_df.columns.tolist(), new_column_names)))
 
         if attribute_type == 'event':
-            self.save_mapping_of_encoded_events(dataframe[column_name], encoded_data)
-            encoded_data = self.remove_end_mark_from_event_column(encoded_data)
+            if isinstance(encoded_data, pandas.DataFrame):
+                self.set_length_of_event_encoding(len(encoded_data.columns))
+            elif isinstance(encoded_data, pandas.Series):
+                self.set_length_of_event_encoding(1)
 
         elif attribute_type == 'context':
             if isinstance(encoded_data, pandas.DataFrame):
@@ -488,33 +486,16 @@ class Preprocessor(object):
             elif isinstance(encoded_data, pandas.Series):
                 self.set_length_of_context_encoding(1)
 
+        elif attribute_type == 'outcome':
+            self.save_mapping_of_encoded_outcome_values(dataframe[column_name], encoded_data)
+            if isinstance(encoded_data, pandas.DataFrame):
+                self.set_length_of_outcome_encoding(len(encoded_data.columns.tolist()))
+            elif isinstance(encoded_data, pandas.Series):
+                self.set_length_of_outcome_encoding(1)
+
         return encoded_data
 
-    def add_end_mark_to_event_column(self, column_name):
-
-        dataframe = self.data_structure['encoding']['eventlog_df']
-        end_mark = self.data_structure['support']['end_process_instance']
-
-        df_columns = dataframe.columns
-        new_row = []
-        for column in df_columns:
-            if column == column_name:
-                new_row.append(end_mark)
-            else:
-                new_row.append(0)
-
-        row_df = pandas.DataFrame([new_row], columns=dataframe.columns)
-        dataframe = dataframe.append(row_df, ignore_index=True)
-
-        return dataframe
-
-    def remove_end_mark_from_event_column(self, data):
-
-        orig_column = data.drop(len(data) - 1)
-
-        return orig_column
-
-    def save_mapping_of_encoded_events(self, column, encoded_column):
+    def save_mapping_of_encoded_outcome_values(self, column, encoded_column):
 
         encoded_column_tuples = []
         for entry in encoded_column.values.tolist():
@@ -534,83 +515,102 @@ class Preprocessor(object):
 
         mapping = dict(tuple_unique_rows)
 
-        self.data_structure['encoding']['event_ids']['mapping'] = mapping
-
-    def get_encoded_end_mark(self):
-
-        return self.data_structure['encoding']['event_ids']['mapping'][
-            self.data_structure['support']['end_process_instance']]
+        self.data_structure['encoding']['mapping_outcome_values'] = mapping
 
     def set_length_of_event_encoding(self, num_columns):
-        self.data_structure['encoding']['event_ids']['length'] = num_columns
+        self.data_structure['encoding']['length_event_ids'] = num_columns
 
     def set_length_of_context_encoding(self, num_columns):
-        self.data_structure['encoding']['context_attributes'].append(num_columns)
+        self.data_structure['encoding']['length_context_attributes'] = num_columns
+
+    def set_length_of_outcome_encoding(self, num_columns):
+        self.data_structure['encoding']['length_outcome_values'] = num_columns
 
     def get_sequences_from_encoded_eventlog(self, eventlog_df):
 
         utils.llprint("Create instances ... \n")
 
         id_latest_process_instance = ''
-        process_instance = ''
         first_event_of_process_instance = True
+        process_instance = []
         context_attributes_process_instance = []
+        outcome_values_process_instance = []
         output = True
 
         for index, event in eventlog_df.iterrows():
 
             id_current_process_instance = int(event[0])
+
             if output:
                 self.check_for_context_attributes_df(event)
                 output = False
 
             if id_current_process_instance != id_latest_process_instance:
                 self.add_data_to_data_structure(id_current_process_instance, 'ids_process_instances')
-                id_latest_process_instance = id_current_process_instance
 
                 if not first_event_of_process_instance:
-                    self.add_data_to_data_structure(process_instance, 'process_instances')
 
+                    self.add_data_to_data_structure(process_instance, 'process_instances')
+                    self.add_data_to_data_structure(outcome_values_process_instance, 'outcome_values')
                     if self.data_structure['meta']['num_attributes_context'] > 0:
                         self.add_data_to_data_structure(context_attributes_process_instance,
                                                         'context_attributes_process_instances')
 
                 process_instance = []
+                outcome_values_process_instance = []
 
                 if self.data_structure['meta']['num_attributes_context'] > 0:
                     context_attributes_process_instance = []
 
                 self.data_structure['meta']['num_process_instances'] += 1
 
+            process_instance = self.add_encoded_event_to_process_instance(event, process_instance)
+            outcome_value_of_event = self.get_outcome_value_of_event(event)
+            outcome_values_process_instance.append(outcome_value_of_event)
             if self.data_structure['meta']['num_attributes_context'] > 0:
                 context_attributes_event = self.get_context_attributes_of_event(event)
                 context_attributes_process_instance.append(context_attributes_event)
 
-            process_instance = self.add_encoded_event_to_process_instance(event, process_instance)
+            id_latest_process_instance = id_current_process_instance
             first_event_of_process_instance = False
 
         self.add_data_to_data_structure(process_instance, 'process_instances')
+        self.add_data_to_data_structure(outcome_values_process_instance, 'outcome_values')
 
         if self.data_structure['meta']['num_attributes_context'] > 0:
             self.add_data_to_data_structure(context_attributes_process_instance, 'context_attributes_process_instances')
+
         self.data_structure['meta']['num_process_instances'] += 1
 
     def check_for_context_attributes_df(self, event):
 
-        if len(event) == self.data_structure['encoding']['num_values_control_flow']:
+        if len(event) == self.data_structure['encoding']['num_values_control_flow'] + self.data_structure['encoding']['length_outcome_values']:
             utils.llprint("No context attributes found ...\n")
         else:
             self.data_structure['meta']['num_attributes_context'] = len(
-                self.data_structure['encoding']['context_attributes'])
+                self.data_structure['encoding']['length_context_attributes'])
             self.data_structure['encoding']['num_values_context'] = sum(
-                self.data_structure['encoding']['context_attributes'])
+                self.data_structure['encoding']['length_context_attributes'])
             utils.llprint("%d context attributes found ...\n" % self.data_structure['meta']['num_attributes_context'])
 
     def add_encoded_event_to_process_instance(self, event, process_instance):
 
         encoded_event_id = []
         start_index = 1
-        end_index = self.data_structure['encoding']['event_ids']['length'] + 1
+        end_index = self.data_structure['encoding']['length_event_ids'] + 1
+
+        for enc_val in range(start_index, end_index):
+            encoded_event_id.append(event[enc_val])
+
+        process_instance.append(tuple(encoded_event_id))
+
+        return process_instance
+
+    def add_encoded_event_to_process_instance(self, event, process_instance):
+
+        encoded_event_id = []
+        start_index = 1
+        end_index = self.data_structure['encoding']['length_event_ids'] + 1
 
         for enc_val in range(start_index, end_index):
             encoded_event_id.append(event[enc_val])
@@ -631,6 +631,16 @@ class Preprocessor(object):
 
         return context_attributes_event
 
+    def get_outcome_value_of_event(self, event):
+
+        event = event.tolist()
+        outcome_value_event = []
+
+        for outcome_value_index in range(self.data_structure['encoding']['num_values_control_flow'] + self.data_structure['encoding']['num_values_context'], len(event)):
+            outcome_value_event.append(event[outcome_value_index])
+
+        return tuple(outcome_value_event)
+
     def add_data_to_data_structure(self, values, structure):
 
         self.data_structure['data'][structure].append(values)
@@ -638,16 +648,18 @@ class Preprocessor(object):
     def get_training_set(self):
 
         utils.llprint("Get training instances ... \n")
-        process_instances_train, context_attributes_train, _, time_deltas_train = self.set_instances_of_fold('train')
+        process_instances_train, context_attributes_train, outcome_values_train, _, time_deltas_train = self.set_instances_of_fold('train')
 
         utils.llprint("Create cropped training instances ... \n")
-        cropped_process_instances, cropped_time_deltas, cropped_context_attributes, next_events = \
+
+        cropped_process_instances, cropped_context_attributes, cropped_outcome_values, cropped_time_deltas, next_events = \
             self.get_cropped_instances(
                 process_instances_train,
-                time_deltas_train,
-                context_attributes_train)
+                context_attributes_train,
+                outcome_values_train,
+                time_deltas_train)
 
-        return cropped_process_instances, cropped_time_deltas, cropped_context_attributes, next_events
+        return cropped_process_instances, cropped_time_deltas, cropped_context_attributes, cropped_outcome_values, next_events
 
     def set_indices_k_fold_validation(self):
         """ Produces indices for each fold of a k-fold cross-validation. """
@@ -671,15 +683,17 @@ class Preprocessor(object):
         """ Retrieves instances of a fold. """
 
         process_instances_of_fold = []
-        event_ids_of_fold = []
+        ids_process_instances_of_fold = []
         context_attributes_of_fold = []
         time_deltas_of_fold = []
+        outcome_values_of_fold = []
 
         for value in self.data_structure['support'][mode + '_index_per_fold'][
             self.data_structure['support']['iteration_cross_validation']]:
             process_instances_of_fold.append(self.data_structure['data']['process_instances'][value])
-            event_ids_of_fold.append(self.data_structure['data']['ids_process_instances'][value])
+            ids_process_instances_of_fold.append(self.data_structure['data']['ids_process_instances'][value])
             time_deltas_of_fold.append(self.data_structure['encoding']['time_deltas'][value])
+            outcome_values_of_fold.append(self.data_structure['data']['outcome_values'][value])
 
             if self.data_structure['meta']['num_attributes_context'] > 0:
                 context_attributes_of_fold.append(
@@ -688,31 +702,34 @@ class Preprocessor(object):
         if mode == 'train':
             self.data_structure['data']['train']['process_instances'] = process_instances_of_fold
             self.data_structure['data']['train']['context_attributes'] = context_attributes_of_fold
-            self.data_structure['data']['train']['event_ids'] = event_ids_of_fold
+            self.data_structure['data']['train']['outcome_values'] = outcome_values_of_fold
+            self.data_structure['data']['train']['ids_process_instances'] = ids_process_instances_of_fold
             self.data_structure['data']['train']['time_deltas'] = time_deltas_of_fold
 
         elif mode == 'test':
             self.data_structure['data']['test']['process_instances'] = process_instances_of_fold
             self.data_structure['data']['test']['context_attributes'] = context_attributes_of_fold
-            self.data_structure['data']['test']['event_ids'] = event_ids_of_fold
+            self.data_structure['data']['test']['outcome_values'] = outcome_values_of_fold
+            self.data_structure['data']['test']['ids_process_instances'] = ids_process_instances_of_fold
             self.data_structure['data']['test']['time_deltas'] = time_deltas_of_fold
 
-        return process_instances_of_fold, context_attributes_of_fold, event_ids_of_fold, time_deltas_of_fold
+        return process_instances_of_fold, context_attributes_of_fold, outcome_values_of_fold, ids_process_instances_of_fold, time_deltas_of_fold
 
-    def get_cropped_instances(self, process_instances, time_deltas_process_instances,
-                              context_attributes_process_instances):
+    def get_cropped_instances(self, process_instances, context_attributes_process_instances,
+                              outcome_values, time_deltas_process_instances):
         """ Crops prefixes out of instances. """
 
         cropped_process_instances = []
         cropped_time_deltas = []
         cropped_context_attributes = []
+        cropped_outcome_values = []
         next_events = []
 
         if self.data_structure['meta']['num_attributes_context'] > 0:
 
-            for process_instance, time_deltas_process_instance, context_attributes_process_instance in zip(
+            for process_instance, time_deltas_process_instance, context_attributes_process_instance, outcome_value in zip(
                     process_instances, time_deltas_process_instances,
-                    context_attributes_process_instances):
+                    context_attributes_process_instances, outcome_values):
 
                 for i in range(0, len(process_instance)):
 
@@ -723,10 +740,12 @@ class Preprocessor(object):
                     cropped_process_instances.append(process_instance[0:i])
                     cropped_time_deltas.append(time_deltas_process_instance[0:i])
                     cropped_context_attributes.append(context_attributes_process_instance[0:i])
+                    cropped_outcome_values.append(outcome_value[0:i])
                     # label
                     next_events.append(process_instance[i])
         else:
-            for process_instance, time_delta_process_instance in zip(process_instances, time_deltas_process_instances):
+            for process_instance, time_delta_process_instance, outcome_value in zip(
+                    process_instances, time_deltas_process_instances, outcome_values):
 
                 for i in range(0, len(process_instance)):
 
@@ -734,25 +753,28 @@ class Preprocessor(object):
                         continue
                     cropped_process_instances.append(process_instance[0:i])
                     cropped_time_deltas.append(time_delta_process_instance[0:i])
+                    cropped_outcome_values.append(outcome_value[0:i])
                     # label
                     next_events.append(process_instance[i])
 
-        return cropped_process_instances, cropped_time_deltas, cropped_context_attributes, next_events
+        return cropped_process_instances, cropped_context_attributes, cropped_outcome_values, cropped_time_deltas, next_events
 
-    def get_cropped_instance(self, prefix_size, index, process_instance, time_deltas):
+    def get_cropped_instance(self, prefix_size, index, process_instance, time_deltas, outcome_value):
         """ Crops prefixes out of a single process instance. """
 
         cropped_process_instance = process_instance[:prefix_size]
         cropped_time_deltas = time_deltas[:prefix_size]
+        cropped_outcome_values = outcome_value[:prefix_size]
         if self.data_structure['meta']['num_attributes_context'] > 0:
             cropped_context_attributes = self.data_structure['data']['test']['context_attributes'][index][:prefix_size]
         else:
             cropped_context_attributes = []
 
-        return cropped_process_instance, cropped_time_deltas, cropped_context_attributes
+        return cropped_process_instance, cropped_time_deltas, cropped_context_attributes, cropped_outcome_values
 
     def get_data_tensor(self, args, cropped_process_instances, cropped_time_deltas,
-                        cropped_context_attributes_process_instance, mode, data_structure):
+                        cropped_context_attributes_process_instance, cropped_outcome_values,
+                        mode, data_structure):
         """ Produces a vector-oriented representation of data as 3-dimensional tensor.
             Note batches of the training set are created by a data generator,
             so we consider the data structure as a closed object.
@@ -760,7 +782,8 @@ class Preprocessor(object):
 
         if data_structure['encoding']['is_doc2vec_set']:
             data_set = self.get_data_tensor_from_doc2vec(args, cropped_process_instances, cropped_time_deltas,
-                                                         cropped_context_attributes_process_instance, mode, data_structure)
+                                                         cropped_context_attributes_process_instance,
+                                                         cropped_outcome_values, mode, data_structure)
 
             return data_set
 
@@ -773,37 +796,39 @@ class Preprocessor(object):
                     data_set = numpy.zeros((
                         len(cropped_process_instances),
                         data_structure['meta']['max_length_process_instance'],
-                        data_structure['encoding']['event_ids']['length'] + 1 + data_structure['encoding'][
-                            'num_values_context']), dtype=numpy.float64)
+                        data_structure['encoding']['length_event_ids'] + 1 + data_structure['encoding'][
+                            'num_values_context'] + data_structure['encoding']['num_values_outcome']), dtype=numpy.float64)
                 else:
                     data_set = numpy.zeros((
                         1,
                         data_structure['meta']['max_length_process_instance'],
-                        data_structure['encoding']['event_ids']['length'] + 1 + data_structure['encoding'][
-                            'num_values_context']), dtype=numpy.float32)
+                        data_structure['encoding']['length_event_ids'] + 1 + data_structure['encoding'][
+                            'num_values_context'] + data_structure['encoding']['num_values_outcome']), dtype=numpy.float32)
 
-                for index, (cropped_process_instance, cropped_time_deltas_process_instance) in enumerate(
-                        zip(cropped_process_instances, cropped_time_deltas)):
+                for index, (cropped_process_instance, cropped_time_deltas_process_instance, cropped_outcome_value) in enumerate(
+                        zip(cropped_process_instances, cropped_time_deltas, cropped_outcome_values)):
 
                     left_pad = data_structure['meta']['max_length_process_instance'] - len(cropped_process_instance)
 
                     if data_structure['meta']['num_attributes_context'] > 0:
                         cropped_context_attributes = cropped_context_attributes_process_instance[index]
 
-                    for time_step, (event, time_delta) in enumerate(
-                            zip(cropped_process_instance, cropped_time_deltas_process_instance)):
+                    for time_step, (event, time_delta, outcome_value) in enumerate(
+                            zip(cropped_process_instance, cropped_time_deltas_process_instance, cropped_outcome_value)):
 
-                        for tuple_idx in range(0, data_structure['encoding']['event_ids']['length']):
+                        for tuple_idx in range(0, data_structure['encoding']['length_event_ids']):
                             data_set[index, time_step + left_pad, tuple_idx] = event[tuple_idx]
 
-                        data_set[index, time_step + left_pad, data_structure['encoding']['event_ids'][
-                            'length']] = time_delta
+                        data_set[index, time_step + left_pad, data_structure['encoding']['length_event_ids']] = time_delta
 
                         if data_structure['meta']['num_attributes_context'] > 0:
                             for context_attribute_index in range(0, data_structure['encoding']['num_values_context']):
-                                data_set[index, time_step + left_pad, data_structure['encoding']['event_ids'][
-                                    'length'] + 1 + context_attribute_index] = cropped_context_attributes[time_step][
+                                data_set[index, time_step + left_pad, data_structure['encoding']['length_event_ids'] + 1 + context_attribute_index] = cropped_context_attributes[time_step][
                                     context_attribute_index]
+
+                        for tuple_index in range(0, data_structure['encoding']['length_outcome_values']):
+                            data_set[index, time_step + left_pad, data_structure['encoding']['length_event_ids'] + 1 + data_structure['encoding']['num_values_context'] +
+                                     tuple_index] = outcome_value[tuple_index]
 
                 return data_set
 
@@ -813,42 +838,45 @@ class Preprocessor(object):
                         data_set = numpy.zeros((
                             len(cropped_process_instances),
                             data_structure['meta']['max_length_process_instance'],
-                            data_structure['encoding']['event_ids']['length'] + data_structure['encoding'][
-                                'num_values_context']), dtype=numpy.float64)
+                            data_structure['encoding']['length_event_ids'] + data_structure['encoding'][
+                                'num_values_context'] + data_structure['encoding']['num_values_outcome']), dtype=numpy.float64)
                 else:
                     data_set = numpy.zeros((
                         1,
                         data_structure['meta']['max_length_process_instance'],
-                        data_structure['encoding']['event_ids']['length'] + data_structure['encoding'][
-                            'num_values_context']), dtype=numpy.float32)
+                        data_structure['encoding']['length_event_ids']+ data_structure['encoding'][
+                            'num_values_context'] + data_structure['encoding']['num_values_outcome']), dtype=numpy.float32)
 
-                for index, cropped_process_instance in enumerate(cropped_process_instances):
+                for index, (cropped_process_instance, cropped_time_deltas_process_instance, cropped_outcome_value) in enumerate(
+                        zip(cropped_process_instances, cropped_time_deltas, cropped_outcome_values)):
 
                     left_pad = data_structure['meta']['max_length_process_instance'] - len(cropped_process_instance)
 
                     if data_structure['meta']['num_attributes_context'] > 0:
                         cropped_context_attributes = cropped_context_attributes_process_instance[index]
 
-                    for time_step, event in enumerate(cropped_process_instance):
+                    for time_step, (event, outcome_value) in enumerate(
+                            zip(cropped_process_instance, cropped_outcome_value)):
 
-                        for tuple_idx in range(0, data_structure['encoding']['event_ids']['length']):
+                        for tuple_idx in range(0, data_structure['encoding']['length_event_ids']):
                             data_set[index, time_step + left_pad, tuple_idx] = event[tuple_idx]
 
                         if data_structure['meta']['num_attributes_context'] > 0:
                             for context_attribute_index in range(0, data_structure['encoding']['num_values_context']):
-                                data_set[index, time_step + left_pad, data_structure['encoding']['event_ids'][
-                                    'length'] + context_attribute_index] = cropped_context_attributes[time_step][
+                                data_set[index, time_step + left_pad, data_structure['encoding']['length_event_ids'] + context_attribute_index] = cropped_context_attributes[time_step][
                                     context_attribute_index]
+
+                        for tuple_index in range(0, data_structure['encoding']['length_outcome_values']):
+                            data_set[index, time_step + left_pad, data_structure['encoding']['length_event_ids'] + data_structure['encoding']['num_values_context'] +
+                                     tuple_index] = outcome_value[tuple_index]
 
                 return data_set
 
-
-
     def get_data_tensor_from_doc2vec(self, args, cropped_process_instances, cropped_time_deltas,
-                                     cropped_context_attributes, mode, data_structure):
+                                     cropped_context_attributes, cropped_outcome_values, mode, data_structure):
 
         event_sentences = self.collect_event_sentences_for_doc2vec(cropped_process_instances, cropped_time_deltas,
-                                                                   cropped_context_attributes, data_structure)
+                                                                   cropped_context_attributes, cropped_outcome_values, data_structure)
 
         encoded_event_sentences = self.apply_doc2vec_encoding(args, event_sentences, data_structure)
 
@@ -907,12 +935,11 @@ class Preprocessor(object):
 
         self.train_and_save_doc2vec_model(args, model, tagged_data)
 
-
     def train_and_save_doc2vec_model(self, args, model, tagged_data):
 
         for epoch in range(args.doc2vec_num_epochs):
             if epoch % 2 == 0:
-                print("Doc2vec training in epoch %s ..." % epoch)
+                 utils.llprint("Doc2vec training in epoch %s ...\n" % epoch)
             model.train(tagged_data, total_examples=len(tagged_data), epochs=args.doc2vec_num_epochs)
             model.alpha -= 0.002
             model.min_alpha = model.alpha
@@ -921,11 +948,8 @@ class Preprocessor(object):
                        sep_limit=2000000000)
             self.data_structure['support']['doc2vec_model'] = model
 
-
-
-
     def collect_event_sentences_for_doc2vec(self, cropped_process_instances, cropped_time_deltas,
-                                            cropped_context_attributes, data_structure):
+                                            cropped_context_attributes, cropped_outcome_values, data_structure):
 
         event_sentence = []
         event_sentences_process_instance = []
@@ -960,7 +984,6 @@ class Preprocessor(object):
                 event_sentences_process_instance = []
 
         return event_sentences_process_instances
-
 
     def apply_doc2vec_encoding(self, args, data, data_structure):
 
@@ -1015,54 +1038,53 @@ class Preprocessor(object):
 
     def tag_data_for_doc2vec(self, event_sentences):
 
-
         tagged_data = [gensim.models.doc2vec.TaggedDocument(words=sentence, tags=[str(index)]) for index, sentence in
                        enumerate(event_sentences)]
 
         return tagged_data
 
-
     def get_data_tensor_for_single_prediction(self, args, cropped_process_instance, cropped_time_deltas,
-                                              cropped_context_attributes, data_structure):
+                                              cropped_context_attributes, cropped_outcome_value, data_structure):
 
         data_set = self.get_data_tensor(
             args,
             [cropped_process_instance],
             [cropped_time_deltas],
             [cropped_context_attributes],
+            [cropped_outcome_value],
             'test',
             data_structure
         )
 
         return data_set
 
-    def get_label_tensor(self, cropped_process_instances, next_events, data_structure):
+    def get_label_tensor(self, cropped_process_instances, outcome_values, data_structure):
         """ Produces a vector-oriented representation of label as 2-dimensional tensor. """
 
-        label = numpy.zeros((len(cropped_process_instances), len(data_structure['support']['event_types'])),
+        label = numpy.zeros((len(cropped_process_instances), len(data_structure['support']['outcome_types'])),
                             dtype=numpy.float64)
 
         for index, cropped_process_instance in enumerate(cropped_process_instances):
 
-            for event_type in data_structure['support']['event_types']:
+            for outcome_type in data_structure['support']['outcome_types']:
 
-                if event_type == next_events[index]:
-                    label[index, data_structure['support']['map_event_type_to_event_id'][event_type]] = 1
+                if outcome_type == outcome_values[index]:
+                    label[index, data_structure['support']['map_outcome_type_to_outcome_value'][outcome_type]] = 1
                 else:
-                    label[index, data_structure['support']['map_event_type_to_event_id'][event_type]] = 0
+                    label[index, data_structure['support']['map_outcome_type_to_outcome_value'][outcome_type]] = 0
 
         return label
 
-    def get_event_type(self, predictions):
+    def get_outcome_type(self, predictions):
 
         max_prediction = 0
-        event_type = ''
+        outcome_type = ''
         index = 0
 
         for prediction in predictions:
             if prediction >= max_prediction:
                 max_prediction = prediction
-                event_type = self.data_structure['support']['map_event_id_to_event_type'][index]
+                outcome_type = self.data_structure['support']['map_outcome_value_to_outcome_type'][index]
             index += 1
 
-        return event_type
+        return outcome_type

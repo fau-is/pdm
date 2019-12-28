@@ -45,8 +45,8 @@ output = {
 }
 
 
-remote_server_uri = "databricks"  # databricks" set to your server URI
-experiment = "/Users/sven.weinzierl@fau.de/dss-paper-bpi2013i"
+remote_server_uri = "databricks"  # "databricks" set to your server URI
+experiment = "/Users/sven.weinzierl@fau.de/experiments"
 mlflow.set_tracking_uri(remote_server_uri)
 mlflow.set_experiment(experiment)
 

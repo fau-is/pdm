@@ -16,17 +16,16 @@ def train(args, preprocessor):
     config.gpu_options.per_process_gpu_memory_fraction = 0.2
     keras.backend.tensorflow_backend.set_session(tf.Session(config=config))
 
-    cropped_process_instances, cropped_time_deltas, cropped_context_attributes, next_events =\
+    cropped_process_instances, cropped_time_deltas, cropped_context_attributes, cropped_outcome_values, next_events =\
         preprocessor.get_training_set()
 
     max_length_process_instance = preprocessor.data_structure['meta']['max_length_process_instance']
     num_features = preprocessor.data_structure['encoding']['num_values_features'] - 1  # case
     if not args.include_time_delta:
         num_features -= 1
-    num_event_ids = preprocessor.data_structure['meta']['num_event_ids']
+    num_outcome_values = len(preprocessor.data_structure['support']['outcome_types'])
 
-
-    data_ids, validation_ids, _, _ = utils.split_train_test(preprocessor.data_structure['data']['train']['event_ids'])
+    data_ids, validation_ids, _, _ = utils.split_train_test(preprocessor.data_structure['data']['train']['ids_process_instances'])
 
     training_generator = DataGenerator(
         preprocessor,
@@ -34,6 +33,7 @@ def train(args, preprocessor):
         cropped_process_instances,
         cropped_time_deltas,
         cropped_context_attributes,
+        cropped_outcome_values,
         next_events,
         args,
         args.batch_size_train)
@@ -44,6 +44,7 @@ def train(args, preprocessor):
         cropped_process_instances,
         cropped_time_deltas,
         cropped_context_attributes,
+        cropped_outcome_values,
         next_events,
         args,
         args.batch_size_train)
@@ -205,7 +206,7 @@ def train(args, preprocessor):
         optimizer = keras.optimizers.Adam(lr=0.00001, beta_1=0.9, beta_2=0.999)
 
 
-    event_output = keras.layers.core.Dense(num_event_ids,
+    event_output = keras.layers.core.Dense(num_outcome_values,
                                            activation='softmax',
                                            name='event_output',
                                            kernel_initializer='glorot_uniform')(hidden_layer_output)
@@ -243,7 +244,7 @@ def train(args, preprocessor):
 
     training_time = datetime.now() - start_training_time
 
-    print(history.history.keys())
+    # print(history.history.keys())
 
     pyplot.plot(history.history['acc'])
     pyplot.plot(history.history['val_acc'])

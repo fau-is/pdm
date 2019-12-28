@@ -38,11 +38,8 @@ def execute_experiment(args, experiment_dict, init_data_structure):
         utils.start_nested_run_mlflow(args, iteration_cross_validation + 1)
         utils.print_output(args, output, iteration_cross_validation + 1)
         utils.write_output(args, output, iteration_cross_validation + 1)
-        # utils.log_at_end_of_nested_run_mlflow(args, iteration_cross_validation + 1)
+        utils.log_at_end_of_nested_run_mlflow(args, iteration_cross_validation + 1)
         utils.end_run_mlflow()
-
-
-
 
     # split validation
     else:
