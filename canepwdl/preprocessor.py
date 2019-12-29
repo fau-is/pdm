@@ -30,15 +30,14 @@ class Preprocessor(object):
 
         'encoding': {
             'eventlog_df': pandas.DataFrame,
-            'length_event_ids': 0,
-            'length_context_attributes': 0,
-            'length_outcome_values': 0,
-            'mapping_outcome_values': {},
-            'time_deltas': [],
+            'num_values_event_ids': 0,
             'num_values_control_flow': 0,
+            'num_values_context_list': [],
             'num_values_context': 0,
             'num_values_outcome': 0,
             'num_values_features': 0,
+            'mapping_outcome_values': {},
+            'time_deltas': [],
             'is_doc2vec_set': False
         },
 
@@ -88,9 +87,9 @@ class Preprocessor(object):
         encoded_eventlog_df = self.encode_data(args)
         # + 2 -> case + time
         self.data_structure['encoding']['num_values_control_flow'] = \
-            2 + self.data_structure['encoding']['length_event_ids']
+            2 + self.data_structure['encoding']['num_values_event_ids']
         self.data_structure['encoding']['num_values_outcome'] = \
-            self.data_structure['encoding']['length_outcome_values']
+            self.data_structure['encoding']['num_values_outcome']
 
         self.get_sequences_from_encoded_eventlog(encoded_eventlog_df)
 
@@ -125,8 +124,9 @@ class Preprocessor(object):
             self.set_indices_split_validation(args)
 
 
+
     def reset_data_structure(self):
-        self.data_structure = {
+        data_structure = {
             'support': {
                 'num_folds': 1,
                 'data_dir': "",
@@ -145,14 +145,14 @@ class Preprocessor(object):
 
             'encoding': {
                 'eventlog_df': pandas.DataFrame,
-                'length_event_ids': 0,
-                'length_context_attributes': 0,
-                'length_outcome_values': 0,
+                'num_values_event_ids': 0,
+                'num_values_control_flow': 0,
+                'num_values_context_list': [],
+                'num_values_context': 0,
+                'num_values_outcome': 0,
+                'num_values_features': 0,
                 'mapping_outcome_values': {},
                 'time_deltas': [],
-                'num_values_control_flow': 0,
-                'num_values_context': 0,
-                'num_values_features': 0,
                 'is_doc2vec_set': False
             },
 
@@ -160,6 +160,7 @@ class Preprocessor(object):
                 'max_length_process_instance': 0,
                 'num_attributes_context': 0,
                 'num_attributes_control_flow': 3,  # process instance id, event id and timestamp
+                'num_attributes_outcome': 1,
                 'num_process_instances': 0
             },
 
@@ -231,6 +232,7 @@ class Preprocessor(object):
                     continue
 
                 else:
+                    # context attribute or outcome value
                     if column_index == (len(eventlog_df.columns) - 1):
                         attribute_type = 'outcome'
                     else:
@@ -339,7 +341,7 @@ class Preprocessor(object):
             encoded_column = self.apply_integer_mapping(attribute_type, attribute_name)
 
         elif mode == 'min_max_norm':
-            encoded_column = self.apply_min_max_normalization(attribute_name)
+            encoded_column = self.apply_min_max_normalization(attribute_type, attribute_name)
 
         elif mode == 'onehot':
             encoded_column = self.apply_one_hot_encoding(attribute_type, attribute_name)
@@ -383,7 +385,7 @@ class Preprocessor(object):
 
         return encoded_data
 
-    def apply_min_max_normalization(self, column_name):
+    def apply_min_max_normalization(self, attribute_type, column_name):
 
         dataframe = self.data_structure['encoding']['eventlog_df']
 
@@ -391,8 +393,10 @@ class Preprocessor(object):
 
         encoded_data = (data - data.min()) / (data.max() - data.min())
 
-        self.set_length_of_context_encoding(1)
-        self.set_length_of_outcome_encoding(1)
+        if attribute_type == 'context':
+            self.set_length_of_context_encoding(1)
+        elif attribute_type == 'outcome':
+            self.set_length_of_outcome_encoding(1)
 
         return encoded_data
 
@@ -518,13 +522,13 @@ class Preprocessor(object):
         self.data_structure['encoding']['mapping_outcome_values'] = mapping
 
     def set_length_of_event_encoding(self, num_columns):
-        self.data_structure['encoding']['length_event_ids'] = num_columns
+        self.data_structure['encoding']['num_values_event_ids'] = num_columns
 
     def set_length_of_context_encoding(self, num_columns):
-        self.data_structure['encoding']['length_context_attributes'] = num_columns
+        self.data_structure['encoding']['num_values_context_list'].append(num_columns)
 
     def set_length_of_outcome_encoding(self, num_columns):
-        self.data_structure['encoding']['length_outcome_values'] = num_columns
+        self.data_structure['encoding']['num_values_outcome'] = num_columns
 
     def get_sequences_from_encoded_eventlog(self, eventlog_df):
 
@@ -584,33 +588,20 @@ class Preprocessor(object):
 
     def check_for_context_attributes_df(self, event):
 
-        if len(event) == self.data_structure['encoding']['num_values_control_flow'] + self.data_structure['encoding']['length_outcome_values']:
+        if len(event) == self.data_structure['encoding']['num_values_control_flow'] + self.data_structure['encoding']['num_values_outcome']:
             utils.llprint("No context attributes found ...\n")
         else:
             self.data_structure['meta']['num_attributes_context'] = len(
-                self.data_structure['encoding']['length_context_attributes'])
+                self.data_structure['encoding']['num_values_context_list'])
             self.data_structure['encoding']['num_values_context'] = sum(
-                self.data_structure['encoding']['length_context_attributes'])
+                self.data_structure['encoding']['num_values_context_list'])
             utils.llprint("%d context attributes found ...\n" % self.data_structure['meta']['num_attributes_context'])
 
     def add_encoded_event_to_process_instance(self, event, process_instance):
 
         encoded_event_id = []
         start_index = 1
-        end_index = self.data_structure['encoding']['length_event_ids'] + 1
-
-        for enc_val in range(start_index, end_index):
-            encoded_event_id.append(event[enc_val])
-
-        process_instance.append(tuple(encoded_event_id))
-
-        return process_instance
-
-    def add_encoded_event_to_process_instance(self, event, process_instance):
-
-        encoded_event_id = []
-        start_index = 1
-        end_index = self.data_structure['encoding']['length_event_ids'] + 1
+        end_index = self.data_structure['encoding']['num_values_event_ids'] + 1
 
         for enc_val in range(start_index, end_index):
             encoded_event_id.append(event[enc_val])
@@ -796,13 +787,13 @@ class Preprocessor(object):
                     data_set = numpy.zeros((
                         len(cropped_process_instances),
                         data_structure['meta']['max_length_process_instance'],
-                        data_structure['encoding']['length_event_ids'] + 1 + data_structure['encoding'][
+                        data_structure['encoding']['num_values_event_ids'] + 1 + data_structure['encoding'][
                             'num_values_context'] + data_structure['encoding']['num_values_outcome']), dtype=numpy.float64)
                 else:
                     data_set = numpy.zeros((
                         1,
                         data_structure['meta']['max_length_process_instance'],
-                        data_structure['encoding']['length_event_ids'] + 1 + data_structure['encoding'][
+                        data_structure['encoding']['num_values_event_ids'] + 1 + data_structure['encoding'][
                             'num_values_context'] + data_structure['encoding']['num_values_outcome']), dtype=numpy.float32)
 
                 for index, (cropped_process_instance, cropped_time_deltas_process_instance, cropped_outcome_value) in enumerate(
@@ -816,18 +807,18 @@ class Preprocessor(object):
                     for time_step, (event, time_delta, outcome_value) in enumerate(
                             zip(cropped_process_instance, cropped_time_deltas_process_instance, cropped_outcome_value)):
 
-                        for tuple_idx in range(0, data_structure['encoding']['length_event_ids']):
+                        for tuple_idx in range(0, data_structure['encoding']['num_values_event_ids']):
                             data_set[index, time_step + left_pad, tuple_idx] = event[tuple_idx]
 
-                        data_set[index, time_step + left_pad, data_structure['encoding']['length_event_ids']] = time_delta
+                        data_set[index, time_step + left_pad, data_structure['encoding']['num_values_event_ids']] = time_delta
 
                         if data_structure['meta']['num_attributes_context'] > 0:
                             for context_attribute_index in range(0, data_structure['encoding']['num_values_context']):
-                                data_set[index, time_step + left_pad, data_structure['encoding']['length_event_ids'] + 1 + context_attribute_index] = cropped_context_attributes[time_step][
+                                data_set[index, time_step + left_pad, data_structure['encoding']['num_values_event_ids'] + 1 + context_attribute_index] = cropped_context_attributes[time_step][
                                     context_attribute_index]
 
-                        for tuple_index in range(0, data_structure['encoding']['length_outcome_values']):
-                            data_set[index, time_step + left_pad, data_structure['encoding']['length_event_ids'] + 1 + data_structure['encoding']['num_values_context'] +
+                        for tuple_index in range(0, data_structure['encoding']['num_values_outcome']):
+                            data_set[index, time_step + left_pad, data_structure['encoding']['num_values_event_ids'] + 1 + data_structure['encoding']['num_values_context'] +
                                      tuple_index] = outcome_value[tuple_index]
 
                 return data_set
@@ -838,13 +829,13 @@ class Preprocessor(object):
                         data_set = numpy.zeros((
                             len(cropped_process_instances),
                             data_structure['meta']['max_length_process_instance'],
-                            data_structure['encoding']['length_event_ids'] + data_structure['encoding'][
+                            data_structure['encoding']['num_values_event_ids'] + data_structure['encoding'][
                                 'num_values_context'] + data_structure['encoding']['num_values_outcome']), dtype=numpy.float64)
                 else:
                     data_set = numpy.zeros((
                         1,
                         data_structure['meta']['max_length_process_instance'],
-                        data_structure['encoding']['length_event_ids']+ data_structure['encoding'][
+                        data_structure['encoding']['num_values_event_ids']+ data_structure['encoding'][
                             'num_values_context'] + data_structure['encoding']['num_values_outcome']), dtype=numpy.float32)
 
                 for index, (cropped_process_instance, cropped_time_deltas_process_instance, cropped_outcome_value) in enumerate(
@@ -858,16 +849,16 @@ class Preprocessor(object):
                     for time_step, (event, outcome_value) in enumerate(
                             zip(cropped_process_instance, cropped_outcome_value)):
 
-                        for tuple_idx in range(0, data_structure['encoding']['length_event_ids']):
+                        for tuple_idx in range(0, data_structure['encoding']['num_values_event_ids']):
                             data_set[index, time_step + left_pad, tuple_idx] = event[tuple_idx]
 
                         if data_structure['meta']['num_attributes_context'] > 0:
                             for context_attribute_index in range(0, data_structure['encoding']['num_values_context']):
-                                data_set[index, time_step + left_pad, data_structure['encoding']['length_event_ids'] + context_attribute_index] = cropped_context_attributes[time_step][
+                                data_set[index, time_step + left_pad, data_structure['encoding']['num_values_event_ids'] + context_attribute_index] = cropped_context_attributes[time_step][
                                     context_attribute_index]
 
-                        for tuple_index in range(0, data_structure['encoding']['length_outcome_values']):
-                            data_set[index, time_step + left_pad, data_structure['encoding']['length_event_ids'] + data_structure['encoding']['num_values_context'] +
+                        for tuple_index in range(0, data_structure['encoding']['num_values_outcome']):
+                            data_set[index, time_step + left_pad, data_structure['encoding']['num_values_event_ids'] + data_structure['encoding']['num_values_context'] +
                                      tuple_index] = outcome_value[tuple_index]
 
                 return data_set
