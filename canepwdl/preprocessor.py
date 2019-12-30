@@ -126,7 +126,7 @@ class Preprocessor(object):
 
 
     def reset_data_structure(self):
-        data_structure = {
+        self.data_structure = {
             'support': {
                 'num_folds': 1,
                 'data_dir': "",
