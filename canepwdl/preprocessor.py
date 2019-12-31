@@ -947,14 +947,17 @@ class Preprocessor(object):
         event_sentences_process_instances = []
 
         if data_structure['meta']['num_attributes_context'] > 0:
-            for cropped_process_instance, cropped_time_deltas_process_instance, cropped_context_attributes_process_instance in zip(
-                    cropped_process_instances, cropped_time_deltas, cropped_context_attributes):
-                for event, time_delta, context_attributes in zip(cropped_process_instance,
+            for cropped_process_instance, cropped_time_deltas_process_instance, \
+                cropped_context_attributes_process_instance, cropped_outcome_values_process_instance in zip(
+                    cropped_process_instances, cropped_time_deltas, cropped_context_attributes, cropped_outcome_values):
+                for event, time_delta, context_attributes, outcome_value in zip(cropped_process_instance,
                                                                  cropped_time_deltas_process_instance,
-                                                                 cropped_context_attributes_process_instance):
+                                                                 cropped_context_attributes_process_instance,
+                                                                 cropped_outcome_values_process_instance):
                     event_sentence.append(event)
                     event_sentence.append(time_delta)
                     event_sentence.append(context_attributes)
+                    event_sentence.append(outcome_value)
 
                     event_sentences_process_instance.append(event_sentence)
                     event_sentence = []
@@ -962,11 +965,15 @@ class Preprocessor(object):
                 event_sentences_process_instances.append(event_sentences_process_instance)
                 event_sentences_process_instance = []
         else:
-            for cropped_process_instance, cropped_time_deltas_process_instance in zip(
-                    cropped_process_instances, cropped_time_deltas):
-                for event, time_delta in zip(cropped_process_instance, cropped_time_deltas_process_instance):
+            for cropped_process_instance, cropped_time_deltas_process_instance, \
+                cropped_outcome_values_process_instance in zip(cropped_process_instances, cropped_time_deltas,
+                                                               cropped_outcome_values):
+
+                for event, time_delta, outcome_value in zip(cropped_process_instance, cropped_time_deltas_process_instance,
+                                                            cropped_outcome_values_process_instance):
                     event_sentence.append(event)
                     event_sentence.append(time_delta)
+                    event_sentence.append(outcome_value)
 
                     event_sentences_process_instance.append(event_sentence)
                     event_sentence = []
@@ -1022,6 +1029,9 @@ class Preprocessor(object):
                 if data_structure['meta']['num_attributes_context'] > 0:
                     for value in context_attributes_values:
                         event.append(str(value))
+
+                outcome_values = event_list[-1]
+                event.append(str(outcome_values))
 
                 event_sentences.append(event)
 
