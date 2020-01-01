@@ -1,32 +1,4 @@
-##Next event prediction with deep learning 
-
-# Overview
-
-- Input: 
-   - event log with the attributes "process instance", "even", "timestamp", "context attribute 1", "...", "context attribute n"
-   - all categorial attributes (despite the "timestamp attriubte") are integer-mapped and the timestamp attribute has the format "dd.mm.yyyy-hh:mm:ss".
-  
-- Pre-processing variants:
-   - "event" and categorical context attributes are encoded depending on the selected encoding technque  
-   - numerical context attributes are min-max normalized
-   - time delta attribute is min-max normalized 
-  
-- Encoding techniques:
-   1. Paragraph embedding (doc2vec, shallow Neural Network)
-   2. Ordinal encoding (integer-mapping)
-   3. Binary encoding
-   4. Hash encoding (proposed by Mehdiyev and Fettke (2017)) 
-   5. Onehot encoding
-    
-- Deep learning architectures
-   1. Multi Layer Perceptron (MLP) according to Theis et al. (2019)
-   2. Long Short-Term Neural Network (LSTM) according to Tax et al. (2017)
-   3. Convolutional Neural Network (CNN) according to Abdulrhman et al. (2019)
-   4. Encoder
-   
-- Post processing: 
-   - argmax
-
+##is-pcm
 
 # Other useful repositories/sources
   - https://github.com/verenich/ProcessSequencePrediction (CAiSE 2017)
@@ -39,9 +11,6 @@
   - https://github.com/irhete/predictive-monitoring-thesis (hyperparameter optimization for lstms)
   - https://docs.python-guide.org/writing/structure/ (structure of python project)
   - https://keras.io/examples/babi_memnn/ (another DNC implementation that could be more efficient) 
-
-
-
 
 # Setup
 The easiest way to setup an environment is to use Miniconda.
