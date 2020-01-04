@@ -77,7 +77,7 @@ def test(args, preprocessor):
 
                     predicted_outcome = preprocessor.get_outcome_type(y_char)
 
-                    cropped_process_instance.append(predicted_outcome)
+                    cropped_outcome_values.append(predicted_outcome)
                     prediction.append(predicted_outcome)
 
                 output = []

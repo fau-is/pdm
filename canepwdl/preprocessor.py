@@ -88,8 +88,6 @@ class Preprocessor(object):
         # + 2 -> case + time
         self.data_structure['encoding']['num_values_control_flow'] = \
             2 + self.data_structure['encoding']['num_values_event_ids']
-        self.data_structure['encoding']['num_values_outcome'] = \
-            self.data_structure['encoding']['num_values_outcome']
 
         self.get_sequences_from_encoded_eventlog(encoded_eventlog_df)
 
@@ -102,7 +100,6 @@ class Preprocessor(object):
 
         self.data_structure['support']['outcome_types'] = list(
             self.data_structure['encoding']['mapping_outcome_values'].values())
-
         self.data_structure['support']['map_outcome_type_to_outcome_value'] = dict(
             (c, i) for i, c in enumerate(self.data_structure['support']['outcome_types']))
         self.data_structure['support']['map_outcome_value_to_outcome_type'] = dict(
@@ -562,7 +559,6 @@ class Preprocessor(object):
 
                 process_instance = []
                 outcome_values_process_instance = []
-
                 if self.data_structure['meta']['num_attributes_context'] > 0:
                     context_attributes_process_instance = []
 
@@ -580,7 +576,6 @@ class Preprocessor(object):
 
         self.add_data_to_data_structure(process_instance, 'process_instances')
         self.add_data_to_data_structure(outcome_values_process_instance, 'outcome_values')
-
         if self.data_structure['meta']['num_attributes_context'] > 0:
             self.add_data_to_data_structure(context_attributes_process_instance, 'context_attributes_process_instances')
 
@@ -639,16 +634,16 @@ class Preprocessor(object):
     def get_training_set(self):
 
         utils.llprint("Get training instances ... \n")
-        process_instances_train, context_attributes_train, outcome_values_train, _, time_deltas_train = self.set_instances_of_fold('train')
+        process_instances_train, time_deltas_train, context_attributes_train, outcome_values_train, _ = self.set_instances_of_fold('train')
 
         utils.llprint("Create cropped training instances ... \n")
 
-        cropped_process_instances, cropped_context_attributes, cropped_outcome_values, cropped_time_deltas, next_events = \
+        cropped_process_instances, cropped_time_deltas, cropped_context_attributes, cropped_outcome_values, next_events = \
             self.get_cropped_instances(
                 process_instances_train,
+                time_deltas_train,
                 context_attributes_train,
-                outcome_values_train,
-                time_deltas_train)
+                outcome_values_train)
 
         return cropped_process_instances, cropped_time_deltas, cropped_context_attributes, cropped_outcome_values, next_events
 
@@ -674,17 +669,17 @@ class Preprocessor(object):
         """ Retrieves instances of a fold. """
 
         process_instances_of_fold = []
-        ids_process_instances_of_fold = []
-        context_attributes_of_fold = []
         time_deltas_of_fold = []
+        context_attributes_of_fold = []
         outcome_values_of_fold = []
+        ids_process_instances_of_fold = []
 
         for value in self.data_structure['support'][mode + '_index_per_fold'][
             self.data_structure['support']['iteration_cross_validation']]:
             process_instances_of_fold.append(self.data_structure['data']['process_instances'][value])
-            ids_process_instances_of_fold.append(self.data_structure['data']['ids_process_instances'][value])
             time_deltas_of_fold.append(self.data_structure['encoding']['time_deltas'][value])
             outcome_values_of_fold.append(self.data_structure['data']['outcome_values'][value])
+            ids_process_instances_of_fold.append(self.data_structure['data']['ids_process_instances'][value])
 
             if self.data_structure['meta']['num_attributes_context'] > 0:
                 context_attributes_of_fold.append(
@@ -692,22 +687,22 @@ class Preprocessor(object):
 
         if mode == 'train':
             self.data_structure['data']['train']['process_instances'] = process_instances_of_fold
+            self.data_structure['data']['train']['time_deltas'] = time_deltas_of_fold
             self.data_structure['data']['train']['context_attributes'] = context_attributes_of_fold
             self.data_structure['data']['train']['outcome_values'] = outcome_values_of_fold
             self.data_structure['data']['train']['ids_process_instances'] = ids_process_instances_of_fold
-            self.data_structure['data']['train']['time_deltas'] = time_deltas_of_fold
 
         elif mode == 'test':
             self.data_structure['data']['test']['process_instances'] = process_instances_of_fold
+            self.data_structure['data']['test']['time_deltas'] = time_deltas_of_fold
             self.data_structure['data']['test']['context_attributes'] = context_attributes_of_fold
             self.data_structure['data']['test']['outcome_values'] = outcome_values_of_fold
             self.data_structure['data']['test']['ids_process_instances'] = ids_process_instances_of_fold
-            self.data_structure['data']['test']['time_deltas'] = time_deltas_of_fold
 
-        return process_instances_of_fold, context_attributes_of_fold, outcome_values_of_fold, ids_process_instances_of_fold, time_deltas_of_fold
+        return process_instances_of_fold, time_deltas_of_fold, context_attributes_of_fold, outcome_values_of_fold, ids_process_instances_of_fold
 
-    def get_cropped_instances(self, process_instances, context_attributes_process_instances,
-                              outcome_values, time_deltas_process_instances):
+    def get_cropped_instances(self, process_instances, time_deltas_process_instances,
+                              context_attributes_process_instances, outcome_values):
         """ Crops prefixes out of instances. """
 
         cropped_process_instances = []
@@ -748,7 +743,7 @@ class Preprocessor(object):
                     # label
                     next_events.append(process_instance[i])
 
-        return cropped_process_instances, cropped_context_attributes, cropped_outcome_values, cropped_time_deltas, next_events
+        return cropped_process_instances, cropped_time_deltas, cropped_context_attributes, cropped_outcome_values, next_events
 
     def get_cropped_instance(self, prefix_size, index, process_instance, time_deltas, outcome_value):
         """ Crops prefixes out of a single process instance. """
