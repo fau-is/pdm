@@ -10,8 +10,8 @@ with open('LICENSE') as f:
 
 setup(
     name='is-pcm',
-    version='0.1.0',
-    description='Next event prediction with deep learning',
+    version='1.0.0',
+    description='Predictive compliance monitoring',
     long_description=readme,
     author='Sven Weinzierl',
     author_email='sven.weinzierl@fau.de',

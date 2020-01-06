@@ -104,8 +104,8 @@ ENV/
 /.idea/
 
 # project specific
-/canepwdl/checkpoints/
-/canepwdl/results/
+/pp/checkpoints/
+/pp/results/
 
 #npm
 /ui/frontend-react/node_modules/
