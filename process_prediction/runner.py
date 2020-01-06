@@ -4,9 +4,10 @@ import process_prediction.trainer as train
 from process_prediction.preprocessor import Preprocessor
 import process_prediction.utils as utils
 
-from IPython.display import display, HTML
+from IPython.display import display_pdf, HTML
 from process_prediction.explanation.LSTM.LSTM_bidi import *
 from process_prediction.explanation.util.heatmap import html_heatmap
+import process_prediction.explanation.util.browser as browser
 
 if __name__ == '__main__':
 
@@ -44,7 +45,10 @@ if __name__ == '__main__':
         for idx, w in enumerate(words):
             print("\t\t\t" + "{:8.10f}".format(R_words[idx]) + "\t" + w)
         print("\nLRP heatmap:")
-        display(HTML(html_heatmap(words, R_words)))
+
+
+
+        browser.display_html(html_heatmap(words, R_words))
 
         # How to sanity check global relevance conservation:
         bias_factor = 1.0  # value to use for sanity check
