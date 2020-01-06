@@ -44,13 +44,13 @@ class LSTM_bidi:
         self.bhh_Left = model.layers[1].get_weights()[2].T  # shape 4d // biases left lstm layer
 
         # LSTM right encoder
-        self.Wxh_Right = model.layers[1].get_weights()[3].T
+        self.Wxh_Right = model.layers[1].get_weights()[3].T  # shape 4d*e // kernel right lstm layer
         # self.bxh_Right = model["bxh_Right"]
-        self.Whh_Right = model.layers[1].get_weights()[4].T
-        self.bhh_Right = model.layers[1].get_weights()[5].T
+        self.Whh_Right = model.layers[1].get_weights()[4].T  # shape 4d*d // recurrent kernel right lstm layer
+        self.bhh_Right = model.layers[1].get_weights()[5].T  # shape 4d // biases right lstm layer
 
         # linear output layer
-        # todo split because of bi lstm?
+        # todo currently a bi-lstm is implemented; keras does not provide two output weight vector of the bi-lslm cell; so, we divided the vector in two equal parts
         self.Why_Left = model.layers[2].get_weights()[0].T  # shape C*d
         self.Why_Left = self.Why_Left[:, 0:100]
         self.Why_Right = model.layers[2].get_weights()[0].T  # shape C*d
@@ -129,7 +129,6 @@ class LSTM_bidi:
         self.s = self.y_Left + self.y_Right
 
         return self.s.copy()  # prediction scores
-
 
 
     def lrp(self, w, LRP_class, eps=0.001, bias_factor=0.0):
