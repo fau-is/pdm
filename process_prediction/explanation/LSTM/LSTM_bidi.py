@@ -130,73 +130,7 @@ class LSTM_bidi:
 
         return self.s.copy()  # prediction scores
 
-    """
-    def backward(self, w, sensitivity_class):
-        # Standard gradient backpropagation backward pass.
-        # Compute the hidden layer gradients by backpropagating a gradient of 1.0 for the class sensitivity_class
-        
-        # forward pass
-        self.set_input(w)
-        self.forward()
 
-        T = len(self.w)
-        d = int(self.Wxh_Left.shape[0] / 4)
-        C = self.Why_Left.shape[0]  # number of classes
-        idx = np.hstack((np.arange(0, d), np.arange(2 * d, 4 * d))).astype(int)  # indices of gates i,f,o together
-        idx_i, idx_g, idx_f, idx_o = np.arange(0, d), np.arange(d, 2 * d), np.arange(2 * d, 3 * d), np.arange(3 * d,
-                                                                                                              4 * d)  # indices of gates i,g,f,o separately
-
-        # initialize
-        self.dx = np.zeros(self.x.shape)
-        self.dx_rev = np.zeros(self.x.shape)
-
-        self.dh_Left = np.zeros((T + 1, d))
-        self.dc_Left = np.zeros((T + 1, d))
-        self.dgates_pre_Left = np.zeros((T, 4 * d))  # gates pre-activation
-        self.dgates_Left = np.zeros((T, 4 * d))  # gates activation
-
-        self.dh_Right = np.zeros((T + 1, d))
-        self.dc_Right = np.zeros((T + 1, d))
-        self.dgates_pre_Right = np.zeros((T, 4 * d))
-        self.dgates_Right = np.zeros((T, 4 * d))
-
-        ds = np.zeros((C))
-        ds[sensitivity_class] = 1.0
-        dy_Left = ds.copy()
-        dy_Right = ds.copy()
-
-        self.dh_Left[T - 1] = np.dot(self.Why_Left.T, dy_Left)
-        self.dh_Right[T - 1] = np.dot(self.Why_Right.T, dy_Right)
-
-        for t in reversed(range(T)):
-            self.dgates_Left[t, idx_o] = self.dh_Left[t] * np.tanh(self.c_Left[t])  # do[t]
-            self.dc_Left[t] += self.dh_Left[t] * self.gates_Left[t, idx_o] * (
-                        1. - (np.tanh(self.c_Left[t])) ** 2)  # dc[t]
-            self.dgates_Left[t, idx_f] = self.dc_Left[t] * self.c_Left[t - 1]  # df[t]
-            self.dc_Left[t - 1] = self.dc_Left[t] * self.gates_Left[t, idx_f]  # dc[t-1]
-            self.dgates_Left[t, idx_i] = self.dc_Left[t] * self.gates_Left[t, idx_g]  # di[t]
-            self.dgates_Left[t, idx_g] = self.dc_Left[t] * self.gates_Left[t, idx_i]  # dg[t]
-            self.dgates_pre_Left[t, idx] = self.dgates_Left[t, idx] * self.gates_Left[t, idx] * (
-                        1.0 - self.gates_Left[t, idx])  # d ifo pre[t]
-            self.dgates_pre_Left[t, idx_g] = self.dgates_Left[t, idx_g] * (
-                        1. - (self.gates_Left[t, idx_g]) ** 2)  # d g pre[t]
-            self.dh_Left[t - 1] = np.dot(self.Whh_Left.T, self.dgates_pre_Left[t])
-            self.dx[t] = np.dot(self.Wxh_Left.T, self.dgates_pre_Left[t])
-
-            self.dgates_Right[t, idx_o] = self.dh_Right[t] * np.tanh(self.c_Right[t])
-            self.dc_Right[t] += self.dh_Right[t] * self.gates_Right[t, idx_o] * (1. - (np.tanh(self.c_Right[t])) ** 2)
-            self.dgates_Right[t, idx_f] = self.dc_Right[t] * self.c_Right[t - 1]
-            self.dc_Right[t - 1] = self.dc_Right[t] * self.gates_Right[t, idx_f]
-            self.dgates_Right[t, idx_i] = self.dc_Right[t] * self.gates_Right[t, idx_g]
-            self.dgates_Right[t, idx_g] = self.dc_Right[t] * self.gates_Right[t, idx_i]
-            self.dgates_pre_Right[t, idx] = self.dgates_Right[t, idx] * self.gates_Right[t, idx] * (
-                        1.0 - self.gates_Right[t, idx])
-            self.dgates_pre_Right[t, idx_g] = self.dgates_Right[t, idx_g] * (1. - (self.gates_Right[t, idx_g]) ** 2)
-            self.dh_Right[t - 1] = np.dot(self.Whh_Right.T, self.dgates_pre_Right[t])
-            self.dx_rev[t] = np.dot(self.Wxh_Right.T, self.dgates_pre_Right[t])
-
-        return self.dx.copy(), self.dx_rev[::-1, :].copy()
-    """
 
     def lrp(self, w, LRP_class, eps=0.001, bias_factor=0.0):
         """
