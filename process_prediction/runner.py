@@ -54,9 +54,6 @@ if __name__ == '__main__':
         print(R_tot)
         print("Sanity check passed? ", np.allclose(R_tot, net.s[target_class]))
 
-        print(0)
-
-
 
     # evaluation mode
     else:

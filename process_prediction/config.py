@@ -1,6 +1,6 @@
 import os
 import argparse
-import utils
+import process_prediction.utils as utils
 
 
 def load():
@@ -14,7 +14,7 @@ def load():
     parser.add_argument('--dnn_architecture', default=0, type=int)
 
     # all models
-    parser.add_argument('--task', default="next_event")
+    parser.add_argument('--task', default="outcome")
     parser.add_argument('--learning_rate', default=0.002, type=float)  # dnc 0.0001 #lstm 0.002
 
     # representation
@@ -25,8 +25,7 @@ def load():
     parser.add_argument('--num_folds', default=3, type=int)  # 10
     parser.add_argument('--cross_validation', default=True, type=utils.str2bool)
     parser.add_argument('--split_rate_test', default=0.5, type=float)  # only if cross validation is deactivated
-    # with dnc batch size should be greater than number of rows
-    parser.add_argument('--batch_size_train', default=256, type=int)  # LSTM 256
+    parser.add_argument('--batch_size_train', default=256, type=int)
     parser.add_argument('--batch_size_test', default=1, type=int)
 
     # data
