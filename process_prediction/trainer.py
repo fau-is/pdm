@@ -53,46 +53,9 @@ def train(args, preprocessor):
 
     training_time = datetime.now() - start_training_time
 
+    # test output
     # for layer in model.layers:
     #    print(layer.get_config(), layer.get_weights())
 
-    """
-    Assumptions:
-        - bias bxh_left and bxh_right is not stored by keras
-        - bias of output layer is also set to 0
-        - remark: keras does not output 2 weight vectors for why -> we use lstm instead of bi-lstm
-    """
-
-    # test
-    # kernel left lstm layer
-    wxh_left = model.layers[1].get_weights()[0]
-    # recurrent kernel left lstm layer
-    whh_left = model.layers[1].get_weights()[1]
-    # biases left lstm layer
-    bhh_left = model.layers[1].get_weights()[2]
-
-    # kernel right lstm layer
-    wxh_right = model.layers[1].get_weights()[3]
-    # recurrent kernel right lstm layer
-    whh_right = model.layers[1].get_weights()[4]
-    # biases right lstm layer
-    bhh_right = model.layers[1].get_weights()[5]
-
-    # linear output layer
-    why_left = model.layers[1].get_weights()[0]
-    why_right = model.layers[1].get_weights()[0]
-
-    print(wxh_left)  # 4d*e // e = input neurons; d = hidden neurons
-    print(whh_left)  # 4d*4
-    print(bhh_left)  # 4d
-
-    print(wxh_right)
-    print(whh_right)
-    print(bhh_right)
-
-    print(why_left)  # C*d // C = classes
-    print(why_right)  # C*d
-
-    print(0)
 
     return training_time.total_seconds()

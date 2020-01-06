@@ -30,6 +30,13 @@ class LSTM_bidi:
         # model weights
         self.model = model
 
+        """
+        Assumptions:
+        - bias bxh_left and bxh_right is not stored by keras
+        - bias of output layer is also set to 0
+        - remark: keras does not output 2 weight vectors for why -> we use lstm instead of bi-lstm
+        """
+
         # LSTM left encoder
         self.Wxh_Left = model.layers[1].get_weights()[0].T  # shape 4d*e // kernel left lstm layer // d = neurons
         # self.bxh_Left = model["bxh_Left"]  # shape 4d
