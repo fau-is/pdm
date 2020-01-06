@@ -5,9 +5,8 @@ from process_prediction.preprocessor import Preprocessor
 import process_prediction.utils as utils
 
 from IPython.display import display, HTML
-from process_prediction.tools.lrp.LSTM.LSTM_bidi import *
-from process_prediction.tools.lrp.util.heatmap import html_heatmap
-import codecs
+from process_prediction.explanation.LSTM.LSTM_bidi import *
+from process_prediction.explanation.util.heatmap import html_heatmap
 
 if __name__ == '__main__':
 

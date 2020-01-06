@@ -7,11 +7,7 @@
 @license: see LICENSE file in repository root
 '''
 
-import numpy as np
-import pickle
-from numpy import newaxis as na
-from process_prediction.tools.lrp.LSTM.LRP_linear_layer import *
-from keras.models import load_model
+from process_prediction.explanation.LSTM.LRP_linear_layer import *
 
 
 class LSTM_bidi:
