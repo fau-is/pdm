@@ -1,7 +1,7 @@
 is-pcm
 
 
-This project is prototype of a predictive compiance monitoring technique consisting of the three components: (1) label generation by log replay (compliance checking), (2) label prediction with outcome-oriented predictive process monitoring (LSTM), and explainable predictions by using a layer-wise relevance probagation (lrp) backward pass.
+This project is a prototype of a predictive compliance monitoring technique. The technique consists of the three components: (1) label generation by log replay (compliance checking), (2) label prediction with outcome-oriented predictive process monitoring (LSTM), and explainable predictions by using a layer-wise relevance probagation (lrp) backward pass.
 
 Note our implementation of the lrp, esp. for process predictions, based on the code provided by the paper "Explaining Recurrent Neural Network Predictions in Sentiment Analysis" from Arras et al. (2017). 
 
