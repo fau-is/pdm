@@ -3,7 +3,7 @@ import csv
 import numpy
 import copy
 import gensim
-import canepwdl.utils as utils
+import process_prediction.utils as utils
 from sklearn.model_selection import KFold, ShuffleSplit
 
 

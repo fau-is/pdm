@@ -10,7 +10,7 @@
 import numpy as np
 import pickle
 from numpy import newaxis as na
-from canepwdl.tools.lrp.LSTM.LRP_linear_layer import *
+from process_prediction.tools.lrp.LSTM.LRP_linear_layer import *
 from keras.models import load_model
 
 

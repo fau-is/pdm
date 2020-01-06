@@ -6,7 +6,7 @@ try:
     from itertools import izip as zip
 except ImportError:
     pass
-import canepwdl.utils as utils
+import process_prediction.utils as utils
 import numpy as numpy
 
 

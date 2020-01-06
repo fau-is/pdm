@@ -1,12 +1,12 @@
-import canepwdl.config as config
-import canepwdl.predictor as test
-import canepwdl.trainer as train
-from canepwdl.preprocessor import Preprocessor
-import canepwdl.utils as utils
+import process_prediction.config as config
+import process_prediction.predictor as test
+import process_prediction.trainer as train
+from process_prediction.preprocessor import Preprocessor
+import process_prediction.utils as utils
 
 from IPython.display import display, HTML
-from canepwdl.tools.lrp.LSTM.LSTM_bidi import *
-from canepwdl.tools.lrp.util.heatmap import html_heatmap
+from process_prediction.tools.lrp.LSTM.LSTM_bidi import *
+from process_prediction.tools.lrp.util.heatmap import html_heatmap
 import codecs
 
 if __name__ == '__main__':
