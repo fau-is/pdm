@@ -5,6 +5,8 @@ This project is a prototype of a predictive compliance monitoring technique. The
 
 Note our implementation of the lrp, esp. for process predictions, based on the code provided by the paper "Explaining Recurrent Neural Network Predictions in Sentiment Analysis" from Arras et al. (2017). 
 
+There are two conceptual versions of the project: One considers additional context attributes (besides the outcome attribute to be predicted). This version can be found on the branch "dev-context". The other version is not context-sensitive.
+
 
 Other useful repositories/sources
 
