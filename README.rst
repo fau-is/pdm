@@ -1,0 +1,27 @@
+##is-pcm
+
+# Other useful repositories/sources
+  - https://github.com/verenich/ProcessSequencePrediction (CAiSE 2017)
+  - https://github.com/AdaptiveBProcess/GenerativeLSTM/tree/master/models (BPM 2019) 
+  - https://github.com/tnolle/binet (4 Papers)
+  - https://github.com/ProminentLab/DREAM-NAP
+  - http://contrib.scikit-learn.org/categorical-encoding/
+  - https://github.com/delas/plg (synthetic eventlog generator)
+  - https://github.com/keras-team/keras-contrib (keras extension)
+  - https://github.com/irhete/predictive-monitoring-thesis (hyperparameter optimization for lstms)
+  - https://docs.python-guide.org/writing/structure/ (structure of python project)
+  - https://keras.io/examples/babi_memnn/ (another DNC implementation that could be more efficient) 
+
+# Setup
+The easiest way to setup an environment is to use Miniconda.
+
+# Using Miniconda
+   1. Install Miniconda (https://docs.conda.io/en/latest/miniconda.html) 
+   2. After setting up miniconda you can make use of the `conda` command in your command line (Powershell, CMD, Bash)
+   3. To quickly install the `canepwdl` package, run `pip install -e .` inside the root directory.
+   4. To install required libraries run 'pip install -r requirements.txt' inside the root directory.
+   5. Install tensorflow (tensorflow.org/install)
+   6. Now you can run the project.
+
+
+
