@@ -10,3 +10,4 @@ category_encoders
 keras-contrib
 keras
 tensorflow
+opyenxes
