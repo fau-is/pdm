@@ -1,22 +1,20 @@
 import process_prediction.config as config
-# todo: differ between the prediction tasks
-import process_prediction.outcome.predictor as test
-import process_prediction.outcome.trainer as train
-from process_prediction.outcome.preprocessor import Preprocessor
 import process_prediction.utils as utils
 from process_prediction.explanation.LSTM.LSTM_bidi import *
 from process_prediction.explanation.util.heatmap import html_heatmap
 import process_prediction.explanation.util.browser as browser
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     args = config.load()
-    preprocessor = Preprocessor(args)
     output = utils.load_output()
     utils.clear_measurement_file(args)
 
     # explanation mode for outcome prediction
     if args.explain:
+        from process_prediction.outcome.preprocessor import Preprocessor
+        preprocessor = Preprocessor(args)
+        import process_prediction.outcome.predictor as test
 
         predicted_class, target_class, words, model, input_embedded = test.predict(args, preprocessor)
         print("Prediction: %s" % predicted_class)
@@ -58,6 +56,11 @@ if __name__ == '__main__':
     # eval outcome prediction
     elif not args.explain and args.task == "outcome":
 
+        from process_prediction.outcome.preprocessor import Preprocessor
+        preprocessor = Preprocessor(args)
+        import process_prediction.outcome.predictor as test
+        import process_prediction.outcome.trainer as train
+
         if args.cross_validation:
 
             for iteration_cross_validation in range(0, args.num_folds):
@@ -83,5 +86,35 @@ if __name__ == '__main__':
             utils.write_output(args, output, -1)
 
     # eval next activity prediction
+    elif not args.explain and args.task == "nextevent":
+
+        from process_prediction.nextevent.preprocessor import Preprocessor
+        preprocessor = Preprocessor(args)
+        import process_prediction.nextevent.predictor as test
+        import process_prediction.nextevent.trainer as train
+
+        if args.cross_validation:
+            for iteration_cross_validation in range(0, args.num_folds):
+                preprocessor.data_structure['support']['iteration_cross_validation'] = iteration_cross_validation
+
+                output["training_time_seconds"].append(train.train(args, preprocessor))
+                test.test(args, preprocessor)
+
+                output = utils.get_output(args, preprocessor, output)
+                utils.print_output(args, output, iteration_cross_validation)
+                utils.write_output(args, output, iteration_cross_validation)
+
+            utils.print_output(args, output, iteration_cross_validation + 1)
+            utils.write_output(args, output, iteration_cross_validation + 1)
+
+        # split validation
+        else:
+            output["training_time_seconds"].append(train.train(args, preprocessor))
+            test.test(args, preprocessor)
+
+            output = utils.get_output(args, preprocessor, output)
+            utils.print_output(args, output, -1)
+            utils.write_output(args, output, -1)
+
     else:
-        print("Is coming ...")
+        print("No modus selected ...")

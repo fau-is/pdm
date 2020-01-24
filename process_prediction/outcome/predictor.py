@@ -1,7 +1,6 @@
 from __future__ import division
 from keras.models import load_model
 import csv
-
 try:
     from itertools import izip as zip
 except ImportError:
@@ -12,7 +11,7 @@ import numpy as numpy
 
 def predict(args, preprocessor):
     # assumption: load the model of the first fold
-    model = load_model('%smodel_%s.h5' % (args.model_dir, 0))
+    model = load_model('%s%smodel_%s.h5' % (args.task, args.model_dir[1:], 0))
 
     # select a random prefix
     process_instances = preprocessor.data_structure['data']['process_instances']
