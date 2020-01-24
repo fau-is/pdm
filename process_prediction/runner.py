@@ -1,10 +1,9 @@
 import process_prediction.config as config
-import process_prediction.predictor as test
-import process_prediction.trainer as train
-from process_prediction.preprocessor import Preprocessor
+# todo: differ between the prediction tasks
+import process_prediction.outcome.predictor as test
+import process_prediction.outcome.trainer as train
+from process_prediction.outcome.preprocessor import Preprocessor
 import process_prediction.utils as utils
-
-from IPython.display import display_pdf, HTML
 from process_prediction.explanation.LSTM.LSTM_bidi import *
 from process_prediction.explanation.util.heatmap import html_heatmap
 import process_prediction.explanation.util.browser as browser
@@ -16,7 +15,7 @@ if __name__ == '__main__':
     output = utils.load_output()
     utils.clear_measurement_file(args)
 
-    # explanation mode
+    # explanation mode for outcome prediction
     if args.explain:
 
         predicted_class, target_class, words, model, input_embedded = test.predict(args, preprocessor)
@@ -46,8 +45,6 @@ if __name__ == '__main__':
             print("\t\t\t" + "{:8.10f}".format(R_words[idx]) + "\t" + w)
         print("\nLRP heatmap:")
 
-
-
         browser.display_html(html_heatmap(words, R_words))
 
         # How to sanity check global relevance conservation:
@@ -58,9 +55,8 @@ if __name__ == '__main__':
         print(R_tot)
         print("Sanity check passed? ", np.allclose(R_tot, net.s[target_class]))
 
-
-    # evaluation mode
-    else:
+    # eval outcome prediction
+    elif not args.explain and args.task == "outcome":
 
         if args.cross_validation:
 
@@ -85,3 +81,7 @@ if __name__ == '__main__':
             output = utils.get_output(args, preprocessor, output)
             utils.print_output(args, output, -1)
             utils.write_output(args, output, -1)
+
+    # eval next activity prediction
+    else:
+        print("Is coming ...")

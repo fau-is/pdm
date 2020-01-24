@@ -130,7 +130,7 @@ class Preprocessor(object):
             model.min_alpha = model.alpha  # fix the learning rate, no decay
 
         # save
-        model.save('./checkpoints/embeddings.model', sep_limit=2000000000)
+        model.save('./%s%sembeddings.model' % (args.task, args.model_dir[1:]), sep_limit=2000000000)
 
         # print(model.wv.most_similar(positive="Take"))
         # print(0)

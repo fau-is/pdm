@@ -104,8 +104,8 @@ ENV/
 /.idea/
 
 # project specific
-/process_prediction/checkpoints/
-/process_prediction/results/
+/process_prediction/outcome/models/
+/process_prediction/outcome/results/
 
 #npm
 /ui/frontend-react/node_modules/

@@ -12,7 +12,7 @@ import numpy as numpy
 
 def predict(args, preprocessor):
     # assumption: load the model of the first fold
-    model = load_model('%smodel_%s.h5' % (args.checkpoint_dir, 0))
+    model = load_model('%smodel_%s.h5' % (args.model_dir, 0))
 
     # select a random prefix
     process_instances = preprocessor.data_structure['data']['process_instances']
@@ -54,11 +54,11 @@ def predict(args, preprocessor):
 def test(args, preprocessor):
     # init
     preprocessor.get_instances_of_fold('test')
-    model = load_model('%smodel_%s.h5' % (args.checkpoint_dir, preprocessor.data_structure['support']['iteration_cross_validation']))
+    model = load_model('%s%smodel_%s.h5' % (args.task, args.model_dir[1:], preprocessor.data_structure['support']['iteration_cross_validation']))
 
     # output
     data_set_name = args.data_set.split('.csv')[0]
-    result_dir_generic = args.result_dir + data_set_name + "__" + args.task
+    result_dir_generic = './' + args.task + args.result_dir[1:] + data_set_name
     result_dir_fold = result_dir_generic + "_%d%s" % (
         preprocessor.data_structure['support']['iteration_cross_validation'], ".csv")
 

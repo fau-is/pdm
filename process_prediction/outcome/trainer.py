@@ -15,16 +15,18 @@ def train(args, preprocessor):
     print('Create machine learning model ... \n')
 
     if args.dnn_architecture == 0:
-
         # input layer
         main_input = keras.layers.Input(shape=(max_length_process_instance, num_features), name='main_input')
 
         # hidden layer
         b1 = keras.layers.Bidirectional(
-            keras.layers.recurrent.LSTM(100, use_bias=True, implementation=1, activation="tanh", kernel_initializer='glorot_uniform', return_sequences=False, dropout=0.2))(main_input)
+            keras.layers.recurrent.LSTM(100, use_bias=True, implementation=1, activation="tanh",
+                                        kernel_initializer='glorot_uniform', return_sequences=False, dropout=0.2))(
+            main_input)
 
         # output layer
-        act_output = keras.layers.core.Dense(num_classes, activation='softmax', name='act_output', kernel_initializer='glorot_uniform')(b1)
+        act_output = keras.layers.core.Dense(num_classes, activation='softmax', name='act_output',
+                                             kernel_initializer='glorot_uniform')(b1)
 
     model = keras.models.Model(inputs=[main_input], outputs=[act_output])
 
@@ -33,9 +35,9 @@ def train(args, preprocessor):
 
     model.compile(loss={'act_output': 'categorical_crossentropy'}, optimizer=optimizer)
     early_stopping = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
-    model_checkpoint = keras.callbacks.ModelCheckpoint('%smodel_%s.h5' % (args.checkpoint_dir,
-                                                                          preprocessor.data_structure['support'][
-                                                                              'iteration_cross_validation']),
+    model_checkpoint = keras.callbacks.ModelCheckpoint('%s%smodel_%s.h5' % (args.task, args.model_dir[1:],
+                                                                            preprocessor.data_structure['support'][
+                                                                                'iteration_cross_validation']),
                                                        monitor='val_loss',
                                                        verbose=0,
                                                        save_best_only=True,
@@ -56,6 +58,5 @@ def train(args, preprocessor):
     # test output
     # for layer in model.layers:
     #    print(layer.get_config(), layer.get_weights())
-
 
     return training_time.total_seconds()

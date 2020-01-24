@@ -56,7 +56,7 @@ def str2bool(v):
 
 
 def clear_measurement_file(args):
-    open('./results/output_%s_%s.csv' % (args.data_set[:-4], args.task), "w").close()
+    open('./%s/results/output_%s.csv' % (args.task, args.data_set[:-4]), "w").close()
 
 
 def get_output(args, preprocessor, _output):
@@ -70,13 +70,13 @@ def get_output(args, preprocessor, _output):
         result_dir_fold = \
             args.result_dir + \
             args.data_set.split(".csv")[0] + \
-            "__" + args.task + \
             "_0.csv"
     else:
         result_dir_fold = \
-            args.result_dir + \
+            './' + \
+            args.task + \
+            args.result_dir[1:] + \
             args.data_set.split(".csv")[0] + \
-            "__" + args.task + \
             "_%d" % preprocessor.data_structure['support']['iteration_cross_validation'] + ".csv"
 
     with open(result_dir_fold, 'r') as result_file_fold:
@@ -144,11 +144,11 @@ def get_output_value(_mode, _index_fold, _output, measure, args):
 def write_output(args, _output, index_fold):
     """ Writes the output. """
 
-    with open('./results/output_%s_%s.csv' % (args.data_set[:-4], args.task), mode='a', newline='') as file:
+    with open('./%s%soutput_%s.csv' % (args.task, args.result_dir[1:], args.data_set[:-4]), mode='a', newline='') as file:
         writer = csv.writer(file, delimiter=';', quoting=csv.QUOTE_NONE, escapechar=' ')
 
         # if file is empty
-        if os.stat('./results/output_%s_%s.csv' % (args.data_set[:-4], args.task)).st_size == 0:
+        if os.stat('./%s%soutput_%s.csv' % (args.task, args.result_dir[1:], args.data_set[:-4])).st_size == 0:
             writer.writerow(
                 ["experiment", "mode", "validation", "accuracy", "precision", "recall", "f1-score", "training-time",
                  "time-stamp"])
