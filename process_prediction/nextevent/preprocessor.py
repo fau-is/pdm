@@ -317,11 +317,24 @@ class Preprocessor(object):
 
         return cropped_process_instances, cropped_context_attributes, next_events
 
-    '''
-    Crops prefixes out of a single process instance.
-    '''
+    def get_cropped_instance_label(self, prefix_size, process_instance):
+        """
+        Crops next activity label out of a single process instance.
+        """
+
+        if prefix_size == len(process_instance):
+            # end marker
+            return self.data_structure["support"]["end_process_instance"]
+        else:
+            return process_instance[prefix_size]  # label of next act
+
+
+
 
     def get_cropped_instance(self, prefix_size, process_instance):
+        """
+        Crops prefixes out of a single process instance.
+        """
 
         cropped_process_instance = process_instance[:prefix_size]
 

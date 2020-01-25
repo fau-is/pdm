@@ -10,6 +10,36 @@ from jellyfish._jellyfish import damerau_levenshtein_distance
 import process_prediction.utils as utils
 
 
+def predict_prefix(args, preprocessor, process_instance, prefix_size):
+
+    # assumption: load the model of the first fold
+    model = load_model('%s%smodel_%s.h5' % ("nextevent", args.model_dir[1:], 0))
+
+
+    # get cropped instance
+    cropped_process_instance = preprocessor.get_cropped_instance(
+        prefix_size,
+        process_instance
+    )
+
+
+    cropped_process_instance_label = preprocessor.get_cropped_instance_label(
+        prefix_size,
+        process_instance
+    )
+
+
+    test_data = preprocessor.get_data_tensor_for_single_prediction(cropped_process_instance)
+
+    y = model.predict(test_data)
+    y = y[0][:]
+
+    prediction = preprocessor.get_event_type(y)
+    test_data_reshaped = test_data.reshape(-1, test_data.shape[2])
+
+    return prediction, cropped_process_instance_label, cropped_process_instance, model, test_data_reshaped
+
+
 def test(args, preprocessor):
     preprocessor.get_instances_of_fold('test')
     model = load_model('%s%smodel_%s.h5' % (args.task, args.model_dir[1:], preprocessor.data_structure['support']['iteration_cross_validation']))

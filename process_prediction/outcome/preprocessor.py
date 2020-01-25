@@ -295,7 +295,7 @@ class Preprocessor(object):
         """
 
         cropped_process_instance = process_instance[:prefix_size]
-        cropped_process_instance_label = process_instance_labels[:prefix_size][-1]
+        cropped_process_instance_label = process_instance_labels[:prefix_size][-1]  # -1 outcome of last act in instance
 
         return cropped_process_instance, cropped_process_instance_label
 
@@ -358,3 +358,14 @@ class Preprocessor(object):
                     labels[index, self.data_structure['meta']['map_class_val_id'][val_class]] = 0
 
         return labels
+
+
+    def get_random_process_instance(self):
+
+        process_instances = self.data_structure['data']['process_instances']
+        labels = self.data_structure['data']['labels']
+
+        index = numpy.random.randint(0, len(process_instances))
+
+
+        return process_instances[index], labels[index]

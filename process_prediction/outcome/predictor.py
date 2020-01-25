@@ -9,37 +9,19 @@ import process_prediction.utils as utils
 import numpy as numpy
 
 
-def predict(args, preprocessor):
+def predict_prefix(args, preprocessor, process_instance, labels, prefix_size):
+
     # assumption: load the model of the first fold
     model = load_model('%s%smodel_%s.h5' % (args.task, args.model_dir[1:], 0))
 
-    # select a random prefix
-    process_instances = preprocessor.data_structure['data']['process_instances']
-    labels = preprocessor.data_structure['data']['labels']
-
-    # prefix of process instance must have a size of >= 2
-    while True:
-        index = numpy.random.randint(0, len(process_instances))
-        prefix_size = numpy.random.randint(0, len(process_instances[index]))
-        if prefix_size >= 2:
-            break
-
-    prefix = process_instances[index][0:prefix_size]
-    label = labels[index][prefix_size]
-
-    # output
-    print("Process instance %i with prefix size %i: %s" % (index, prefix_size, prefix))
-    print("Label: %s" % label)
-
     cropped_process_instance, cropped_process_instance_label = preprocessor.get_cropped_instance(
         prefix_size,
-        process_instances[index],
-        labels[index]
+        process_instance,
+        labels
     )
 
     ground_truth = cropped_process_instance_label
     test_data = preprocessor.get_data_tensor_for_single_prediction(cropped_process_instance)
-
 
     y = model.predict(test_data)
     y = y[0][:]
@@ -47,7 +29,7 @@ def predict(args, preprocessor):
     prediction = preprocessor.get_class_val(y)
     test_data_reshaped = test_data.reshape(-1, test_data.shape[2])
 
-    return prediction, ground_truth, prefix, model, test_data_reshaped
+    return prediction, ground_truth, cropped_process_instance, model, test_data_reshaped
 
 
 def test(args, preprocessor):
