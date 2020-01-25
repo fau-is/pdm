@@ -16,6 +16,8 @@ output = {
     "recall_value": 0.0,
     "f1_values": [],
     "f1_value": 0.0,
+    "auc_prc_values": [],
+    "auc_prc_value": 0.0,
     "training_time_seconds": []
 }
 
@@ -98,19 +100,33 @@ def get_output(args, preprocessor, _output):
         sklearn.metrics.recall_score(ground_truth_label, predicted_label, average='weighted'))
     _output["f1_values"].append(sklearn.metrics.f1_score(ground_truth_label, predicted_label, average='weighted'))
 
-    # ToDo: calc confusion matrix
-    # util.llprint(confusion_matrix(ground_truth_label, predicted_label))
+    try:
+        # we use the average precision at different threshold values as auc of the pr-curve
+        # and not the auc-pr-curve with the trapezoidal rule / linear interpolation, because it could be too optimistic
+        _output["auc_prc_values"].append(multi_class_prc_auc_score(ground_truth_label, predicted_label))
+    except:
+        print("Warning: Auc prc score can not be calculated ...")
 
     return _output
 
 
-def print_output(args, _output, index_fold):
+def multi_class_prc_auc_score(ground_truth_label, predicted_label, average='weighted'):
+    label_binarizer = sklearn.preprocessing.LabelBinarizer()
+    label_binarizer.fit(ground_truth_label)
 
+    ground_truth_label = label_binarizer.transform(ground_truth_label)
+    predicted_label = label_binarizer.transform(predicted_label)
+
+    return sklearn.metrics.average_precision_score(ground_truth_label, predicted_label, average=average)
+
+
+def print_output(args, _output, index_fold):
     if args.cross_validation and index_fold < args.num_folds:
         llprint("\nAccuracy of fold %i: %f\n" % (index_fold, _output["accuracy_values"][index_fold]))
         llprint("Precision of fold %i: %f\n" % (index_fold, _output["precision_values"][index_fold]))
         llprint("Recall of fold %i: %f\n" % (index_fold, _output["recall_values"][index_fold]))
         llprint("F1-Score of fold %i: %f\n" % (index_fold, _output["f1_values"][index_fold]))
+        llprint("Auc-prc of fold %i: %f\n" % (index_fold, _output["auc_prc_values"][index_fold]))
         llprint("Training time of fold %i: %f seconds\n\n" % (index_fold, _output["training_time_seconds"][index_fold]))
 
     else:
@@ -118,6 +134,7 @@ def print_output(args, _output, index_fold):
         llprint("Precision avg: %f\n" % (avg(_output["precision_values"])))
         llprint("Recall avg: %f\n" % (avg(_output["recall_values"])))
         llprint("F1-Score avg: %f\n" % (avg(_output["f1_values"])))
+        llprint("Auc-prc avg: %f\n" % (avg(_output["auc_prc_values"])))
         llprint("Training time avg: %f seconds" % (avg(_output["training_time_seconds"])))
 
 
@@ -144,13 +161,14 @@ def get_output_value(_mode, _index_fold, _output, measure, args):
 def write_output(args, _output, index_fold):
     """ Writes the output. """
 
-    with open('./%s%soutput_%s.csv' % (args.task, args.result_dir[1:], args.data_set[:-4]), mode='a', newline='') as file:
+    with open('./%s%soutput_%s.csv' % (args.task, args.result_dir[1:], args.data_set[:-4]), mode='a',
+              newline='') as file:
         writer = csv.writer(file, delimiter=';', quoting=csv.QUOTE_NONE, escapechar=' ')
 
         # if file is empty
         if os.stat('./%s%soutput_%s.csv' % (args.task, args.result_dir[1:], args.data_set[:-4])).st_size == 0:
             writer.writerow(
-                ["experiment", "mode", "validation", "accuracy", "precision", "recall", "f1-score", "training-time",
+                ["experiment", "mode", "validation", "accuracy", "precision", "recall", "f1-score", "auc-prc", "training-time",
                  "time-stamp"])
         writer.writerow([
             # todo: add to experiment name the encoding identifier
@@ -161,6 +179,7 @@ def write_output(args, _output, index_fold):
             get_output_value(get_mode(index_fold, args), index_fold, _output, "precision_values", args),
             get_output_value(get_mode(index_fold, args), index_fold, _output, "recall_values", args),
             get_output_value(get_mode(index_fold, args), index_fold, _output, "f1_values", args),
+            get_output_value(get_mode(index_fold, args), index_fold, _output, "auc_prc_values", args),
             get_output_value(get_mode(index_fold, args), index_fold, _output, "training_time_seconds", args),
             arrow.now()
         ])

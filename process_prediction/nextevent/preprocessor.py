@@ -324,7 +324,7 @@ class Preprocessor(object):
         Crops next activity label out of a single process instance.
         """
 
-        if prefix_size == len(process_instance):
+        if prefix_size == len(process_instance) - 1:
             # end marker
             return self.data_structure["support"]["end_process_instance"]
         else:

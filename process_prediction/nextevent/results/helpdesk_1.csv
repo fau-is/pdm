@@ -3873,7 +3873,7 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2383;4;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2384;4;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2385;4;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2386;4;b'Closed';b'Closed';1.0;1.0;1.0
+2386;4;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2387;4;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2388;4;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2389;4;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -4592,13 +4592,13 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 1723;5;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 1725;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1727;5;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
-1728;5;b'Closed';b'Closed';1.0;1.0;1.0
+1728;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1729;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1733;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1734;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1736;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1739;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
-1743;5;b'Closed';b'Closed';1.0;1.0;1.0
+1743;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1745;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1749;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1751;5;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
@@ -4635,7 +4635,7 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 1822;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1824;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1825;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
-1829;5;b'Closed';b'Closed';1.0;1.0;1.0
+1829;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1830;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1831;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1838;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
@@ -4653,7 +4653,7 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 1859;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1860;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1864;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
-1865;5;b'Closed';b'Closed';1.0;1.0;1.0
+1865;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1866;5;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
 1867;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1872;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -4664,7 +4664,7 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 1883;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1884;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1891;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
-1896;5;b'Closed';b'Closed';1.0;1.0;1.0
+1896;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1897;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1898;5;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 1899;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -4691,7 +4691,7 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 1955;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1957;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1959;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
-1963;5;b'Closed';b'Closed';1.0;1.0;1.0
+1963;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1964;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1966;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1972;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -4726,7 +4726,7 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2049;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2050;5;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2052;5;b'Wait';b'Take in charge ticket';0.1428571428571429;0.1428571428571429;0.23076923076923084
-2053;5;b'Closed';b'Closed';1.0;1.0;1.0
+2053;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2054;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2058;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2061;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -4776,7 +4776,7 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2144;5;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
 2146;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2147;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2148;5;b'Closed';b'Closed';1.0;1.0;1.0
+2148;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2151;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2152;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2158;5;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
@@ -4800,11 +4800,11 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2215;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2216;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2218;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
-2220;5;b'Closed';b'Closed';1.0;1.0;1.0
+2220;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2224;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2230;5;b'Closed';b'Closed';1.0;1.0;1.0
+2230;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2235;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2238;5;b'Wait';b'Closed';0.0;0.0;0.0
+2238;5;b'Wait';b'Take in charge ticket';0.1428571428571429;0.1428571428571429;0.23076923076923084
 2240;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2243;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2244;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -4830,7 +4830,7 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2294;5;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
 2296;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2299;5;b'Require upgrade';b'Take in charge ticket';0.1428571428571429;0.1428571428571429;0.3529411764705883
-2300;5;b'Closed';b'Closed';1.0;1.0;1.0
+2300;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2301;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2303;5;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2305;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -4854,8 +4854,8 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2344;5;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2345;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2347;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2348;5;b'Closed';b'Closed';1.0;1.0;1.0
-2349;5;b'Closed';b'Closed';1.0;1.0;1.0
+2348;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
+2349;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2353;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2355;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2359;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -4868,20 +4868,20 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2379;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2380;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2381;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2383;5;b'Take in charge ticket';b'Closed';0.04761904761904767;0.04761904761904767;0.05882352941176472
-2386;5;b'!';b'Closed';0.0;0.0;0.0
+2383;5;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
+2386;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2388;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2397;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2398;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2401;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2406;5;b'Wait';b'Take in charge ticket';0.1428571428571429;0.1428571428571429;0.23076923076923084
-2410;5;b'Closed';b'Closed';1.0;1.0;1.0
+2410;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2413;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2416;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2417;5;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2418;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2423;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2424;5;b'Closed';b'Closed';1.0;1.0;1.0
+2424;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2425;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2428;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2431;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -4909,7 +4909,7 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2474;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2475;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2480;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2482;5;b'Closed';b'Closed';1.0;1.0;1.0
+2482;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2485;5;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
 2487;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2489;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
@@ -4982,14 +4982,14 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2648;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2649;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2654;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
-2657;5;b'Closed';b'Closed';1.0;1.0;1.0
+2657;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2658;5;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
-2660;5;b'!';b'Closed';0.0;0.0;0.0
+2660;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2664;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2665;5;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2666;5;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
 2667;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
-2668;5;b'Resolve ticket';b'Closed';0.1428571428571429;0.1428571428571429;0.3076923076923077
+2668;5;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2673;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2677;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2680;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -5007,7 +5007,7 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2719;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2720;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2721;5;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
-2722;5;b'Closed';b'Closed';1.0;1.0;1.0
+2722;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2723;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2724;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2725;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
@@ -5020,7 +5020,7 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2737;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2738;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2741;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2742;5;b'Closed';b'Closed';1.0;1.0;1.0
+2742;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2743;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2744;5;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2746;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -5030,7 +5030,7 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2763;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2764;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2766;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2773;5;b'Closed';b'Closed';1.0;1.0;1.0
+2773;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2775;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2776;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2777;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -5079,7 +5079,7 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2890;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2893;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2896;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
-2897;5;b'Closed';b'Closed';1.0;1.0;1.0
+2897;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2903;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2908;5;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2909;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -5134,7 +5134,7 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 3030;5;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 3032;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 3033;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
-3035;5;b'Closed';b'Closed';1.0;1.0;1.0
+3035;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 3036;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 3037;5;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 3039;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -5145,7 +5145,7 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 3052;5;b'!';b'Take in charge ticket';0.0;0.0;0.0
 3053;5;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1527;6;b'Create SW anomaly';b'Take in charge ticket';0.1428571428571429;0.1428571428571429;0.3157894736842105
-1532;6;b'Closed';b'Closed';1.0;1.0;1.0
+1532;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1538;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1539;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1545;6;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
@@ -5154,7 +5154,7 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 1570;6;b'Wait';b'Take in charge ticket';0.1428571428571429;0.1428571428571429;0.23076923076923084
 1574;6;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 1576;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
-1593;6;b'Take in charge ticket';b'Closed';0.04761904761904767;0.04761904761904767;0.05882352941176472
+1593;6;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
 1594;6;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 1604;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1605;6;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
@@ -5176,13 +5176,13 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 1719;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1723;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1727;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
-1728;6;b'!';b'Closed';0.0;0.0;0.0
+1728;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1733;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
-1743;6;b'!';b'Closed';0.0;0.0;0.0
+1743;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1751;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1754;6;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
-1756;6;b'Closed';b'Closed';1.0;1.0;1.0
-1757;6;b'Closed';b'Closed';1.0;1.0;1.0
+1756;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
+1757;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1759;6;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 1769;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1773;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -5194,17 +5194,17 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 1815;6;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
 1819;6;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
 1820;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
-1829;6;b'!';b'Closed';0.0;0.0;0.0
+1829;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1831;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1838;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
-1844;6;b'!';b'Closed';0.0;0.0;0.0
+1844;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1845;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1848;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1864;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
-1865;6;b'!';b'Closed';0.0;0.0;0.0
-1866;6;b'Resolve ticket';b'Closed';0.1428571428571429;0.1428571428571429;0.3076923076923077
+1865;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
+1866;6;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 1873;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
-1896;6;b'!';b'Closed';0.0;0.0;0.0
+1896;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1898;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1906;6;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 1918;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -5212,7 +5212,7 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 1935;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1942;6;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
 1947;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
-1963;6;b'!';b'Closed';0.0;0.0;0.0
+1963;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1977;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1988;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2000;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -5226,7 +5226,7 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2047;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2050;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2052;6;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
-2053;6;b'!';b'Closed';0.0;0.0;0.0
+2053;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2066;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2070;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2081;6;b'Wait';b'Take in charge ticket';0.1428571428571429;0.1428571428571429;0.23076923076923084
@@ -5240,7 +5240,7 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2138;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2144;6;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2146;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2148;6;b'!';b'Closed';0.0;0.0;0.0
+2148;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2158;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2161;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2167;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -5252,9 +5252,9 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2208;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2212;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2218;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2220;6;b'!';b'Closed';0.0;0.0;0.0
-2230;6;b'!';b'Closed';0.0;0.0;0.0
-2238;6;b'Resolve ticket';b'Closed';0.1428571428571429;0.1428571428571429;0.3076923076923077
+2220;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
+2230;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
+2238;6;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2248;6;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
 2264;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2268;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -5265,22 +5265,22 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2291;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2294;6;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2299;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2300;6;b'!';b'Closed';0.0;0.0;0.0
+2300;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2303;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2309;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2310;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2317;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2318;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2330;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
-2332;6;b'!';b'Closed';0.0;0.0;0.0
+2332;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2336;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2337;6;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2340;6;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2341;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2344;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2345;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2348;6;b'!';b'Closed';0.0;0.0;0.0
-2349;6;b'!';b'Closed';0.0;0.0;0.0
+2348;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
+2349;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2355;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2360;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2367;6;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
@@ -5289,13 +5289,13 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2378;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2379;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2380;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2383;6;b'Wait';b'Closed';0.0;0.0;0.0
+2383;6;b'Wait';b'Take in charge ticket';0.1428571428571429;0.1428571428571429;0.23076923076923084
 2406;6;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
-2410;6;b'!';b'Closed';0.0;0.0;0.0
+2410;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2413;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2416;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2417;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
-2424;6;b'!';b'Closed';0.0;0.0;0.0
+2424;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2428;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2434;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2438;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -5309,7 +5309,7 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2469;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2470;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2472;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
-2482;6;b'!';b'Closed';0.0;0.0;0.0
+2482;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2485;6;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2489;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2499;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -5341,30 +5341,30 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2632;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2648;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2654;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2657;6;b'!';b'Closed';0.0;0.0;0.0
+2657;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2658;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2665;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2666;6;b'Wait';b'Take in charge ticket';0.1428571428571429;0.1428571428571429;0.23076923076923084
 2667;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2668;6;b'Closed';b'Closed';1.0;1.0;1.0
+2668;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2673;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2677;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2683;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2708;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2709;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2721;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
-2722;6;b'!';b'Closed';0.0;0.0;0.0
+2722;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2724;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2725;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2726;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2735;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2742;6;b'!';b'Closed';0.0;0.0;0.0
+2742;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2743;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2744;6;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2750;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2763;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2764;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2773;6;b'!';b'Closed';0.0;0.0;0.0
+2773;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2775;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2800;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2804;6;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
@@ -5385,7 +5385,7 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2886;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2893;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2896;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2897;6;b'!';b'Closed';0.0;0.0;0.0
+2897;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2903;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2908;6;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
 2917;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -5410,20 +5410,20 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 3027;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 3029;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 3030;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
-3035;6;b'!';b'Closed';0.0;0.0;0.0
+3035;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 3037;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 3048;6;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 3049;6;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 3050;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
-3053;6;b'!';b'Closed';0.0;0.0;0.0
+3053;6;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1527;7;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
-1532;7;b'!';b'Closed';0.0;0.0;0.0
+1532;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1539;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
-1545;7;b'Resolve ticket';b'Closed';0.1428571428571429;0.1428571428571429;0.3076923076923077
+1545;7;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 1556;7;b'Wait';b'Take in charge ticket';0.1428571428571429;0.1428571428571429;0.23076923076923084
 1570;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
-1574;7;b'Closed';b'Closed';1.0;1.0;1.0
-1593;7;b'Create SW anomaly';b'Closed';0.11764705882352944;0.11764705882352944;0.2666666666666666
+1574;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
+1593;7;b'Create SW anomaly';b'Take in charge ticket';0.1428571428571429;0.1428571428571429;0.3157894736842105
 1594;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1605;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1619;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -5432,28 +5432,28 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 1649;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1683;7;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 1687;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
-1692;7;b'!';b'Closed';0.0;0.0;0.0
+1692;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1713;7;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 1715;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1723;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1727;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1751;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1754;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
-1756;7;b'!';b'Closed';0.0;0.0;0.0
-1757;7;b'!';b'Closed';0.0;0.0;0.0
-1759;7;b'Closed';b'Closed';1.0;1.0;1.0
+1756;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
+1757;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
+1759;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1786;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1815;7;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
 1819;7;b'Wait';b'Take in charge ticket';0.1428571428571429;0.1428571428571429;0.23076923076923084
-1866;7;b'Take in charge ticket';b'Closed';0.04761904761904767;0.04761904761904767;0.05882352941176472
+1866;7;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
 1898;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
-1906;7;b'Closed';b'Closed';1.0;1.0;1.0
-1934;7;b'Closed';b'Closed';1.0;1.0;1.0
+1906;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
+1934;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1935;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
-1942;7;b'Wait';b'Closed';0.0;0.0;0.0
+1942;7;b'Wait';b'Take in charge ticket';0.1428571428571429;0.1428571428571429;0.23076923076923084
 1947;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2002;7;b'Closed';b'Closed';1.0;1.0;1.0
-2009;7;b'Take in charge ticket';b'Closed';0.04761904761904767;0.04761904761904767;0.05882352941176472
+2002;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
+2009;7;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
 2050;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2052;7;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2070;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -5465,8 +5465,8 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2138;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2144;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2158;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2183;7;b'Closed';b'Closed';1.0;1.0;1.0
-2238;7;b'Closed';b'Closed';1.0;1.0;1.0
+2183;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
+2238;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2248;7;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2280;7;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2286;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -5475,32 +5475,32 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2317;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2330;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2336;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2337;7;b'Closed';b'Closed';1.0;1.0;1.0
+2337;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2340;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2344;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2367;7;b'Resolve ticket';b'Closed';0.1428571428571429;0.1428571428571429;0.3076923076923077
+2367;7;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2372;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2383;7;b'Take in charge ticket';b'Closed';0.04761904761904767;0.04761904761904767;0.05882352941176472
+2383;7;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
 2406;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2417;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2470;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2472;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2485;7;b'Closed';b'Closed';1.0;1.0;1.0
+2485;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2504;7;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2549;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2552;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2559;7;b'!';b'Closed';0.0;0.0;0.0
-2566;7;b'Closed';b'Closed';1.0;1.0;1.0
+2559;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
+2566;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2571;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2582;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2609;7;b'!';b'Closed';0.0;0.0;0.0
+2609;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2612;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2622;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2632;7;b'!';b'Closed';0.0;0.0;0.0
+2632;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2658;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2665;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2666;7;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
-2668;7;b'!';b'Closed';0.0;0.0;0.0
+2668;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2709;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2721;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2744;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
@@ -5513,25 +5513,25 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2862;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2866;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2908;7;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
-2920;7;b'!';b'Closed';0.0;0.0;0.0
+2920;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2924;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2926;7;b'Closed';b'Closed';1.0;1.0;1.0
+2926;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2930;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2935;7;b'Closed';b'Closed';1.0;1.0;1.0
+2935;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2974;7;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2980;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
-3027;7;b'!';b'Closed';0.0;0.0;0.0
+3027;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 3030;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 3037;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
-3048;7;b'Closed';b'Closed';1.0;1.0;1.0
+3048;7;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 3049;7;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1527;8;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
-1545;8;b'Closed';b'Closed';1.0;1.0;1.0
+1545;8;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1556;8;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
-1574;8;b'!';b'Closed';0.0;0.0;0.0
-1593;8;b'Resolve ticket';b'Closed';0.1428571428571429;0.1428571428571429;0.3076923076923077
+1574;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
+1593;8;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 1594;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
-1605;8;b'!';b'Closed';0.0;0.0;0.0
+1605;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1621;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1640;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1649;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -5539,61 +5539,61 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 1687;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1713;8;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1754;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
-1759;8;b'!';b'Closed';0.0;0.0;0.0
+1759;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1815;8;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
 1819;8;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
-1866;8;b'Take in charge ticket';b'Closed';0.04761904761904767;0.04761904761904767;0.05882352941176472
-1906;8;b'!';b'Closed';0.0;0.0;0.0
-1934;8;b'!';b'Closed';0.0;0.0;0.0
-1942;8;b'Take in charge ticket';b'Closed';0.04761904761904767;0.04761904761904767;0.05882352941176472
-2002;8;b'!';b'Closed';0.0;0.0;0.0
-2009;8;b'Wait';b'Closed';0.0;0.0;0.0
+1866;8;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
+1906;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
+1934;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
+1942;8;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
+2002;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
+2009;8;b'Wait';b'Take in charge ticket';0.1428571428571429;0.1428571428571429;0.23076923076923084
 2052;8;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
-2081;8;b'Resolve ticket';b'Closed';0.1428571428571429;0.1428571428571429;0.3076923076923077
+2081;8;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2097;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2116;8;b'!';b'Closed';0.0;0.0;0.0
+2116;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2144;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2183;8;b'!';b'Closed';0.0;0.0;0.0
-2238;8;b'!';b'Closed';0.0;0.0;0.0
+2183;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
+2238;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2248;8;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2280;8;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2294;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2337;8;b'!';b'Closed';0.0;0.0;0.0
+2337;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2340;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2367;8;b'Require upgrade';b'Closed';0.1333333333333333;0.1333333333333333;0.1333333333333333
-2383;8;b'Resolve ticket';b'Closed';0.1428571428571429;0.1428571428571429;0.3076923076923077
-2406;8;b'!';b'Closed';0.0;0.0;0.0
-2485;8;b'!';b'Closed';0.0;0.0;0.0
+2367;8;b'Require upgrade';b'Take in charge ticket';0.1428571428571429;0.1428571428571429;0.3529411764705883
+2383;8;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
+2406;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
+2485;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2504;8;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
-2566;8;b'!';b'Closed';0.0;0.0;0.0
+2566;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2612;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2666;8;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
-2744;8;b'!';b'Closed';0.0;0.0;0.0
+2744;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2804;8;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2818;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2844;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2908;8;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
-2926;8;b'!';b'Closed';0.0;0.0;0.0
-2935;8;b'!';b'Closed';0.0;0.0;0.0
+2926;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
+2935;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2974;8;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
-3048;8;b'!';b'Closed';0.0;0.0;0.0
+3048;8;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1527;9;b'Create SW anomaly';b'Take in charge ticket';0.1428571428571429;0.1428571428571429;0.3157894736842105
-1545;9;b'!';b'Closed';0.0;0.0;0.0
+1545;9;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1556;9;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
-1593;9;b'Closed';b'Closed';1.0;1.0;1.0
+1593;9;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 1683;9;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1713;9;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1815;9;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 1819;9;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
-1866;9;b'Resolve ticket';b'Closed';0.1428571428571429;0.1428571428571429;0.3076923076923077
-1942;9;b'Resolve ticket';b'Closed';0.1428571428571429;0.1428571428571429;0.3076923076923077
-2009;9;b'Resolve ticket';b'Closed';0.1428571428571429;0.1428571428571429;0.3076923076923077
+1866;9;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
+1942;9;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
+2009;9;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 2052;9;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2081;9;b'Closed';b'Closed';1.0;1.0;1.0
+2081;9;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2248;9;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2280;9;b'!';b'Take in charge ticket';0.0;0.0;0.0
-2367;9;b'Take in charge ticket';b'Closed';0.04761904761904767;0.04761904761904767;0.05882352941176472
-2383;9;b'Closed';b'Closed';1.0;1.0;1.0
+2367;9;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
+2383;9;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
 2504;9;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2666;9;b'!';b'Take in charge ticket';0.0;0.0;0.0
 2804;9;b'!';b'Take in charge ticket';0.0;0.0;0.0
@@ -5601,28 +5601,28 @@ CaseID;Prefix length;Groud truth;Predicted;Levenshtein;Damerau;Jaccard
 2974;9;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1527;10;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
 1556;10;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
-1593;10;b'!';b'Closed';0.0;0.0;0.0
-1815;10;b'Closed';b'Closed';1.0;1.0;1.0
-1819;10;b'Take in charge ticket';b'Closed';0.04761904761904767;0.04761904761904767;0.05882352941176472
-1866;10;b'Closed';b'Closed';1.0;1.0;1.0
-1942;10;b'Closed';b'Closed';1.0;1.0;1.0
-2009;10;b'Closed';b'Closed';1.0;1.0;1.0
-2081;10;b'!';b'Closed';0.0;0.0;0.0
-2367;10;b'Wait';b'Closed';0.0;0.0;0.0
-2383;10;b'!';b'Closed';0.0;0.0;0.0
+1593;10;b'!';b'Take in charge ticket';0.0;0.0;0.0
+1815;10;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
+1819;10;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
+1866;10;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
+1942;10;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
+2009;10;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
+2081;10;b'!';b'Take in charge ticket';0.0;0.0;0.0
+2367;10;b'Wait';b'Take in charge ticket';0.1428571428571429;0.1428571428571429;0.23076923076923084
+2383;10;b'!';b'Take in charge ticket';0.0;0.0;0.0
 1527;11;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
-1556;11;b'!';b'Closed';0.0;0.0;0.0
-1815;11;b'!';b'Closed';0.0;0.0;0.0
-1819;11;b'Wait';b'Closed';0.0;0.0;0.0
-1866;11;b'!';b'Closed';0.0;0.0;0.0
-1942;11;b'!';b'Closed';0.0;0.0;0.0
-2009;11;b'!';b'Closed';0.0;0.0;0.0
-2367;11;b'Wait';b'Closed';0.0;0.0;0.0
+1556;11;b'!';b'Take in charge ticket';0.0;0.0;0.0
+1815;11;b'!';b'Take in charge ticket';0.0;0.0;0.0
+1819;11;b'Wait';b'Take in charge ticket';0.1428571428571429;0.1428571428571429;0.23076923076923084
+1866;11;b'!';b'Take in charge ticket';0.0;0.0;0.0
+1942;11;b'!';b'Take in charge ticket';0.0;0.0;0.0
+2009;11;b'!';b'Take in charge ticket';0.0;0.0;0.0
+2367;11;b'Wait';b'Take in charge ticket';0.1428571428571429;0.1428571428571429;0.23076923076923084
 1527;12;b'!';b'Take in charge ticket';0.0;0.0;0.0
-1819;12;b'Take in charge ticket';b'Closed';0.04761904761904767;0.04761904761904767;0.05882352941176472
-2367;12;b'Resolve ticket';b'Closed';0.1428571428571429;0.1428571428571429;0.3076923076923077
-1819;13;b'Resolve ticket';b'Closed';0.1428571428571429;0.1428571428571429;0.3076923076923077
-2367;13;b'Closed';b'Closed';1.0;1.0;1.0
-1819;14;b'Closed';b'Closed';1.0;1.0;1.0
-2367;14;b'!';b'Closed';0.0;0.0;0.0
-1819;15;b'!';b'Closed';0.0;0.0;0.0
+1819;12;b'Take in charge ticket';b'Take in charge ticket';1.0;1.0;1.0
+2367;12;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
+1819;13;b'Resolve ticket';b'Take in charge ticket';0.4285714285714286;0.4285714285714286;0.3529411764705883
+2367;13;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
+1819;14;b'Closed';b'Take in charge ticket';0.04761904761904767;0.04761904761904767;0.05882352941176472
+2367;14;b'!';b'Take in charge ticket';0.0;0.0;0.0
+1819;15;b'!';b'Take in charge ticket';0.0;0.0;0.0

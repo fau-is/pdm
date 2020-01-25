@@ -7,8 +7,8 @@ def load():
     parser = argparse.ArgumentParser()
 
     # mode
-    parser.add_argument('--explain', default=True, type=utils.str2bool)
-    parser.add_argument('--task', default="outcome")  # outcome; nextevent
+    parser.add_argument('--explain', default=False, type=utils.str2bool)
+    parser.add_argument('--task', default="nextevent")  # outcome; nextevent
 
     # dnn
     parser.add_argument('--dnn_num_epochs', default=1, type=int)
