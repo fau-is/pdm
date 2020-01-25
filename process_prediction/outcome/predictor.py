@@ -6,7 +6,6 @@ try:
 except ImportError:
     pass
 import process_prediction.utils as utils
-import numpy as numpy
 
 
 def predict_prefix(args, preprocessor, process_instance, labels, prefix_size):

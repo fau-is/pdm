@@ -87,10 +87,12 @@ class Preprocessor(object):
             (i, c) for i, c in enumerate(self.data_structure['support']['event_types']))
         self.data_structure['meta']['num_event_ids'] = len(self.data_structure['support']['event_labels'])
 
-
-        # todo: create embedding model
-        utils.llprint("Create embedding model ... \n")
-        self.data_structure['support']['embedding_model'] = self.create_embedding_model(args)
+        if not args.explain:
+            utils.llprint("Create embedding model ... \n")
+            self.data_structure['support']['embedding_model'] = self.create_embedding_model(args)
+        else:
+            utils.llprint("Load embedding model ... \n")
+            self.data_structure['support']['embedding_model'] = gensim.models.Word2Vec.load('%s%sembeddings.model' % (args.task, args.model_dir[1:]))
 
         if args.cross_validation:
             self.set_indices_k_fold_validation()
