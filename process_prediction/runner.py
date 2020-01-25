@@ -22,62 +22,66 @@ if __name__ == '__main__':
         # todo: select a process instance with each rule!
         # 1. case: only 0s; 2. case at least a label with value 0
         # assumption: value 0 is conformant
-        val_out_classes = out_preprocessor.data_structure['meta']['val_classes']
+        val_out_classes = [int(val) for val in out_preprocessor.data_structure['meta']['val_classes']]
+        val_out_classes.sort()
 
+        for out_class_index, out_class_val in enumerate(val_out_classes):
 
-        # todo: calculate for each prefix of a instance >= 2
+            # print(out_class_index)
+            # print(out_class_val)
 
+            # select a sequence
+            process_instance, out_labels = out_preprocessor.get_process_instance(out_class_val)
+            prefix_heatmaps = ""
 
-        # select a sequence
-        process_instance, out_labels = out_preprocessor.get_random_process_instance()
-        prefix_heatmaps = ""
+            print("Conformance class: %s" % out_class_val)
 
-        for prefix_index in range(2, len(process_instance)):
+            for prefix_index in range(2, len(process_instance)):
 
-            # outcome prediction
-            predicted_out_class, target_out_class, prefix_words, out_model, out_input_embedded = out_test.predict_prefix(args, out_preprocessor, process_instance, out_labels, prefix_index)
-            # next activity prediction
+                # outcome prediction
+                predicted_out_class, target_out_class, prefix_words, out_model, out_input_embedded = out_test.predict_prefix(args, out_preprocessor, process_instance, out_labels, prefix_index)
+                # next activity prediction
 
-            predicted_act_class, target_act_class, _, _, _ = act_test.predict_prefix(args, act_preprocessor, process_instance, prefix_index)
+                predicted_act_class, target_act_class, _, _, _ = act_test.predict_prefix(args, act_preprocessor, process_instance, prefix_index)
 
-            print("Prefix: %s; Outcome prediction: %s; Outcome target: %s" % (prefix_index, predicted_out_class, target_out_class))
-            print("Prefix: %s; Next act prediction: %s; Next act target: %s" % (prefix_index, predicted_act_class, target_act_class))
+                print("Prefix: %s; Outcome prediction: %s; Outcome target: %s" % (prefix_index, predicted_out_class, target_out_class))
+                print("Prefix: %s; Next act prediction: %s; Next act target: %s" % (prefix_index, predicted_act_class, target_act_class))
 
-            target_out_class = predicted_out_class
+                target_out_class = predicted_out_class
 
-            if isinstance(target_out_class, str):
-                target_out_class = int(target_out_class)
+                if isinstance(target_out_class, str):
+                    target_out_class = int(target_out_class)
 
-            # compute lrp relevances
-            # LRP hyperparameters:
-            eps = 0.001  # small positive number
-            bias_factor = 0.0  # recommended value
-            net = LSTM_bidi(args, out_model, out_input_embedded)  # load trained LSTM model
-            Rx, Rx_rev, R_rest = net.lrp(prefix_words, target_out_class, eps, bias_factor)  # perform LRP
-            R_words = np.sum(Rx + Rx_rev, axis=1)  # compute word-level LRP relevances
-            scores = net.s.copy()  # classification prediction scores
+                # compute lrp relevances
+                # LRP hyperparameters:
+                eps = 0.001  # small positive number
+                bias_factor = 0.0  # recommended value
+                net = LSTM_bidi(args, out_model, out_input_embedded)  # load trained LSTM model
+                Rx, Rx_rev, R_rest = net.lrp(prefix_words, target_out_class, eps, bias_factor)  # perform LRP
+                R_words = np.sum(Rx + Rx_rev, axis=1)  # compute word-level LRP relevances
+                scores = net.s.copy()  # classification prediction scores
 
-            """
-            print("prediction scores:", scores)
-            print("\nLRP target class:", target_out_class)
-            print("\nLRP relevances:")
-            for idx, w in enumerate(prefix_words):
-                print("\t\t\t" + "{:8.10f}".format(R_words[idx]) + "\t" + w)
-            print("\nLRP heatmap:")
-            """
+                """
+                print("prediction scores:", scores)
+                print("\nLRP target class:", target_out_class)
+                print("\nLRP relevances:")
+                for idx, w in enumerate(prefix_words):
+                    print("\t\t\t" + "{:8.10f}".format(R_words[idx]) + "\t" + w)
+                print("\nLRP heatmap:")
+                """
 
-            prefix_heatmaps = prefix_heatmaps + html_heatmap(prefix_words, R_words) + "<br>"
+                prefix_heatmaps = prefix_heatmaps + html_heatmap(prefix_words, R_words) + "<br>"
 
-            # How to sanity check global relevance conservation:
-            bias_factor = 1.0  # value to use for sanity check
-            Rx, Rx_rev, R_rest = net.lrp(prefix_words, target_out_class, eps, bias_factor)  # prefix -> w_indices
-            R_tot = Rx.sum() + Rx_rev.sum() + R_rest.sum()  # sum of all "input" relevances
+                # How to sanity check global relevance conservation:
+                bias_factor = 1.0  # value to use for sanity check
+                Rx, Rx_rev, R_rest = net.lrp(prefix_words, target_out_class, eps, bias_factor)  # prefix -> w_indices
+                R_tot = Rx.sum() + Rx_rev.sum() + R_rest.sum()  # sum of all "input" relevances
 
-            """
-            print(R_tot)
-            print("Sanity check passed? ", np.allclose(R_tot, net.s[target_out_class]))
-            """
-        browser.display_html(prefix_heatmaps)
+                """
+                print(R_tot)
+                print("Sanity check passed? ", np.allclose(R_tot, net.s[target_out_class]))
+                """
+            browser.display_html(prefix_heatmaps)
 
 
 
