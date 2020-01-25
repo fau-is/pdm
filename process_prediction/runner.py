@@ -16,6 +16,10 @@ if __name__ == '__main__':
         preprocessor = Preprocessor(args)
         import process_prediction.outcome.predictor as test
 
+        # select a sequence
+        # preprocessor.get_random_process_instance()
+
+        # outcome prediction
         predicted_class, target_class, words, model, input_embedded = test.predict(args, preprocessor)
         print("Prediction: %s" % predicted_class)
         target_class = predicted_class
@@ -27,13 +31,9 @@ if __name__ == '__main__':
         # LRP hyperparameters:
         eps = 0.001  # small positive number
         bias_factor = 0.0  # recommended value
-
         net = LSTM_bidi(args, model, input_embedded)  # load trained LSTM model
-
-        # w_indices = [net.voc.index(p) for p in prefix]  # convert input sentence to word IDs
         Rx, Rx_rev, R_rest = net.lrp(words, target_class, eps, bias_factor)  # perform LRP
         R_words = np.sum(Rx + Rx_rev, axis=1)  # compute word-level LRP relevances
-
         scores = net.s.copy()  # classification prediction scores
 
         print("prediction scores:", scores)
@@ -42,7 +42,6 @@ if __name__ == '__main__':
         for idx, w in enumerate(words):
             print("\t\t\t" + "{:8.10f}".format(R_words[idx]) + "\t" + w)
         print("\nLRP heatmap:")
-
         browser.display_html(html_heatmap(words, R_words))
 
         # How to sanity check global relevance conservation:
@@ -52,6 +51,10 @@ if __name__ == '__main__':
 
         print(R_tot)
         print("Sanity check passed? ", np.allclose(R_tot, net.s[target_class]))
+
+
+
+
 
     # eval outcome prediction
     elif not args.explain and args.task == "outcome":
