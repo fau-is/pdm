@@ -14,27 +14,24 @@ def train(args, preprocessor):
 
     print('Create machine learning model ... \n')
 
-    # Vanialla LSTM
-    # Note, tax et al. did not set a activation function
-    # if no activation function set, than no activation function is applied (f(x)=x)
-    # relu activation leads to error if sequences getting longer
     if args.dnn_architecture == 0:
+        # input layer
         main_input = keras.layers.Input(shape=(max_length_process_instance, num_features), name='main_input')
-        l1 = keras.layers.recurrent.LSTM(128, implementation=2, activation="tanh", kernel_initializer='glorot_uniform',
-                                         return_sequences=False, dropout=0.2)(main_input)
-        b1 = keras.layers.normalization.BatchNormalization()(l1)
 
-    act_output = keras.layers.core.Dense(num_event_ids, activation='softmax', name='act_output',
-                                         kernel_initializer='glorot_uniform')(b1)
+        # hidden layer
+        b1 = keras.layers.Bidirectional(
+            keras.layers.recurrent.LSTM(100, use_bias=True, implementation=1, activation="tanh",
+                                        kernel_initializer='glorot_uniform', return_sequences=False, dropout=0.2))(
+            main_input)
+
+        # output layer
+        act_output = keras.layers.core.Dense(num_event_ids, activation='softmax', name='act_output',
+                                             kernel_initializer='glorot_uniform')(b1)
+
     model = keras.models.Model(inputs=[main_input], outputs=[act_output])
 
     optimizer = keras.optimizers.Nadam(lr=args.learning_rate, beta_1=0.9, beta_2=0.999, epsilon=1e-8,
                                        schedule_decay=0.004, clipvalue=3)
-    # opt = keras.optimizers.Adam(lr=args.learning_rate, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
-    # opt = keras.optimizers.SGD(lr=0.01, momentum=0.0, decay=0.0, nesterov=False)
-    # opt = keras.optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=1e-8, decay=0.004, clipvalue=3)
-    # opt = keras.optimizers.Adadelta(lr=1.0, rho=0.95, epsilon=None, decay=0.0)
-    # opt = keras.optimizers.Adagrad(lr=0.01, epsilon=None, decay=0.0)
 
     model.compile(loss={'act_output': 'categorical_crossentropy'}, optimizer=optimizer)
     early_stopping = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)

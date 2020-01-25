@@ -4,6 +4,7 @@ import numpy
 import copy
 import process_prediction.utils as utils
 from sklearn.model_selection import KFold, ShuffleSplit
+import gensim
 
 
 class Preprocessor(object):
@@ -23,7 +24,8 @@ class Preprocessor(object):
             'map_event_id_to_event_label': [],
             'map_event_type_to_event_id': [],
             'map_event_id_to_event_type': [],
-            'end_process_instance': '!'
+            'end_process_instance': '!',
+            'embedding_model': ""
         },
 
         'meta': {
@@ -58,25 +60,23 @@ class Preprocessor(object):
         utils.llprint("Initialization ... \n")
         self.data_structure['support']['num_folds'] = args.num_folds
         self.data_structure['support']['data_dir'] = args.data_dir + args.data_set
-
         self.get_sequences_from_eventlog()
-
         self.data_structure['support']['elements_per_fold'] = \
             int(round(
                 self.data_structure['meta']['num_process_instances'] / self.data_structure['support']['num_folds']))
+        self.data_structure['meta']['num_features'] = args.embedding_dim
 
-        self.data_structure['data']['process_instances'] = list(
-            map(lambda x: x + '!', self.data_structure['data']['process_instances']))
-        self.data_structure['meta']['max_length_process_instance'] = max(
-            map(lambda x: len(x), self.data_structure['data']['process_instances']))
+        # add end marker of process instance
+        self.data_structure['data']['process_instances'] = list(map(lambda x: x + ['!'], self.data_structure['data']['process_instances']))
+        self.data_structure['meta']['max_length_process_instance'] = max(map(lambda x: len(x), self.data_structure['data']['process_instances']))
 
+        # structures for predicting next activities
         self.data_structure['support']['event_labels'] = list(
             map(lambda x: set(x), self.data_structure['data']['process_instances']))
         self.data_structure['support']['event_labels'] = list(
             set().union(*self.data_structure['support']['event_labels']))
         self.data_structure['support']['event_labels'].sort()
         self.data_structure['support']['event_types'] = copy.copy(self.data_structure['support']['event_labels'])
-
         self.data_structure['support']['map_event_label_to_event_id'] = dict(
             (c, i) for i, c in enumerate(self.data_structure['support']['event_labels']))
         self.data_structure['support']['map_event_id_to_event_label'] = dict(
@@ -85,10 +85,12 @@ class Preprocessor(object):
             (c, i) for i, c in enumerate(self.data_structure['support']['event_types']))
         self.data_structure['support']['map_event_id_to_event_type'] = dict(
             (i, c) for i, c in enumerate(self.data_structure['support']['event_types']))
-
         self.data_structure['meta']['num_event_ids'] = len(self.data_structure['support']['event_labels'])
-        self.data_structure['meta']['num_features'] = self.data_structure['meta']['num_event_ids'] +\
-                                                      self.data_structure['meta']['num_attributes_context']
+
+
+        # todo: create embedding model
+        utils.llprint("Create embedding model ... \n")
+        self.data_structure['support']['embedding_model'] = self.create_embedding_model(args)
 
         if args.cross_validation:
             self.set_indices_k_fold_validation()
@@ -98,21 +100,19 @@ class Preprocessor(object):
     def get_sequences_from_eventlog(self):
 
         id_latest_process_instance = ''
-        process_instance = ''
+        process_instance = []
         first_event_of_process_instance = True
-        context_attributes_process_instance = []
         output = True
 
-        eventlog_csvfile = open(self.data_structure['support']['data_dir'], 'r')
-        eventlog_reader = csv.reader(eventlog_csvfile, delimiter=';', quotechar='|')
-        next(eventlog_reader, None)
+        file = open(self.data_structure['support']['data_dir'], 'r')
+        reader = csv.reader(file, delimiter=';', quotechar='|')
+        next(reader, None)
 
-        for event in eventlog_reader:
+        for event in reader:
 
             id_current_process_instance = event[0]
 
             if output:
-                self.check_for_context_attributes(event)
                 output = False
 
             if id_current_process_instance != id_latest_process_instance:
@@ -122,30 +122,52 @@ class Preprocessor(object):
                 if not first_event_of_process_instance:
                     self.add_data_to_data_structure(process_instance, 'process_instances')
 
-                    if self.data_structure['meta']['num_attributes_context'] > 0:
-                        self.add_data_to_data_structure(context_attributes_process_instance,
-                                                        'context_attributes_process_instances')
-
-                process_instance = ''
-
-                if self.data_structure['meta']['num_attributes_context'] > 0:
-                    context_attributes_process_instance = []
+                process_instance = []
 
                 self.data_structure['meta']['num_process_instances'] += 1
 
-            if self.data_structure['meta']['num_attributes_context'] > 0:
-                context_attributes_event = self.get_context_attributes_of_event(event)
-                context_attributes_process_instance.append(context_attributes_event)
-
-            process_instance = self.add_event_to_process_instance(event, process_instance)
+            process_instance.append(event[1])
             first_event_of_process_instance = False
+
+        file.close()
 
         self.add_data_to_data_structure(process_instance, 'process_instances')
 
-        if self.data_structure['meta']['num_attributes_context'] > 0:
-            self.add_data_to_data_structure(context_attributes_process_instance, 'context_attributes_process_instances')
-
         self.data_structure['meta']['num_process_instances'] += 1
+
+
+    def create_embedding_model(self, args):
+        file = open(self.data_structure['support']['data_dir'], 'r')
+        reader = csv.reader(file, delimiter=';', quotechar='|')
+        next(reader, None)
+        data_set = list()
+        embedding_dim = args.embedding_dim
+        epochs = args.embedding_epochs
+
+        # create data set
+        for row in reader:
+            data_set.append([row[1]])
+
+        file.close()
+
+        # train model
+        # note each word is handled as a sentence
+        model = gensim.models.Word2Vec(data_set, size=embedding_dim, window=3, min_count=1)
+
+        for epoch in range(epochs):
+            if epoch % 2 == 0:
+                print('Now training epoch %s' % epoch)
+            model.train(data_set, total_examples=len(data_set), epochs=epochs)
+            model.alpha -= 0.002  # decrease learning rate
+            model.min_alpha = model.alpha  # fix the learning rate, no decay
+
+        # save
+        model.save('./%s%sembeddings.model' % (args.task, args.model_dir[1:]), sep_limit=2000000000)
+
+        # print(model.wv.most_similar(positive="Take"))
+        # print(0)
+
+        return model
 
     def set_training_set(self):
 
@@ -161,7 +183,6 @@ class Preprocessor(object):
 
         utils.llprint("Create training set data as tensor ... \n")
         features_data = self.get_data_tensor(cropped_process_instances,
-                                             cropped_context_attributes,
                                              'train')
 
         utils.llprint("Create training set label as tensor ... \n")
@@ -184,6 +205,7 @@ class Preprocessor(object):
 
         return event_type
 
+    """
     def check_for_context_attributes(self, event):
         if len(event) == self.data_structure['meta']['num_attributes_control_flow']:
             utils.llprint("No context attributes found ...\n")
@@ -191,6 +213,7 @@ class Preprocessor(object):
             self.data_structure['meta']['num_attributes_context'] = len(event) - self.data_structure['meta'][
                 'num_attributes_control_flow']
             utils.llprint("%d context attribute(s) found ...\n" % self.data_structure['meta']['num_attributes_context'])
+    """
 
     def add_data_to_data_structure(self, values, structure):
         self.data_structure['data'][structure].append(values)
@@ -298,21 +321,17 @@ class Preprocessor(object):
     Crops prefixes out of a single process instance.
     '''
 
-    def get_cropped_instance(self, prefix_size, index, process_instance):
+    def get_cropped_instance(self, prefix_size, process_instance):
 
-        cropped_process_instance = ''.join(process_instance[:prefix_size])
-        if self.data_structure['meta']['num_attributes_context'] > 0:
-            cropped_context_attributes = self.data_structure['data']['test']['context_attributes'][index][:prefix_size]
-        else:
-            cropped_context_attributes = []
+        cropped_process_instance = process_instance[:prefix_size]
 
-        return cropped_process_instance, cropped_context_attributes
+        return cropped_process_instance
 
     '''
     Produces a vector-oriented representation of data as 3-dimensional tensor.
     '''
 
-    def get_data_tensor(self, cropped_process_instances, cropped_context_attributes_process_instance, mode):
+    def get_data_tensor(self, cropped_process_instances, mode):
 
         if mode == 'train':
             data_set = numpy.zeros((
@@ -325,48 +344,23 @@ class Preprocessor(object):
                 self.data_structure['meta']['max_length_process_instance'],
                 self.data_structure['meta']['num_features']), dtype=numpy.float32)
 
-        # ToDo: do not create a single tensor based on all sequences
+
+        model = self.data_structure["support"]["embedding_model"]
         for index, cropped_process_instance in enumerate(cropped_process_instances):
+            for index_, activity in enumerate(cropped_process_instance):
 
-            leftpad = self.data_structure['meta']['max_length_process_instance'] - len(cropped_process_instance)
+                # apply embeddings
+                # print(model.wv.vocab)
 
-            if self.data_structure['meta']['num_attributes_context'] > 0:
-                cropped_context_attributes = cropped_context_attributes_process_instance[index]
-
-            # ToDo: remove one-hot encoding
-            for t, event in enumerate(cropped_process_instance):
-                for event_label in self.data_structure['support']['event_labels']:
-                    if event_label == event:
-                        data_set[index, t + leftpad, self.data_structure['support']['map_event_label_to_event_id'][
-                            event_label]] = 1.0
-
-                if self.data_structure['meta']['num_attributes_context'] > 0:
-                    for x in range(0, self.data_structure['meta']['num_attributes_context']):
-                        data_set[index, t + leftpad, len(self.data_structure['support']['event_labels']) + x] = \
-                            cropped_context_attributes[t][x]
+                data_set[index, index_, :] = model.wv[activity]
 
         return data_set
 
-    def get_data_tensor_for_single_prediction(self, args, cropped_process_instance, cropped_context_attributes):
+    def get_data_tensor_for_single_prediction(self, cropped_process_instance):
 
         data_set = self.get_data_tensor(
             [cropped_process_instance],
-            [cropped_context_attributes],
             'test')
-
-        # Change structure if CNN LSTM
-        if args.dnn_architecture == 3:
-            data_set = data_set.reshape((
-                data_set.shape[0], 1,
-                self.data_structure['meta']['max_length_process_instance'],
-                self.data_structure['meta']['num_features']))
-
-        # Change structure if ConvLSTM
-        if args.dnn_architecture == 4:
-            data_set = data_set.reshape((
-                1, 1, 1,
-                self.data_structure['meta']['max_length_process_instance'],
-                self.data_structure['meta']['num_features']))
 
         return data_set
 

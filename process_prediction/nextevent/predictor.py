@@ -28,19 +28,16 @@ def test(args, preprocessor):
         result_writer.writerow(
             ["CaseID", "Prefix length", "Groud truth", "Predicted", "Levenshtein", "Damerau", "Jaccard"])
 
-        # for each prefix_size
+        # for prefix_size >= 2
         for prefix_size in range(2, preprocessor.data_structure['meta']['max_length_process_instance']):
             utils.llprint("Prefix size: %d\n" % prefix_size)
 
-            index = 0
             for process_instance, event_id in zip(preprocessor.data_structure['data']['test']['process_instances'],
                                                   preprocessor.data_structure['data']['test']['event_ids']):
 
-                cropped_process_instance, cropped_context_attributes = preprocessor.get_cropped_instance(
+                cropped_process_instance = preprocessor.get_cropped_instance(
                     prefix_size,
-                    index,
                     process_instance)
-                index = index + 1
 
                 # make no prediction for this case, since this case has ended already
                 if preprocessor.data_structure['support']['end_process_instance'] in cropped_process_instance:
@@ -49,16 +46,13 @@ def test(args, preprocessor):
                 ground_truth = ''.join(process_instance[prefix_size:prefix_size + prediction_size])
                 prediction = ''
 
-                # predict only next activity (i = 1)
+                # predict only next activity
                 for i in range(prediction_size):
 
                     if len(ground_truth) <= i:
                         continue
 
-                    test_data = preprocessor.get_data_tensor_for_single_prediction(
-                        args,
-                        cropped_process_instance,
-                        cropped_context_attributes)
+                    test_data = preprocessor.get_data_tensor_for_single_prediction(cropped_process_instance)
 
                     y = model.predict(test_data)
                     y_char = y[0][:]
