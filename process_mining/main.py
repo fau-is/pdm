@@ -70,7 +70,8 @@ def main():
             perform_conformance_checking(trace, ca)
     # output
     create_conformance_output(ca, event_log)
-    eventlog_parser.write_csv_file_to_disk(event_log, output_csv)
+    eventlog_parser.write_csv_file_to_disk(event_log, output_pcm)
+    eventlog_parser.write_csv_nep_file_to_disk(event_log, output_nep)
 
 
 def create_conformance_output(ca, event_log):
@@ -133,7 +134,8 @@ if __name__ == '__main__':
     args = cmd_parser.parse_args()
     data_path = args.eventLog
     xml_path = args.XmlDcr
-    output_csv = args.outputPath
+    output_pcm = args.outputPathPCM
+    output_nep = args.outputPathNEP
     use_celonis = False
     parallel = True
     dcr_graph = None

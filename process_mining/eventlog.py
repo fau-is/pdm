@@ -9,19 +9,13 @@ class Violations(enum.Enum):
     """
     This class reflects the three classes of violations
     0. Everything is perfectly fine!
-    1. Event $e_i \in \sigma_{j}$ even though the state of the process
-        prohibits its execution.
-    2. Event $e_i \in \sigma_{j}$ should not occur since it is constrained by another event
-        $e_{n} \in \mathcal{E}_M$.
-    3. Event $e_i \not\in \sigma_j$ even though it should be
-        at the end of the process's execution.
-    4. Combines the types 1 & 2
+    1. Inserted Event
+    2. Missing event
     """
     Type0 = 0
     Type1 = 1
     Type2 = 2
-    Type3 = 3
-    Type4 = 4
+
 
 
 class EventLog(object):
@@ -111,10 +105,6 @@ class Event(object):
         self.__violation = Violations.Type0
 
     def change_conf(self, violation):
-        if (violation == Violations.Type1 and self.__violation == Violations.Type2) \
-                or (violation == Violations.Type2 and self.__violation == Violations.Type1):
-            self.__violation = Violations.Type4
-        elif violation is not violation.Type3:
             self.__violation = violation
 
     def get_violation(self):
@@ -131,7 +121,7 @@ class Event(object):
         """
         event = Event("End", "", time_stamp)
         if pviolation:
-            event.__violation = Violations.Type3
+            event.__violation = Violations.Type2
         return event
 
 

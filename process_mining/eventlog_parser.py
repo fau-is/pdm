@@ -31,6 +31,27 @@ def write_csv_file_to_disk(eventlog: EventLog, output_path):
                 writer.writerow(event_dict)
 
 
+def write_csv_nep_file_to_disk(eventlog: EventLog, output_path):
+    """
+    Gets the EventLog class and writes it into a CSV file
+    :param eventlog: Eventlog data structure to be exported
+    :return: None
+    """
+    file = open(output_path, 'w', newline='')
+    labels = ["case", "event", "timestamp"]
+    writer = csv.DictWriter(file, labels)
+    writer.writeheader()
+
+    for trace in eventlog.Traces:
+        if len(trace.Events) <= 2:
+            continue
+        trace_iter = iter(trace.Events)
+        for event in trace_iter:
+            if event.EventName is not "End":
+                event_dict = {"case": trace.TraceId, "event": event.EventName, "timestamp": event.Timestamp}
+                writer.writerow(event_dict)
+
+
 def get_event_log(file_path: str = None, use_celonis=False):
     """
     Gets the event log data structure from the event log file.

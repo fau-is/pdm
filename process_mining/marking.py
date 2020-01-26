@@ -2,7 +2,7 @@
 """
 The module implements the Marking of a DCR Graph
 """
-import process_mining.conn
+import process_mining.conn as conn
 from process_mining.activity import DCRActivityBase
 from process_mining.graph import DCRGraph
 from process_mining.eventlog import Violations
@@ -70,7 +70,7 @@ class Marking(object):
 
         if self.node_is_blocked(node, trace_data, event):
             trace_data.add_violating_activity(node.ActivityName)
-            event.change_conf(Violations.Type2)
+            event.change_conf(Violations.Type1)
 
         if node.NestingActivity is not None:
             if self.node_is_blocked(node.NestingActivity, trace_data, event):
