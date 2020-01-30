@@ -8,13 +8,11 @@ def load():
 
     # mode
     parser.add_argument('--explain', default=True, type=utils.str2bool)
+    parser.add_argument('--task', default="outcome")  # outcome; nextevent
 
     # dnn
     parser.add_argument('--dnn_num_epochs', default=1, type=int)
     parser.add_argument('--dnn_architecture', default=0, type=int)
-
-    # all models
-    parser.add_argument('--task', default="outcome")
     parser.add_argument('--learning_rate', default=0.002, type=float)  # dnc 0.0001 #lstm 0.002
 
     # representation
@@ -31,7 +29,7 @@ def load():
     # data
     parser.add_argument('--data_set', default="helpdesk.csv")
     parser.add_argument('--data_dir', default="./data/")
-    parser.add_argument('--checkpoint_dir', default="./checkpoints/")
+    parser.add_argument('--model_dir', default="./models/")
     parser.add_argument('--result_dir', default="./results/")
 
     # gpu processing
