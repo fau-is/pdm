@@ -299,7 +299,7 @@ class Preprocessor(object):
         """
 
         cropped_process_instance = process_instance[:prefix_size]
-        cropped_process_instance_label = process_instance_labels[:prefix_size][-1]  # -1 outcome of last act in instance
+        cropped_process_instance_label = process_instance_labels[prefix_size]  # -1 outcome of last act in instance
 
         return cropped_process_instance, cropped_process_instance_label
 

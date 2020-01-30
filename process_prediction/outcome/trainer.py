@@ -1,9 +1,16 @@
 from __future__ import print_function, division
 import keras
 from datetime import datetime
+import tensorflow as tf
 
 
 def train(args, preprocessor):
+
+    config = tf.ConfigProto(allow_soft_placement=True)
+    config.gpu_options.allow_growth = True
+    config.gpu_options.per_process_gpu_memory_fraction = 0.3
+    keras.backend.tensorflow_backend.set_session(tf.Session(config=config))
+
     preprocessor.set_training_set()
 
     features_data = preprocessor.data_structure['data']['train']['features_data']
