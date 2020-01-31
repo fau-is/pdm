@@ -17,7 +17,7 @@ def load():
 
     # representation
     parser.add_argument('--embedding_dim', default=60, type=int)
-    parser.add_argument('--embedding_epochs', default=1, type=int)
+    parser.add_argument('--embedding_epochs', default=10, type=int)
 
     # evaluation
     parser.add_argument('--num_folds', default=10, type=int)  # 10
@@ -33,8 +33,8 @@ def load():
     parser.add_argument('--result_dir', default="./results/")
 
     # gpu processing
-    parser.add_argument('--gpu_ratio', default=1.0, type=float)
-    parser.add_argument('--cpu_num', default=6, type=int)
+    parser.add_argument('--gpu_ratio', default=0.2, type=float)
+    parser.add_argument('--cpu_num', default=1, type=int)
     parser.add_argument('--gpu_device', default="0", type=str)
 
     args = parser.parse_args()

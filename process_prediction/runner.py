@@ -38,11 +38,14 @@ if __name__ == '__main__':
 
             for prefix_index in range(2, len(process_instance)):
 
+
+                # next activity prediction
+                predicted_act_class, target_act_class, _, _, _ = act_test.predict_prefix(args, act_preprocessor,
+                                                                                         process_instance, prefix_index)
+
                 # outcome prediction
                 predicted_out_class, target_out_class, prefix_words, out_model, out_input_embedded = out_test.predict_prefix(args, out_preprocessor, process_instance, out_labels, prefix_index)
-                # next activity prediction
 
-                predicted_act_class, target_act_class, _, _, _ = act_test.predict_prefix(args, act_preprocessor, process_instance, prefix_index)
 
                 print("Prefix: %s; Outcome prediction: %s; Outcome target: %s" % (prefix_index, predicted_out_class, target_out_class))
                 print("Prefix: %s; Next act prediction: %s; Next act target: %s" % (prefix_index, predicted_act_class, target_act_class))
