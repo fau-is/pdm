@@ -8,7 +8,7 @@ def train(args, preprocessor):
 
     config = tf.ConfigProto(allow_soft_placement=True)
     config.gpu_options.allow_growth = True
-    config.gpu_options.per_process_gpu_memory_fraction = 0.3
+    config.gpu_options.per_process_gpu_memory_fraction = 0.2
     keras.backend.tensorflow_backend.set_session(tf.Session(config=config))
 
     preprocessor.set_training_set()

@@ -7,7 +7,7 @@ def load():
     parser = argparse.ArgumentParser()
 
     # mode
-    parser.add_argument('--explain', default=True, type=utils.str2bool)
+    parser.add_argument('--explain', default=False, type=utils.str2bool)
     parser.add_argument('--task', default="outcome")  # outcome; nextevent
 
     # dnn
@@ -20,14 +20,14 @@ def load():
     parser.add_argument('--embedding_epochs', default=10, type=int)
 
     # evaluation
-    parser.add_argument('--num_folds', default=10, type=int)  # 10
+    parser.add_argument('--num_folds', default=3, type=int)  # 10
     parser.add_argument('--cross_validation', default=True, type=utils.str2bool)
     parser.add_argument('--split_rate_test', default=0.5, type=float)  # only if cross validation is deactivated
     parser.add_argument('--batch_size_train', default=128, type=int)
     parser.add_argument('--batch_size_test', default=1, type=int)
 
     # data
-    parser.add_argument('--data_set', default="train_hb_pcm.csv")
+    parser.add_argument('--data_set', default="train_hb_pcm_ci_2.csv")
     parser.add_argument('--data_dir', default="./data/")
     parser.add_argument('--model_dir', default="./models/")
     parser.add_argument('--result_dir', default="./results/")
