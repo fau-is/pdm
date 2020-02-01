@@ -12,7 +12,7 @@ def load():
 
     # dnn
     parser.add_argument('--dnn_num_epochs', default=100, type=int)
-    parser.add_argument('--dnn_architecture', default=0, type=int)
+    parser.add_argument('--dnn_architecture', default=1, type=int)
     parser.add_argument('--learning_rate', default=0.002, type=float)  # dnc 0.0001 #lstm 0.002
 
     # representation
@@ -23,11 +23,11 @@ def load():
     parser.add_argument('--num_folds', default=3, type=int)  # 10
     parser.add_argument('--cross_validation', default=True, type=utils.str2bool)
     parser.add_argument('--split_rate_test', default=0.5, type=float)  # only if cross validation is deactivated
-    parser.add_argument('--batch_size_train', default=128, type=int)
+    parser.add_argument('--batch_size_train', default=512, type=int)
     parser.add_argument('--batch_size_test', default=1, type=int)
 
     # data
-    parser.add_argument('--data_set', default="train_hb_pcm_2_sample.csv")
+    parser.add_argument('--data_set', default="train_hb_pcm_2_test_sample.csv")
     parser.add_argument('--data_dir', default="./data/")
     parser.add_argument('--model_dir', default="./models/")
     parser.add_argument('--result_dir', default="./results/")
