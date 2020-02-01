@@ -189,14 +189,6 @@ class Preprocessor(object):
         process_instances_train, labels_train, _ = \
             self.get_instances_of_fold('train')
 
-        """
-        utils.llprint("Create cropped training instances ... \n")
-        cropped_process_instances, cropped_labels = \
-            self.get_cropped_instances(
-                process_instances_train,
-                labels_train)
-        """
-
         utils.llprint("Create training set data as tensor ... \n")
         features_data = self.get_data_tensor(process_instances_train, 'train')
 
@@ -345,7 +337,7 @@ class Preprocessor(object):
         return data_set
 
 
-    def get_label_tensor(self, process_instances, labels):
+    def get_label_tensor(self, process_instances, labels_):
         """
         Produces a vector-oriented representation of label as 2-dimensional tensor.
         """
@@ -360,7 +352,7 @@ class Preprocessor(object):
             # one hot encoding
             for val_class in self.data_structure['meta']['val_classes']:
 
-                if val_class == labels[index]:
+                if val_class == labels_[index]:
                     labels[index, self.data_structure['meta']['map_class_val_id'][val_class]] = 1
                 else:
                     labels[index, self.data_structure['meta']['map_class_val_id'][val_class]] = 0
