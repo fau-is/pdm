@@ -27,7 +27,7 @@ def train(args, preprocessor):
 
         # hidden layer
         b1 = keras.layers.Bidirectional(
-            keras.layers.recurrent.LSTM(100, use_bias=True, implementation=1, # activation="tanh",
+            keras.layers.recurrent.LSTM(100, use_bias=True, implementation=1, activation="tanh",
                                         kernel_initializer='glorot_uniform', return_sequences=False, dropout=0.2))(
             main_input)
 
