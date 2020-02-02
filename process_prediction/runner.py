@@ -97,7 +97,6 @@ if __name__ == '__main__':
         Case 2: a process instance is not conform -> indicator 1 = 1 at time step k; indicator 2 = 0 at last time step;
         Case 3: a process instance is not conform -> indicator 1 = 0 for each time step; indicator 2 = 1 at last time step;
         Case 4 a process instance is not conform -> indicator 1 = 1 at time step k; indicator 2 = 1 at last time step;
-        -> next possible activities for case 2 and 4
         """
 
         # Load models of first fold
