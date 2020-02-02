@@ -108,7 +108,7 @@ if __name__ == '__main__':
         process_instances, labels = out_preprocessor.get_process_instance()  # get process instance
 
         # Case 1 ########################################################################################
-        print("Case 1: process is conformant (1=False; 2=False)")
+        print("Case 1: process is conform (1=False; 2=False)")
         select_index = 0
         select = False
 
@@ -143,7 +143,7 @@ if __name__ == '__main__':
 
 
         # Case 2 ########################################################################################
-        print("Case 2: process is not conformant (1=True; 2=False)")
+        print("Case 2: process is not conform (1=True; 2=False)")
         select_index = 0
         select = False
 
@@ -177,7 +177,7 @@ if __name__ == '__main__':
 
 
         # Case 3 ########################################################################################
-        print("Case 3: process is not conformant (1=False; 2=True)")
+        print("Case 3: process is not conform (1=False; 2=True)")
         select_index = 0
         select = False
 
@@ -212,7 +212,7 @@ if __name__ == '__main__':
             print("Case 3: process instance not found")
 
         # Case 4 ########################################################################################
-        print("Case 4: process is not conformant (1=True; 2=True)")
+        print("Case 4: process is not conform (1=True; 2=True)")
         select_index = 0
         select = False
 
