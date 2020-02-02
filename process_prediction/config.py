@@ -7,7 +7,7 @@ def load():
     parser = argparse.ArgumentParser()
 
     # mode
-    parser.add_argument('--explain', default=False, type=utils.str2bool)
+    parser.add_argument('--explain', default=True, type=utils.str2bool)
     parser.add_argument('--task', default="outcome2")  # outcome; outcome2; nextevent
 
     # dnn
@@ -23,11 +23,16 @@ def load():
     parser.add_argument('--num_folds', default=3, type=int)  # 10
     parser.add_argument('--cross_validation', default=True, type=utils.str2bool)
     parser.add_argument('--split_rate_test', default=0.5, type=float)  # only if cross validation is deactivated
-    parser.add_argument('--batch_size_train', default=512, type=int)
+    parser.add_argument('--batch_size_train', default=128, type=int)
     parser.add_argument('--batch_size_test', default=1, type=int)
 
     # data
-    parser.add_argument('--data_set', default="train_hb_pcm_1.csv")
+    parser.add_argument('--data_set', default="train_hb_pcm_sample.csv")
+    # explain -> train_hb_pcm
+    # outcome -> train_hb_pc_1
+    # outcome -> train_hb_pc_2
+    # nextevent -> all
+
     parser.add_argument('--data_dir', default="./data/")
     parser.add_argument('--model_dir', default="./models/")
     parser.add_argument('--result_dir', default="./results/")
