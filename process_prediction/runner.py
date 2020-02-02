@@ -14,10 +14,11 @@ if __name__ == '__main__':
     if args.explain:
         from process_prediction.outcome.preprocessor import Preprocessor as Out_Preprocessor
         from process_prediction.nextevent.preprocessor import Preprocessor as Act_Preprocessor
-        out_preprocessor = Out_Preprocessor(args)
-        act_preprocessor = Act_Preprocessor(args)
         import process_prediction.outcome.predictor as out_test
         import process_prediction.nextevent.predictor as act_test
+
+        out_preprocessor = Out_Preprocessor(args)
+        act_preprocessor = Act_Preprocessor(args)
 
         # todo: select a process instance with each rule!
         # 1. case: only 0s; 2. case at least a label with value 0
@@ -92,9 +93,10 @@ if __name__ == '__main__':
     elif not args.explain and args.task == "outcome":
 
         from process_prediction.outcome.preprocessor import Preprocessor
-        preprocessor = Preprocessor(args)
         import process_prediction.outcome.predictor as out_test
         import process_prediction.outcome.trainer as train
+
+        preprocessor = Preprocessor(args)
 
         if args.cross_validation:
 
@@ -125,10 +127,10 @@ if __name__ == '__main__':
     elif not args.explain and args.task == "outcome2":
 
         from process_prediction.outcome2.preprocessor import Preprocessor
-
-        preprocessor = Preprocessor(args)
         import process_prediction.outcome2.predictor as out_test
         import process_prediction.outcome2.trainer as train
+
+        preprocessor = Preprocessor(args)
 
         if args.cross_validation:
 

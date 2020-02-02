@@ -37,6 +37,7 @@ def train(args, preprocessor):
 
         optimizer = keras.optimizers.Nadam(lr=args.learning_rate, beta_1=0.9, beta_2=0.999, epsilon=1e-8,
                                        schedule_decay=0.004, clipvalue=3)
+
     elif args.dnn_architecture == 1:
         # input layer
         main_input = keras.layers.Input(shape=(max_length_process_instance, num_features), name='main_input')
@@ -66,7 +67,7 @@ def train(args, preprocessor):
         out_output = keras.layers.core.Dense(num_classes, activation='softmax', name='out_output',
                                              kernel_initializer='glorot_uniform')(hidden_layer_4)
 
-        optimizer = keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999)
+        optimizer = keras.optimizers.Nadam(lr=0.001, beta_1=0.9, beta_2=0.999)
 
 
     model = keras.models.Model(inputs=[main_input], outputs=[out_output])

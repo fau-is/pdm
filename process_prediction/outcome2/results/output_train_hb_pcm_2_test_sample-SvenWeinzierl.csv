@@ -1,2 +1,0 @@
-experiment;mode;validation;accuracy;precision;recall;f1-score;auc-prc;training-time;time-stamp
-train_hb_pcm_2_test_sample-1;fold0;cross-validation;0.5100037750094375;0.5492958794686631;0.5100037750094375;0.4244207547011182;0.5231047751997239;19.303477;2020-02-01T15:40:35.585196+01:00

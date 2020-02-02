@@ -11,8 +11,8 @@ def load():
     parser.add_argument('--task', default="outcome2")  # outcome; outcome2; nextevent
 
     # dnn
-    parser.add_argument('--dnn_num_epochs', default=100, type=int)
-    parser.add_argument('--dnn_architecture', default=1, type=int)
+    parser.add_argument('--dnn_num_epochs', default=1, type=int)
+    parser.add_argument('--dnn_architecture', default=0, type=int)
     parser.add_argument('--learning_rate', default=0.002, type=float)  # dnc 0.0001 #lstm 0.002
 
     # representation
@@ -27,7 +27,7 @@ def load():
     parser.add_argument('--batch_size_test', default=1, type=int)
 
     # data
-    parser.add_argument('--data_set', default="train_hb_pcm_2_test_sample.csv")
+    parser.add_argument('--data_set', default="train_hb_pcm_1.csv")
     parser.add_argument('--data_dir', default="./data/")
     parser.add_argument('--model_dir', default="./models/")
     parser.add_argument('--result_dir', default="./results/")
