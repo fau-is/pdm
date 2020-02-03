@@ -10,14 +10,22 @@ import process_prediction.utils as utils
 
 def predict_prefix(preprocessor, process_instance, labels, model):
 
-
+    # process_instance = ['NEW', 'RELEASE', 'DELETE']
     ground_truth = labels[-1]
     test_data = preprocessor.get_data_tensor_for_single_prediction(process_instance)
 
     y = model.predict(test_data)
     y = y[0][:]
 
-    prediction = preprocessor.get_class_val(y)
+    y = y.tolist()
+    # print(y)
+    prediction = str(y.index(max(y)))
+    if prediction == '1':
+        prediction = '0'
+    else:
+        prediction = '2'
+
+
     test_data_reshaped = test_data.reshape(-1, test_data.shape[2])
 
     return prediction, ground_truth, process_instance, model, test_data_reshaped

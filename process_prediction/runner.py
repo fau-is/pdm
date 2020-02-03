@@ -102,7 +102,7 @@ if __name__ == '__main__':
         # Load models of first fold
         act_model = load_model('%s%smodel_%s.h5' % ("nextevent", args.model_dir[1:], 0))
         out_model = load_model('%s%smodel_%s.h5' % ("outcome", args.model_dir[1:], 0))
-        out2_model = load_model('%s%smodel_%s.h5' % ("outcome2", args.model_dir[1:], 0))
+        out2_model = load_model('%s%smodel_%s.h5' % ("outcome2", args.model_dir[1:], 1))
 
         process_instances, labels = out_preprocessor.get_process_instance()  # get process instance
 

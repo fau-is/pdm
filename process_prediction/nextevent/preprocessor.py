@@ -92,7 +92,7 @@ class Preprocessor(object):
             self.data_structure['support']['embedding_model'] = self.create_embedding_model(args)
         else:
             utils.llprint("Load embedding model ... \n")
-            self.data_structure['support']['embedding_model'] = gensim.models.Word2Vec.load('%s%sembeddings.model' % (args.task, args.model_dir[1:]))
+            self.data_structure['support']['embedding_model'] = gensim.models.Word2Vec.load('%s%sembeddings.model' % ("nextevent", args.model_dir[1:]))
 
         if args.cross_validation:
             self.set_indices_k_fold_validation()
