@@ -7,7 +7,7 @@ def load():
     parser = argparse.ArgumentParser()
 
     # mode
-    parser.add_argument('--explain', default=True, type=utils.str2bool)
+    parser.add_argument('--explain', default=False, type=utils.str2bool)
     parser.add_argument('--task', default="outcome")  # outcome; outcome2; nextevent
 
     # dnn
@@ -16,7 +16,7 @@ def load():
     parser.add_argument('--learning_rate', default=0.002, type=float)  # dnc 0.0001 #lstm 0.002
 
     # representation
-    parser.add_argument('--embedding_dim', default=60, type=int)
+    parser.add_argument('--embedding_dim', default=32, type=int)
     parser.add_argument('--embedding_epochs', default=10, type=int)
 
     # evaluation
@@ -27,7 +27,7 @@ def load():
     parser.add_argument('--batch_size_test', default=1, type=int)
 
     # data
-    parser.add_argument('--data_set', default="train_hb_pcm_.csv")
+    parser.add_argument('--data_set', default="train_bpia_pcm_1.csv")
     # explain -> train_hb_pcm
     # outcome -> train_hb_pc_1
     # outcome -> train_hb_pc_2
