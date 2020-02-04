@@ -85,7 +85,8 @@ class EventLog(object):
                 event_tmp = Event(event_name, event_role, event_timestamp, attributes)
                 trace_tmp.append_event(event_tmp)
             # append the event to the trace
-            event_log.append_trace(trace_tmp)
+            if len(trace_tmp.Events) > 0:
+                event_log.append_trace(trace_tmp)
         return event_log
 
 
