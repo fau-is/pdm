@@ -314,7 +314,6 @@ class Preprocessor(object):
                     if i == 0:
                         continue
                     cropped_process_instances.append(process_instance[0:i])
-                    # label
                     next_events.append(process_instance[i])
 
         return cropped_process_instances, cropped_context_attributes, next_events

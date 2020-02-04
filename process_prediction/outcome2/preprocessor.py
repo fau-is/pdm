@@ -124,7 +124,7 @@ class Preprocessor(object):
 
         # train model
         # note each word is handled as a sentence
-        model = gensim.models.Word2Vec(data_set, size=embedding_dim, window=3, min_count=1)
+        model = gensim.models.Word2Vec(data_set, alpha=0.025, size=embedding_dim, window=5, min_count=1)
 
         for epoch in range(epochs):
             if epoch % 2 == 0:
@@ -266,38 +266,6 @@ class Preprocessor(object):
 
         return process_instances_of_fold, labels_of_fold, process_instances_ids_of_fold
 
-
-    def get_cropped_instances(self, process_instances, labels):
-        """
-        Crops prefixes out of instances.
-        """
-
-        cropped_process_instances = []
-        cropped_labels = []
-
-        for process_instance, labels_ in zip(process_instances, labels):
-            for i in range(0, len(process_instance)):
-
-                if i == 0:
-                    continue
-
-                # 0:i -> get 0 up to n-1 events of a process instance, since n is the label
-                cropped_process_instances.append(process_instance[0:i])
-                # label for cropped process instance
-                cropped_labels.append(labels_[0:i][-1])
-
-        return cropped_process_instances, cropped_labels
-
-
-    def get_cropped_instance(self, prefix_size, process_instance, process_instance_labels):
-        """
-        Crops prefixes out of a single process instance.
-        """
-
-        cropped_process_instance = process_instance[:prefix_size]
-        cropped_process_instance_label = process_instance_labels[prefix_size]  # -1 outcome of last act in instance
-
-        return cropped_process_instance, cropped_process_instance_label
 
 
     def get_data_tensor(self, process_instances, mode):

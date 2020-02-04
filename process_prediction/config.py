@@ -8,7 +8,7 @@ def load():
 
     # mode
     parser.add_argument('--explain', default=False, type=utils.str2bool)
-    parser.add_argument('--task', default="outcome")  # outcome; outcome2; nextevent
+    parser.add_argument('--task', default="nextevent")  # outcome; outcome2; nextevent
 
     # dnn
     parser.add_argument('--dnn_num_epochs', default=100, type=int)
@@ -27,7 +27,7 @@ def load():
     parser.add_argument('--batch_size_test', default=1, type=int)
 
     # data
-    parser.add_argument('--data_set', default="train_bpia_pcm_1.csv")
+    parser.add_argument('--data_set', default="train_bpia_pcm_1_sample.csv")
     # explain -> train_hb_pcm
     # outcome -> train_hb_pc_1
     # outcome -> train_hb_pc_2
