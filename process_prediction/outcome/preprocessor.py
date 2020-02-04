@@ -82,7 +82,7 @@ class Preprocessor(object):
             self.data_structure['support']['embedding_model'] = self.create_embedding_model(args)
         else:
             utils.llprint("Load embedding model ... \n")
-            self.data_structure['support']['embedding_model'] = gensim.models.Word2Vec.load('%s%sembeddings.model' % (args.task, args.model_dir[1:]))
+            self.data_structure['support']['embedding_model'] = gensim.models.Word2Vec.load('%s%sembeddings.model' % ("outcome", args.model_dir[1:]))
 
         if args.cross_validation:
             self.set_indices_k_fold_validation()
@@ -299,7 +299,7 @@ class Preprocessor(object):
         """
 
         cropped_process_instance = process_instance[:prefix_size]
-        cropped_process_instance_label = process_instance_labels[:prefix_size][-1]  # -1 outcome of last act in instance
+        cropped_process_instance_label = process_instance_labels[prefix_size]  # -1 outcome of last act in instance
 
         return cropped_process_instance, cropped_process_instance_label
 
@@ -364,28 +364,5 @@ class Preprocessor(object):
         return labels
 
 
-    def get_process_instance(self, out_class_val):
-
-        process_instances = self.data_structure['data']['process_instances']
-        labels = self.data_structure['data']['labels']
-
-        if out_class_val == 0:
-            for index in range(0, len(process_instances)):
-                if sum([int(val) for val in labels[index]]) == 0:
-                    return process_instances[index], labels[index]
-        else:
-            for index in range(0, len(process_instances)):
-                if out_class_val in [int(val) for val in labels[index]]:
-                    return process_instances[index], labels[index]
-
-        """
-        while True:
-            index = numpy.random.randint(0, len(process_instances))
-
-            # case: process instance is conformant
-            if out_class_val == 0 and sum(labels[index]) == 0:
-                break
-            # case: process instance is not conformant
-            elif out_class_val != 0 and out_class_val in labels[index]:
-                break
-        """
+    def get_process_instance(self):
+        return self.data_structure['data']['process_instances'], self.data_structure['data']['labels']

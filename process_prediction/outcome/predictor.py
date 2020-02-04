@@ -8,10 +8,7 @@ except ImportError:
 import process_prediction.utils as utils
 
 
-def predict_prefix(args, preprocessor, process_instance, labels, prefix_size):
-
-    # assumption: load the model of the first fold
-    model = load_model('%s%smodel_%s.h5' % (args.task, args.model_dir[1:], 0))
+def predict_prefix(args, preprocessor, process_instance, labels, prefix_size, model):
 
     cropped_process_instance, cropped_process_instance_label = preprocessor.get_cropped_instance(
         prefix_size,
@@ -25,7 +22,8 @@ def predict_prefix(args, preprocessor, process_instance, labels, prefix_size):
     y = model.predict(test_data)
     y = y[0][:]
 
-    prediction = preprocessor.get_class_val(y)
+    y = y.tolist()
+    prediction = str(y.index(max(y)))
     test_data_reshaped = test_data.reshape(-1, test_data.shape[2])
 
     return prediction, ground_truth, cropped_process_instance, model, test_data_reshaped

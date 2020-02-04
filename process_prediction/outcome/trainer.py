@@ -1,9 +1,16 @@
 from __future__ import print_function, division
 import keras
 from datetime import datetime
+import tensorflow as tf
 
 
 def train(args, preprocessor):
+
+    config = tf.ConfigProto(allow_soft_placement=True)
+    config.gpu_options.allow_growth = True
+    config.gpu_options.per_process_gpu_memory_fraction = 0.2
+    keras.backend.tensorflow_backend.set_session(tf.Session(config=config))
+
     preprocessor.set_training_set()
 
     features_data = preprocessor.data_structure['data']['train']['features_data']
@@ -21,8 +28,7 @@ def train(args, preprocessor):
         # hidden layer
         b1 = keras.layers.Bidirectional(
             keras.layers.recurrent.LSTM(100, use_bias=True, implementation=1, activation="tanh",
-                                        kernel_initializer='glorot_uniform', return_sequences=False, dropout=0.2))(
-            main_input)
+                                        kernel_initializer='glorot_uniform', return_sequences=False, dropout=0.2))(main_input)
 
         # output layer
         out_output = keras.layers.core.Dense(num_classes, activation='softmax', name='out_output',
