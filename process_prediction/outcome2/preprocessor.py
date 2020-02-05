@@ -58,11 +58,14 @@ class Preprocessor(object):
         }
     }
 
-    def __init__(self, args):
+    def __init__(self, args, meta):
 
         utils.llprint("Initialization ... \n")
         self.data_structure['support']['num_folds'] = args.num_folds
-        self.data_structure['support']['data_dir'] = args.data_dir + args.data_set
+        if meta:
+            self.data_structure['support']['data_dir'] = args.data_dir + args.data_set_out2
+        else:
+            self.data_structure['support']['data_dir'] = args.data_dir + args.data_set
         self.get_sequences_from_event_log()
         self.data_structure['support']['elements_per_fold'] = \
             int(round(
@@ -326,3 +329,6 @@ class Preprocessor(object):
                     labels[index, self.data_structure['meta']['map_class_val_id'][val_class]] = 0
 
         return labels
+
+    def get_process_instance(self):
+        return self.data_structure['data']['process_instances'], self.data_structure['data']['labels']

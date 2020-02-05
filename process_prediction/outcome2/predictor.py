@@ -20,11 +20,6 @@ def predict_prefix(preprocessor, process_instance, labels, model):
     y = y.tolist()
     # print(y)
     prediction = str(y.index(max(y)))
-    if prediction == '1':
-        prediction = '0'
-    else:
-        prediction = '2'
-
 
     test_data_reshaped = test_data.reshape(-1, test_data.shape[2])
 

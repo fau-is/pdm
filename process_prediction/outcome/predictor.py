@@ -10,6 +10,10 @@ import process_prediction.utils as utils
 
 def predict_prefix(args, preprocessor, process_instance, labels, prefix_size, model):
 
+    # remove label of outcome2
+    labels = labels[0:len(labels) - 1]
+    process_instance = process_instance[0:len(process_instance)-1]
+
     cropped_process_instance, cropped_process_instance_label = preprocessor.get_cropped_instance(
         prefix_size,
         process_instance,
