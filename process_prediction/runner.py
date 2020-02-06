@@ -42,7 +42,6 @@ def apply_lrp(args, prefix_heatmaps, predicted_class, model, input_embedded, pre
     print("Sanity check passed? ", np.allclose(R_tot, net.s[target_out_class]))
     """
 
-    browser.display_html(prefix_heatmaps)
 
     return prefix_heatmaps
 
@@ -51,11 +50,14 @@ def create_output(args, process_instance, label, out_preprocessor, out_model, ac
                   out2_preprocessor, out2_model):
 
     prefix_heatmaps_out = ""
+    process_instance_no_end = process_instance[0:len(process_instance) - 1]
     # predict no 1
-    for prefix_index in range(2, len(process_instance)):
-        predicted_out_class, target_out_class, prefix_words, out_model, out_input_embedded = out_test.predict_prefix(
-            args, out_preprocessor, process_instance, label, prefix_index, out_model)
-        apply_lrp(args, prefix_heatmaps_out, predicted_out_class, out_model, out_input_embedded, prefix_words)
+    for prefix_index in range(2, len(process_instance_no_end)):
+
+        predicted_out_class, target_out_class, prefix_words, out_model, out_input_embedded = out_test.predict_prefix(args, out_preprocessor, process_instance_no_end, label, prefix_index, out_model)
+
+        prefix_heatmaps_out = apply_lrp(args, prefix_heatmaps_out, predicted_out_class, out_model, out_input_embedded, prefix_words)
+
         predicted_act_class, target_act_class, _, _, _, prob_event_types = act_test.predict_prefix(args,
                                                                                                    act_preprocessor,
                                                                                                    process_instance,
@@ -66,12 +68,17 @@ def create_output(args, process_instance, label, out_preprocessor, out_model, ac
         print("Prefix: %s; Next act prediction: %s; Next act target: %s" % (
             prefix_index, predicted_act_class, target_act_class))
         print(prob_event_types)
+
+    browser.display_html(prefix_heatmaps_out)
+
     # predict not 2
-    predicted_out2_class, target_out_class, prefix_words, out2_model, out2_input_embedded = out2_test.predict_prefix(
-        out2_preprocessor, process_instance, label, out2_model)
-    apply_lrp(args, "", predicted_out2_class, out2_model, out2_input_embedded, prefix_words)
+    predicted_out2_class, target_out_class, prefix_words, out2_model, out2_input_embedded = out2_test.predict_prefix(out2_preprocessor, process_instance_no_end, label, out2_model)
+    prefix_heatmaps_out = ""
+    prefix_heatmaps_out = apply_lrp(args, "", predicted_out2_class, out2_model, out2_input_embedded, prefix_words)
     print("All; Outcome prediction: %s; Outcome target: %s" % (predicted_out_class, target_out_class))
 
+    browser.display_html(prefix_heatmaps_out)
+    prefix_heatmaps_out = ""
 
 if __name__ == '__main__':
     args = config.load()
