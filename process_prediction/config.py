@@ -7,8 +7,8 @@ def load():
     parser = argparse.ArgumentParser()
 
     # mode
-    parser.add_argument('--explain', default=True, type=utils.str2bool)
-    parser.add_argument('--task', default="nextevent")  # outcome; outcome2; nextevent
+    parser.add_argument('--explain', default=False, type=utils.str2bool)
+    parser.add_argument('--task', default="outcome2")  # outcome; outcome2; nextevent
 
     # dnn
     parser.add_argument('--dnn_num_epochs', default=100, type=int)
@@ -16,7 +16,7 @@ def load():
     parser.add_argument('--learning_rate', default=0.002, type=float)  # dnc 0.0001 #lstm 0.002
 
     # representation
-    parser.add_argument('--embedding_dim', default=100, type=int)
+    parser.add_argument('--embedding_dim', default=32, type=int)
     parser.add_argument('--embedding_epochs', default=10, type=int)
 
     # evaluation

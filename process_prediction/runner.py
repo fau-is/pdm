@@ -300,7 +300,7 @@ if __name__ == '__main__':
         import process_prediction.outcome2.predictor as out_test
         import process_prediction.outcome2.trainer as train
 
-        preprocessor = Preprocessor(args)
+        preprocessor = Preprocessor(args, 0)
 
         if args.cross_validation:
 
