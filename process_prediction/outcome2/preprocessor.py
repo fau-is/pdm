@@ -63,9 +63,10 @@ class Preprocessor(object):
         utils.llprint("Initialization ... \n")
         self.data_structure['support']['num_folds'] = args.num_folds
         if meta:
-            self.data_structure['support']['data_dir'] = args.data_dir + args.data_set_out2
-        else:
             self.data_structure['support']['data_dir'] = args.data_dir + args.data_set
+        else:
+            self.data_structure['support']['data_dir'] = args.data_dir + args.data_set_out2
+
         self.get_sequences_from_event_log()
         self.data_structure['support']['elements_per_fold'] = \
             int(round(
