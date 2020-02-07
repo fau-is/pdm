@@ -27,10 +27,10 @@ def load():
     parser.add_argument('--batch_size_test', default=1, type=int)
 
     # data
-    parser.add_argument('--data_set_out2', default="train_bpia_pcm_sample_2.csv")
-    parser.add_argument('--data_set_out1', default="train_bpia_pcm_sample_1.csv")
-    parser.add_argument('--data_set_act', default="train_bpia_pcm_sample.csv")
-    parser.add_argument('--data_set', default="train_bpia_pcm_sample.csv")
+    parser.add_argument('--data_set_out2', default="train_bpia_pcm_2.csv")
+    parser.add_argument('--data_set_out1', default="train_bpia_pcm_1.csv")
+    parser.add_argument('--data_set_act', default="train_bpia_pcm.csv")
+    parser.add_argument('--data_set', default="train_bpia_pcm.csv")
 
     # explain -> train_hb_pcm
     # outcome -> train_hb_pc_1

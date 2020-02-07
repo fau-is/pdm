@@ -90,6 +90,13 @@ def check_label_out2(label):
         return label
 
 
+def check_prediction(prediction):
+    if prediction == '1':
+        return '0'
+    else:
+        return '1'
+
+
 if __name__ == '__main__':
     args = config.load()
     output = utils.load_output()
@@ -119,7 +126,7 @@ if __name__ == '__main__':
 
         # Load models of first fold
         act_model = load_model('%s%smodel_%s.h5' % ("nextevent", args.model_dir[1:], 0))
-        out_model = load_model('%s%smodel_%s.h5' % ("outcome", args.model_dir[1:], 1))
+        out_model = load_model('%s%smodel_%s.h5' % ("outcome", args.model_dir[1:], 0))
         out2_model = load_model('%s%smodel_%s.h5' % ("outcome2", args.model_dir[1:], 0))
 
         process_instances, labels = meta_preprocessor.get_process_instance()  # get process instance
