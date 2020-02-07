@@ -1,0 +1,5 @@
+experiment;mode;validation;accuracy;precision;recall;f1-score;auc-prc;training-time;time-stamp
+train_bpia_pcm-0;fold0;cross-validation;1.0;1.0;1.0;1.0;1.0;1382.772999;2020-02-07T14:58:28.063973+01:00
+train_bpia_pcm-0;fold1;cross-validation;1.0;1.0;1.0;1.0;1.0;1483.277815;2020-02-07T15:31:44.429028+01:00
+train_bpia_pcm-0;fold2;cross-validation;1.0;1.0;1.0;1.0;1.0;348.504714;2020-02-07T15:46:22.614149+01:00
+train_bpia_pcm-0;avg;cross-validation;1.0;1.0;1.0;1.0;1.0;1071.5185093333334;2020-02-07T15:46:22.614149+01:00
