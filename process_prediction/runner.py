@@ -48,7 +48,7 @@ def apply_lrp(args, prefix_heatmaps, predicted_class, model, input_embedded, pre
 def create_output(args, process_instance, label, out_preprocessor, out_model, act_preprocessor, act_model,
                   out2_preprocessor, out2_model):
     prefix_heatmaps_out = ""
-    # process_instance_no_end = process_instance[0:len(process_instance)-1]
+    process_instance_no_end = process_instance[0:len(process_instance)-1]
     # label_no_end = labels[0:len(process_instance)-1]
     # predict no 1
     for prefix_index in range(2, len(process_instance)):
@@ -77,7 +77,7 @@ def create_output(args, process_instance, label, out_preprocessor, out_model, ac
         out2_preprocessor, process_instance_no_end, label, out2_model)
     prefix_heatmaps_out = ""
     prefix_heatmaps_out = apply_lrp(args, "", predicted_out2_class, out2_model, out2_input_embedded, out2_prefix_words)
-    print("All; Outcome prediction: %s; Outcome target: %s" % (predicted_out2_class, target_out2_class))
+    print("All; Outcome prediction: %s; Outcome target: %s" % (predicted_out2_class, check_label_out2(target_out2_class)))
 
     browser.display_html(prefix_heatmaps_out)
     prefix_heatmaps_out = ""
@@ -124,7 +124,7 @@ if __name__ == '__main__':
 
         process_instances, labels = meta_preprocessor.get_process_instance()  # get process instance
 
-        """
+
         # Case 1 ########################################################################################
         print("Case 1: process is conform (1=False; 2=False)")
         select_index = 0
@@ -205,7 +205,7 @@ if __name__ == '__main__':
         else:
             print("Case 2: process instance not found")
 
-        """
+
         # Case 3 ########################################################################################
         print("Case 3: process is not conform (1=False; 2=True)")
         select_index = 0
@@ -248,7 +248,7 @@ if __name__ == '__main__':
         else:
             print("Case 3: process instance not found")
 
-        """
+
         # Case 4 ########################################################################################
         print("Case 4: process is not conform (1=True; 2=True)")
         select_index = 0
@@ -256,15 +256,18 @@ if __name__ == '__main__':
 
         for index in range(0, len(process_instances)):
             if len(process_instances[index]) >= 2:
+                process_instance_no_end = process_instances[index][0:len(process_instances[index]) - 1]
+                label_no_end = labels[index][0:len(labels[index]) - 1]
                 if '1' in labels[index] and '2' in labels[index]:
                     is_correct = True
-                    # predict not 1
-                    for prefix_index in range(2, len(process_instances[index])-1):
+                    # check 1: predict not 1
+                    for prefix_index in range(2, len(process_instance_no_end)):
                         predicted_out_class, _, _, _, _ = out_test.predict_prefix(args, out_preprocessor,
                                                                                   process_instances[index],
                                                                                   labels[index],
                                                                                   prefix_index, out_model)
-                        if predicted_out_class != labels[index][prefix_index]:
+
+                        if predicted_out_class != labels[index][prefix_index-1]:
                             is_correct = False
                     # predict not 2
                     predicted_out2_class, _, _, _, _ = out2_test.predict_prefix(out2_preprocessor,
@@ -284,7 +287,7 @@ if __name__ == '__main__':
                           out2_preprocessor, out2_model)
         else:
             print("Case 4: process instance not found")
-        """
+
 
 
 
