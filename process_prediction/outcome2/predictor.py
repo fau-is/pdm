@@ -23,10 +23,12 @@ def predict_prefix(preprocessor, process_instance, labels, model):
 
     test_data_reshaped = test_data.reshape(-1, test_data.shape[2])
 
+    """
     if prediction == '1':
         prediction = '0'
     else:
         prediction = '1'
+    """
 
     return prediction, ground_truth, process_instance, model, test_data_reshaped
 
