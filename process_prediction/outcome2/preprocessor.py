@@ -226,7 +226,7 @@ class Preprocessor(object):
         Produces indices for each fold of a k-fold cross-validation.
         """
 
-        kFold = KFold(n_splits=self.data_structure['support']['num_folds'], random_state=0, shuffle=False)
+        kFold = KFold(n_splits=self.data_structure['support']['num_folds'], random_state=0, shuffle=True)
 
         for train_indices, test_indices in kFold.split(self.data_structure['data']['process_instances']):
             self.data_structure['support']['train_index_per_fold'].append(train_indices)
