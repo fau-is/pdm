@@ -28,17 +28,51 @@ def train(args, preprocessor):
         # hidden layer
         b1 = keras.layers.Bidirectional(
             keras.layers.recurrent.LSTM(100, use_bias=True, implementation=1, activation="tanh",
-                                        kernel_initializer='glorot_uniform', return_sequences=False, dropout=0.2))(main_input)
+                                        kernel_initializer='glorot_uniform', return_sequences=False, dropout=0.2))(
+            main_input)
 
         # output layer
         out_output = keras.layers.core.Dense(num_classes, activation='softmax', name='out_output',
                                              kernel_initializer='glorot_uniform')(b1)
 
+        optimizer = keras.optimizers.Nadam(lr=args.learning_rate, beta_1=0.9, beta_2=0.999, epsilon=1e-8,
+                                           schedule_decay=0.004, clipvalue=3)
+
+    elif args.dnn_architecture == 1:
+        # input layer
+        main_input = keras.layers.Input(shape=(max_length_process_instance, num_features), name='main_input')
+        input_layer_flattened = keras.layers.Flatten()(main_input)
+
+
+        # layer 2
+        hidden_layer_1 = keras.layers.Dense(100, activation='relu')(input_layer_flattened)
+        hidden_layer_1 = keras.layers.normalization.BatchNormalization()(hidden_layer_1)
+        hidden_layer_1 = keras.layers.Dropout(0.5)(hidden_layer_1)
+
+
+        # layer 3
+        hidden_layer_2 = keras.layers.Dense(200, activation='relu')(hidden_layer_1)
+        hidden_layer_2 = keras.layers.normalization.BatchNormalization()(hidden_layer_2)
+        hidden_layer_2 = keras.layers.Dropout(0.5)(hidden_layer_2)
+
+        # layer 4
+        hidden_layer_3 = keras.layers.Dense(100, activation='relu')(hidden_layer_2)
+        hidden_layer_3 = keras.layers.normalization.BatchNormalization()(hidden_layer_3)
+        hidden_layer_3 = keras.layers.Dropout(0.5)(hidden_layer_3)
+    
+        # layer 5
+        hidden_layer_4 = keras.layers.Dense(50, activation='relu')(hidden_layer_3)
+        hidden_layer_4 = keras.layers.normalization.BatchNormalization()(hidden_layer_4)
+        hidden_layer_4 = keras.layers.Dropout(0.5)(hidden_layer_4)
+
+
+        # output layer
+        out_output = keras.layers.core.Dense(num_classes, activation='softmax', name='out_output',
+                                             kernel_initializer='glorot_uniform')(hidden_layer_4)
+
+        optimizer = keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999)
+
     model = keras.models.Model(inputs=[main_input], outputs=[out_output])
-
-    optimizer = keras.optimizers.Nadam(lr=args.learning_rate, beta_1=0.9, beta_2=0.999, epsilon=1e-8,
-                                       schedule_decay=0.004, clipvalue=3)
-
     model.compile(loss={'out_output': 'categorical_crossentropy'}, optimizer=optimizer)
     early_stopping = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
     model_checkpoint = keras.callbacks.ModelCheckpoint('%s%smodel_%s.h5' % (args.task, args.model_dir[1:],

@@ -103,10 +103,6 @@ ENV/
 # Intellij
 /.idea/
 
-# project specific
-/process_prediction/outcome/models/
-/process_prediction/outcome/results/
-
 #npm
 /ui/frontend-react/node_modules/
 /ui/frontend-react/build

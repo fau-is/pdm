@@ -59,7 +59,7 @@ class Preprocessor(object):
 
         utils.llprint("Initialization ... \n")
         self.data_structure['support']['num_folds'] = args.num_folds
-        self.data_structure['support']['data_dir'] = args.data_dir + args.data_set
+        self.data_structure['support']['data_dir'] = args.data_dir + args.data_set_act
         self.get_sequences_from_eventlog()
         self.data_structure['support']['elements_per_fold'] = \
             int(round(
@@ -238,7 +238,7 @@ class Preprocessor(object):
 
     def set_indices_k_fold_validation(self):
 
-        kFold = KFold(n_splits=self.data_structure['support']['num_folds'], random_state=0, shuffle=False)
+        kFold = KFold(n_splits=self.data_structure['support']['num_folds'], random_state=0, shuffle=True)
 
         for train_indices, test_indices in kFold.split(self.data_structure['data']['process_instances']):
             self.data_structure['support']['train_index_per_fold'].append(train_indices)
@@ -314,7 +314,6 @@ class Preprocessor(object):
                     if i == 0:
                         continue
                     cropped_process_instances.append(process_instance[0:i])
-                    # label
                     next_events.append(process_instance[i])
 
         return cropped_process_instances, cropped_context_attributes, next_events

@@ -10,6 +10,10 @@ import process_prediction.utils as utils
 
 def predict_prefix(args, preprocessor, process_instance, labels, prefix_size, model):
 
+    # remove label of outcome2
+    labels = labels[0:len(labels) - 1]
+    process_instance = process_instance[0:len(process_instance)-1]
+
     cropped_process_instance, cropped_process_instance_label = preprocessor.get_cropped_instance(
         prefix_size,
         process_instance,
@@ -25,6 +29,11 @@ def predict_prefix(args, preprocessor, process_instance, labels, prefix_size, mo
     y = y.tolist()
     prediction = str(y.index(max(y)))
     test_data_reshaped = test_data.reshape(-1, test_data.shape[2])
+
+    if prediction == '1':
+        prediction = '0'
+    else:
+        prediction = '1'
 
     return prediction, ground_truth, cropped_process_instance, model, test_data_reshaped
 
@@ -71,6 +80,7 @@ def test(args, preprocessor):
 
                 y = model.predict(test_data)
                 y = y[0][:]
+                # print(y)
 
                 prediction = preprocessor.get_class_val(y)
 

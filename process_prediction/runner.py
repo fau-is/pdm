@@ -42,20 +42,23 @@ def apply_lrp(args, prefix_heatmaps, predicted_class, model, input_embedded, pre
     print("Sanity check passed? ", np.allclose(R_tot, net.s[target_out_class]))
     """
 
-    browser.display_html(prefix_heatmaps)
-
     return prefix_heatmaps
 
 
 def create_output(args, process_instance, label, out_preprocessor, out_model, act_preprocessor, act_model,
                   out2_preprocessor, out2_model):
-
     prefix_heatmaps_out = ""
+    process_instance_no_end = process_instance[0:len(process_instance)-1]
+    # label_no_end = labels[0:len(process_instance)-1]
     # predict no 1
     for prefix_index in range(2, len(process_instance)):
+        # note method predict prefix removes the end event!
         predicted_out_class, target_out_class, prefix_words, out_model, out_input_embedded = out_test.predict_prefix(
             args, out_preprocessor, process_instance, label, prefix_index, out_model)
-        apply_lrp(args, prefix_heatmaps_out, predicted_out_class, out_model, out_input_embedded, prefix_words)
+
+        prefix_heatmaps_out = apply_lrp(args, prefix_heatmaps_out, predicted_out_class, out_model, out_input_embedded,
+                                        prefix_words)
+
         predicted_act_class, target_act_class, _, _, _, prob_event_types = act_test.predict_prefix(args,
                                                                                                    act_preprocessor,
                                                                                                    process_instance,
@@ -66,11 +69,32 @@ def create_output(args, process_instance, label, out_preprocessor, out_model, ac
         print("Prefix: %s; Next act prediction: %s; Next act target: %s" % (
             prefix_index, predicted_act_class, target_act_class))
         print(prob_event_types)
+
+    browser.display_html(prefix_heatmaps_out)
+
     # predict not 2
-    predicted_out2_class, target_out_class, prefix_words, out2_model, out2_input_embedded = out2_test.predict_prefix(
-        out2_preprocessor, process_instance, label, out2_model)
-    apply_lrp(args, "", predicted_out2_class, out2_model, out2_input_embedded, prefix_words)
-    print("All; Outcome prediction: %s; Outcome target: %s" % (predicted_out_class, target_out_class))
+    predicted_out2_class, target_out2_class, out2_prefix_words, out2_model, out2_input_embedded = out2_test.predict_prefix(
+        out2_preprocessor, process_instance_no_end, label, out2_model)
+    prefix_heatmaps_out = ""
+    prefix_heatmaps_out = apply_lrp(args, "", predicted_out2_class, out2_model, out2_input_embedded, out2_prefix_words)
+    print("All; Outcome prediction: %s; Outcome target: %s" % (predicted_out2_class, check_label_out2(target_out2_class)))
+
+    browser.display_html(prefix_heatmaps_out)
+    prefix_heatmaps_out = ""
+
+
+def check_label_out2(label):
+    if label == '2':
+        return '1'
+    else:
+        return label
+
+
+def check_prediction(prediction):
+    if prediction == '1':
+        return '0'
+    else:
+        return '1'
 
 
 if __name__ == '__main__':
@@ -87,8 +111,9 @@ if __name__ == '__main__':
         import process_prediction.outcome2.predictor as out2_test
         import process_prediction.nextevent.predictor as act_test
 
+        meta_preprocessor = Out2_Preprocessor(args, True)
         out_preprocessor = Out_Preprocessor(args)
-        out2_preprocessor = Out2_Preprocessor(args)
+        out2_preprocessor = Out2_Preprocessor(args, False)
         act_preprocessor = Act_Preprocessor(args)
 
         """
@@ -102,9 +127,10 @@ if __name__ == '__main__':
         # Load models of first fold
         act_model = load_model('%s%smodel_%s.h5' % ("nextevent", args.model_dir[1:], 0))
         out_model = load_model('%s%smodel_%s.h5' % ("outcome", args.model_dir[1:], 0))
-        out2_model = load_model('%s%smodel_%s.h5' % ("outcome2", args.model_dir[1:], 1))
+        out2_model = load_model('%s%smodel_%s.h5' % ("outcome2", args.model_dir[1:], 0))
 
-        process_instances, labels = out_preprocessor.get_process_instance()  # get process instance
+        process_instances, labels = meta_preprocessor.get_process_instance()  # get process instance
+
 
         # Case 1 ########################################################################################
         print("Case 1: process is conform (1=False; 2=False)")
@@ -112,20 +138,25 @@ if __name__ == '__main__':
         select = False
 
         for index in range(0, len(process_instances)):
-            if len(process_instances[index]) >= 3:
-                if sum([int(val) for val in labels[index]]) == 0:
+            if len(process_instances[index]) >= 2:
+                process_instance_no_end = process_instances[index][0:len(process_instances[index]) - 1]
+                label_no_end = labels[index][0:len(labels[index]) - 1]
+                if sum([int(val) for val in label_no_end]) == 0:
                     is_correct = True
-                    # predict not 1
-                    for prefix_index in range(2, len(process_instances[index])):
+                    # check 1: predict not 1
+                    for prefix_index in range(2, len(process_instance_no_end)):
                         predicted_out_class, _, _, _, _ = out_test.predict_prefix(args, out_preprocessor,
-                                                                                  process_instances[index], labels[index],
+                                                                                  process_instances[index],
+                                                                                  labels[index],
                                                                                   prefix_index, out_model)
-                        if predicted_out_class != labels[index][prefix_index]:
+                        if predicted_out_class != labels[index][prefix_index - 1]:
                             is_correct = False
-                    # predict not 2
-                    predicted_out2_class, _, _, _, _ = out2_test.predict_prefix(out2_preprocessor, process_instances[index],
+
+                    # check 2: predict not 2
+                    predicted_out2_class, _, _, _, _ = out2_test.predict_prefix(out2_preprocessor,
+                                                                                process_instances[index],
                                                                                 labels[index], out2_model)
-                    if predicted_out2_class != labels[index][-1]:
+                    if predicted_out2_class != check_label_out2(labels[index][-1]):
                         is_correct = False
                     if is_correct:
                         select_index = index
@@ -139,7 +170,7 @@ if __name__ == '__main__':
                           out2_preprocessor, out2_model)
         else:
             print("Case 1: process instance not found")
-
+        
 
         # Case 2 ########################################################################################
         print("Case 2: process is not conform (1=True; 2=False)")
@@ -147,23 +178,30 @@ if __name__ == '__main__':
         select = False
 
         for index in range(0, len(process_instances)):
-            if len(process_instances[index]) >= 3:
+            if len(process_instances[index]) >= 2:
+                process_instance_no_end = process_instances[index][0:len(process_instances[index]) - 1]
+                label_no_end = labels[index][0:len(labels[index]) - 1]
                 if '1' in labels[index] and '2' not in labels[index]:
                     is_correct = True
-                    # predict not 1
-                    for prefix_index in range(2, len(process_instances[index])):
+                    # check 1: predict not 1
+                    for prefix_index in range(2, len(process_instance_no_end)):
                         predicted_out_class, _, _, _, _ = out_test.predict_prefix(args, out_preprocessor,
-                                                                                  process_instances[index], labels[index],
+                                                                                  process_instances[index],
+                                                                                  labels[index],
                                                                                   prefix_index, out_model)
-                        if predicted_out_class != labels[index][prefix_index]:
+                        if predicted_out_class != labels[index][prefix_index - 1]:
                             is_correct = False
-                    # predict not 2
-                    predicted_out2_class, _, _, _, _ = out2_test.predict_prefix(out2_preprocessor, process_instances[index],
+
+                    # check 2: predict not 2
+                    predicted_out2_class, _, _, _, _ = out2_test.predict_prefix(out2_preprocessor,
+                                                                                process_instances[index],
                                                                                 labels[index], out2_model)
-                    if predicted_out2_class != labels[index][-1]:
+                    if predicted_out2_class != check_label_out2(labels[index][-1]):
                         is_correct = False
+
                     if is_correct:
                         select_index = index
+                        select = True
                         break
 
         if select:
@@ -181,25 +219,32 @@ if __name__ == '__main__':
         select = False
 
         for index in range(0, len(process_instances)):
-            if len(process_instances[index]) >= 3:
+            if len(process_instances[index]) >= 2:
+                process_instance_no_end = process_instances[index][0:len(process_instances[index]) - 1]
+                label_no_end = labels[index][0:len(labels[index]) - 1]
+
                 if '1' not in labels[index] and '2' in labels[index]:
+
                     is_correct = True
-                    # predict not 1
-                    for prefix_index in range(2, len(process_instances[index])):
+
+                    # check 1: predict not 1
+                    for prefix_index in range(2, len(process_instance_no_end)):
                         predicted_out_class, _, _, _, _ = out_test.predict_prefix(args, out_preprocessor,
                                                                                   process_instances[index],
                                                                                   labels[index],
                                                                                   prefix_index, out_model)
-                        if predicted_out_class != labels[index][prefix_index]:
+                        if predicted_out_class != labels[index][prefix_index - 1]:
                             is_correct = False
+
                     # predict not 2
                     predicted_out2_class, _, _, _, _ = out2_test.predict_prefix(out2_preprocessor,
                                                                                 process_instances[index],
                                                                                 labels[index], out2_model)
-                    if predicted_out2_class != labels[index][-1]:
+                    if predicted_out2_class != check_label_out2(labels[index][-1]):
                         is_correct = False
                     if is_correct:
                         select_index = index
+                        select = True
                         break
 
         if select:
@@ -210,31 +255,36 @@ if __name__ == '__main__':
         else:
             print("Case 3: process instance not found")
 
+
         # Case 4 ########################################################################################
         print("Case 4: process is not conform (1=True; 2=True)")
         select_index = 0
         select = False
 
         for index in range(0, len(process_instances)):
-            if len(process_instances[index]) >= 3:
+            if len(process_instances[index]) >= 2:
+                process_instance_no_end = process_instances[index][0:len(process_instances[index]) - 1]
+                label_no_end = labels[index][0:len(labels[index]) - 1]
                 if '1' in labels[index] and '2' in labels[index]:
                     is_correct = True
-                    # predict not 1
-                    for prefix_index in range(2, len(process_instances[index])):
+                    # check 1: predict not 1
+                    for prefix_index in range(2, len(process_instance_no_end)):
                         predicted_out_class, _, _, _, _ = out_test.predict_prefix(args, out_preprocessor,
                                                                                   process_instances[index],
                                                                                   labels[index],
                                                                                   prefix_index, out_model)
-                        if predicted_out_class != labels[index][prefix_index]:
+
+                        if predicted_out_class != labels[index][prefix_index-1]:
                             is_correct = False
                     # predict not 2
                     predicted_out2_class, _, _, _, _ = out2_test.predict_prefix(out2_preprocessor,
                                                                                 process_instances[index],
                                                                                 labels[index], out2_model)
-                    if predicted_out2_class != labels[index][-1]:
+                    if predicted_out2_class != check_label_out2(labels[index][-1]):
                         is_correct = False
                     if is_correct:
                         select_index = index
+                        select = True
                         break
 
         if select:
@@ -289,7 +339,7 @@ if __name__ == '__main__':
         import process_prediction.outcome2.predictor as out_test
         import process_prediction.outcome2.trainer as train
 
-        preprocessor = Preprocessor(args)
+        preprocessor = Preprocessor(args, False)
 
         if args.cross_validation:
 
@@ -349,3 +399,4 @@ if __name__ == '__main__':
 
     else:
         print("No mode selected ...")
+
