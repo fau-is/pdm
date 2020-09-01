@@ -114,3 +114,4 @@ ENV/
 #OS generated files
 .DS_Store
 .DS_Store?
+/process_mining/Resources/

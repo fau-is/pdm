@@ -5,8 +5,8 @@ This module is used to parse an event log and afterwards bring it to the data st
 import opyenxes.data_in.XesXmlParser as XesParser
 import opyenxes.data_out.XesXmlSerializer as XesSerializer
 import csv
-
-from process_mining.eventlog import EventLog
+import datetime
+from process_mining.eventlog import EventLog, Violations
 
 
 def write_csv_file_to_disk(eventlog: EventLog, output_path):
@@ -15,41 +15,67 @@ def write_csv_file_to_disk(eventlog: EventLog, output_path):
     :param eventlog: Eventlog data structure to be exported
     :return: None
     """
-    file = open(output_path, 'w', newline='')
+    file = open(output_path + "_a_log_17.csv", 'w', newline='')
     labels = ["case", "event", "timestamp", "conformance"]
-    writer = csv.DictWriter(file, labels)
+    writer = csv.DictWriter(file, labels, dialect="excel")
     writer.writeheader()
 
     for trace in eventlog.Traces:
-        if len(trace.Events) <= 2:
+        if len(trace.Events) < 3:
             continue
         trace_iter = iter(trace.Events)
         for event in trace_iter:
-            if event.EventName is not "End":
-                event_dict = {"case": trace.TraceId, "event": event.EventName, "timestamp": event.Timestamp,
-                              "conformance": next(trace_iter).get_violation().value}
-                writer.writerow(event_dict)
+            event_dict = {"case": trace.TraceId, "event": event.EventName,
+                      "timestamp": event.Timestamp.strftime("%d.%m.%y-%H:%M:%S"),
+                      "conformance": event.get_violation().value}
+            writer.writerow(event_dict)
 
 
-def write_csv_nep_file_to_disk(eventlog: EventLog, output_path):
-    """
-    Gets the EventLog class and writes it into a CSV file
-    :param eventlog: Eventlog data structure to be exported
-    :return: None
-    """
-    file = open(output_path, 'w', newline='')
-    labels = ["case", "event", "timestamp"]
-    writer = csv.DictWriter(file, labels)
-    writer.writeheader()
-
-    for trace in eventlog.Traces:
-        if len(trace.Events) <= 2:
-            continue
-        trace_iter = iter(trace.Events)
-        for event in trace_iter:
-            if event.EventName is not "End":
-                event_dict = {"case": trace.TraceId, "event": event.EventName, "timestamp": event.Timestamp}
-                writer.writerow(event_dict)
+# def write_csv_pcm2_file_to_disk(eventlog: EventLog, output_path):
+#     """
+#     Gets the EventLog class and writes it into a CSV file
+#     :param eventlog: Eventlog data structure to be exported
+#     :return: None
+#     """
+#     file = open(output_path + "_2_withEnd.csv", 'w', newline='')
+#     labels = ["case", "event", "timestamp", "violation"]
+#     writer = csv.DictWriter(file, labels, dialect="excel")
+#     writer.writeheader()
+#
+#     for trace in eventlog.Traces:
+#         if len(trace.Events) <= 2:
+#             continue
+#         trace_iter = iter(trace.Events)
+#         for event in trace_iter:
+#             event_dict = {"case": trace.TraceId, "event": event.EventName,
+#                           "timestamp": event.Timestamp.strftime("%d.%m.%y-%H:%M:%S")}
+#             if event.get_violation() == Violations.Type2:
+#                 event_dict["violation"] = event.get_violation().value
+#             else:
+#                 event_dict["violation"] = Violations.Type0.value
+#             writer.writerow(event_dict)
+#
+#
+# def write_csv_pcm3_file_to_disk(eventlog: EventLog, output_path):
+#     """
+#     Gets the EventLog class and writes it into a CSV file
+#     :param eventlog: Eventlog data structure to be exported
+#     :return: None
+#     """
+#     file = open(output_path + "_1_and_2_withEnd.csv", 'w', newline='')
+#     labels = ["case", "event", "timestamp", "violation"]
+#     writer = csv.DictWriter(file, labels, dialect="excel")
+#     writer.writeheader()
+#
+#     for trace in eventlog.Traces:
+#         if len(trace.Events) <= 2:
+#             continue
+#         trace_iter = iter(trace.Events)
+#         for event in trace_iter:
+#             event_dict = {"case": trace.TraceId, "event": event.EventName,
+#                           "timestamp": event.Timestamp.strftime("%d.%m.%y-%H:%M:%S"),
+#                           "violation": event.get_violation().value}
+#             writer.writerow(event_dict)
 
 
 def get_event_log(file_path: str = None, use_celonis=False):

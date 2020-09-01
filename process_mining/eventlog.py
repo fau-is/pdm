@@ -1,21 +1,37 @@
 # coding=utf-8
 """The module implements a data structure to represent an event log"""
+import enum
+
 import opyenxes.data_in.XesXmlParser as XESParser
 import opyenxes.model.XAttributable as xA
-import enum
+
+
+# class Violations():
+#    """
+#    This class reflects the three classes of violations
+#    0. Everything is perfectly fine!
+#    1. Inserted Event
+#    2. Missing event
+#    """
+#    Type0 = 0
+#    Type1 = 1
+#    Type2 = 2
 
 
 class Violations(enum.Enum):
     """
     This class reflects the three classes of violations
-    0. Everything is perfectly fine!
-    1. Inserted Event
-    2. Missing event
+    0. Everything is fine
+    1. Condition violated
+    2. Milestone violated
+    3. Exclude violated
+    4. Pending event unexecuted
     """
     Type0 = 0
     Type1 = 1
     Type2 = 2
-
+    Type3 = 3
+    Type4 = 4
 
 
 class EventLog(object):
@@ -106,11 +122,10 @@ class Event(object):
         self.__violation = Violations.Type0
 
     def change_conf(self, violation):
-            self.__violation = violation
+        self.__violation = violation
 
     def get_violation(self):
         return self.__violation
-
 
     @staticmethod
     def create_end_event(time_stamp, pviolation):
@@ -122,7 +137,7 @@ class Event(object):
         """
         event = Event("End", "", time_stamp)
         if pviolation:
-            event.__violation = Violations.Type2
+            event.__violation = Violations.Type4
         return event
 
 
@@ -133,12 +148,11 @@ class Trace(object):
 
     def __init__(self, trace_id):
         """
-        Default constructor of a Trace, a trace is a set of related events often also called a case
-        a case is the instance of one process at a time
+        Default constructor of a Trace, a trace is a set of related events often also called a case.
+        A case is the instance of one process at a certain time.
         """
         self.Events = []
         self.TraceId = trace_id
-
 
     def append_event(self, event):
         """

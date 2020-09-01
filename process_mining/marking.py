@@ -70,7 +70,7 @@ class Marking(object):
 
         if self.node_is_blocked(node, trace_data, event):
             trace_data.add_violating_activity(node.ActivityName)
-            event.change_conf(Violations.Type1)
+
 
         if node.NestingActivity is not None:
             if self.node_is_blocked(node.NestingActivity, trace_data, event):
@@ -78,7 +78,7 @@ class Marking(object):
 
         if node not in self.Included:
             trace_data.add_violating_activity(node.ActivityName)
-            event.change_conf(Violations.Type1)
+            event.change_conf(Violations.Type3)
 
         if node not in self.Executed:
             self.Executed.append(node)
@@ -132,6 +132,7 @@ class Marking(object):
                 if milestone.StartNode in self.Included and \
                         milestone.StartNode in self.PendingResponse:
                     blocked = True
+                    event.change_conf(Violations.Type2)
                     trace_data.add_violating_connection(
                         "milestone-{}-{}".format(milestone.StartNode.ActivityName,
                                                  milestone.EndNode.ActivityName))
@@ -148,6 +149,7 @@ class Marking(object):
                 if condition.StartNode in self.Included \
                         and condition.StartNode not in self.Executed:
                     blocked = True
+                    event.change_conf(Violations.Type1)
                     trace_data.add_violating_connection(
                         "condition-{}-{}".format(condition.StartNode.ActivityName,
                                                  condition.EndNode.ActivityName))

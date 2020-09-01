@@ -14,13 +14,10 @@ def parse_args():
     parser.add_argument('--eventLog', nargs='?', default='Resources/a_log17.xes',
                         help='The path pulling the event log')
 
-    parser.add_argument('--XmlDcr', nargs="?", default='Resources/BPI_A.xml',
+    parser.add_argument('--XmlDcr', nargs="?", default='Resources/BPI_A2.xml',
                         help='The input path for the DCR Graph xml')
 
-    parser.add_argument('--outputPathPCM', nargs="?", default="./Output/train_bpia_pcm.csv",
-                        help='The output path for a csv event log')
-
-    parser.add_argument('--outputPathNEP', nargs="?", default="./Output/train_bpia_nep.csv",
+    parser.add_argument('--outputPathPCM', nargs="?", default="./",
                         help='The output path for a csv event log')
 
     return parser.parse_args()
