@@ -3,7 +3,6 @@ import process_prediction.utils as utils
 from process_prediction.explanation.LSTM.LSTM_bidi import *
 from process_prediction.explanation.util.heatmap import html_heatmap
 import process_prediction.explanation.util.browser as browser
-from keras.models import load_model
 
 
 def apply_lrp(args, prefix_heatmaps, predicted_class, model, input_embedded, prefix_words):

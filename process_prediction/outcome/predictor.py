@@ -1,5 +1,4 @@
 from __future__ import division
-from keras.models import load_model
 import csv
 try:
     from itertools import izip as zip
