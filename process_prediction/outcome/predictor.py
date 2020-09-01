@@ -5,6 +5,7 @@ try:
 except ImportError:
     pass
 import process_prediction.utils as utils
+from tensorflow.keras.models import load_model
 
 
 def predict_prefix(args, preprocessor, process_instance, labels, prefix_size, model):

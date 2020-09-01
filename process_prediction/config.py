@@ -16,21 +16,21 @@ def load():
     parser.add_argument('--learning_rate', default=0.002, type=float)  # dnc 0.0001 #lstm 0.002
 
     # representation
-    parser.add_argument('--embedding_dim', default=100, type=int)
-    parser.add_argument('--embedding_epochs', default=10, type=int)
+    parser.add_argument('--embedding_dim', default=32, type=int)
+    parser.add_argument('--embedding_epochs', default=1, type=int)
 
     # evaluation
-    parser.add_argument('--num_folds', default=3, type=int)  # 10
-    parser.add_argument('--cross_validation', default=True, type=utils.str2bool)
+    parser.add_argument('--num_folds', default=2, type=int)  # 10
+    parser.add_argument('--cross_validation', default=False, type=utils.str2bool)
     parser.add_argument('--split_rate_test', default=0.5, type=float)  # only if cross validation is deactivated
-    parser.add_argument('--batch_size_train', default=128, type=int)
+    parser.add_argument('--batch_size_train', default=256, type=int)
     parser.add_argument('--batch_size_test', default=1, type=int)
 
     # data
     parser.add_argument('--data_set_out2', default="train_hb_pcm_sample_2.csv")
     parser.add_argument('--data_set_out1', default="train_hb_pcm_sample_1.csv")
     parser.add_argument('--data_set_act', default="train_hb_pcm_sample.csv")
-    parser.add_argument('--data_set', default="train_hb_pcm_sample_1.csv")
+    parser.add_argument('--data_set', default="hb_new_try.csv")
 
     # explain -> train_hb_pcm
     # outcome -> train_hb_pc_1

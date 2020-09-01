@@ -301,8 +301,9 @@ if __name__ == '__main__':
     elif not args.explain and args.task == "outcome":
 
         from process_prediction.outcome.preprocessor import Preprocessor
-        import process_prediction.outcome.predictor as out_test
         import process_prediction.outcome.trainer as train
+        import process_prediction.outcome.predictor as out_test
+
 
         preprocessor = Preprocessor(args)
 
