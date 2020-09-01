@@ -28,9 +28,9 @@ def load():
 
     # data
     parser.add_argument('--data_set_out2', default="train_hb_pcm_sample_2.csv")
-    parser.add_argument('--data_set_out1', default="train_hb_pcm_sample_1.csv")
+    parser.add_argument('--data_set_out1', default="hb_new_try_sample.csv")
     parser.add_argument('--data_set_act', default="train_hb_pcm_sample.csv")
-    parser.add_argument('--data_set', default="hb_new_try.csv")
+    parser.add_argument('--data_set', default="hb_new_try_sample.csv")
 
     # explain -> train_hb_pcm
     # outcome -> train_hb_pc_1

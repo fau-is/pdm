@@ -92,7 +92,7 @@ class Preprocessor(object):
 
     def get_classes(self):
         file = open(self.data_structure['support']['data_dir'], 'r')
-        reader = csv.reader(file, delimiter=';', quotechar='|')
+        reader = csv.reader(file, delimiter=',', quotechar='|')
         next(reader, None)
         labels = list()
         map_class_val_id = dict()
@@ -110,8 +110,9 @@ class Preprocessor(object):
         return len(list(set(labels))), list(set(labels)), map_class_val_id, map_class_id_val
 
     def create_embedding_model(self, args):
+
         file = open(self.data_structure['support']['data_dir'], 'r')
-        reader = csv.reader(file, delimiter=';', quotechar='|')
+        reader = csv.reader(file, delimiter=',', quotechar='|')
         next(reader, None)
         data_set = list()
         embedding_dim = args.embedding_dim
@@ -125,7 +126,7 @@ class Preprocessor(object):
 
         # train model
         # note each word is handled as a sentence
-        model = gensim.models.Word2Vec(data_set, alpha=0.025, size=embedding_dim, window=5)
+        model = gensim.models.Word2Vec(data_set, alpha=0.025, min_count=1, size=embedding_dim, window=5)
 
         for epoch in range(epochs):
             if epoch % 2 == 0:
@@ -137,9 +138,6 @@ class Preprocessor(object):
         # save
         model.save('./%s%sembeddings.model' % (args.task, args.model_dir[1:]), sep_limit=2000000000)
 
-        # print(model.wv.most_similar(positive="Take"))
-        # print(0)
-
         return model
 
     def get_sequences_from_event_log(self):
@@ -150,7 +148,7 @@ class Preprocessor(object):
         process_instance = []
         process_instance_labels = []
         file = open(self.data_structure['support']['data_dir'], 'r')
-        reader = csv.reader(file, delimiter=';', quotechar='|')
+        reader = csv.reader(file, delimiter=',', quotechar='|')
         next(reader, None)
 
         for event in reader:
@@ -318,7 +316,11 @@ class Preprocessor(object):
             for index_, activity in enumerate(cropped_process_instance):
                 # apply embeddings
                 # print(model.wv.vocab)
-                data_set[index, index_, :] = model.wv[activity]
+
+                try:
+                    data_set[index, index_, :] = model.wv[activity]
+                except ValueError:
+                    data_set[index, index_, :] = 32*[0]
 
         return data_set
 

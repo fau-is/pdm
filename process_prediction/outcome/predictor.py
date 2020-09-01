@@ -1,18 +1,15 @@
 from __future__ import division
 import csv
-try:
-    from itertools import izip as zip
-except ImportError:
-    pass
 import process_prediction.utils as utils
 from tensorflow.keras.models import load_model
 
 
 def predict_prefix(args, preprocessor, process_instance, labels, prefix_size, model):
 
+    # todo: check this statement; remove end event
     # remove label of outcome2
     labels = labels[0:len(labels) - 1]
-    process_instance = process_instance[0:len(process_instance)-1]
+    process_instance = process_instance[0:len(process_instance) - 1]
 
     cropped_process_instance, cropped_process_instance_label = preprocessor.get_cropped_instance(
         prefix_size,
@@ -30,10 +27,12 @@ def predict_prefix(args, preprocessor, process_instance, labels, prefix_size, mo
     prediction = str(y.index(max(y)))
     test_data_reshaped = test_data.reshape(-1, test_data.shape[2])
 
+    """
     if prediction == '1':
         prediction = '0'
     else:
         prediction = '1'
+    """
 
     return prediction, ground_truth, cropped_process_instance, model, test_data_reshaped
 
@@ -41,7 +40,8 @@ def predict_prefix(args, preprocessor, process_instance, labels, prefix_size, mo
 def test(args, preprocessor):
     # init
     preprocessor.get_instances_of_fold('test')
-    model = load_model('%s%smodel_%s.h5' % (args.task, args.model_dir[1:], preprocessor.data_structure['support']['iteration_cross_validation']))
+    model = load_model('%s%smodel_%s.h5' % (
+    args.task, args.model_dir[1:], preprocessor.data_structure['support']['iteration_cross_validation']))
 
     # output
     data_set_name = args.data_set.split('.csv')[0]
@@ -58,22 +58,21 @@ def test(args, preprocessor):
         # for each process instance
         index = 0
         for process_instance, event_id, process_instance_labels in zip(
-                    preprocessor.data_structure['data']['test']['process_instances'],
-                    preprocessor.data_structure['data']['test']['event_ids'],
-                    preprocessor.data_structure['data']['test']['labels']):
+                preprocessor.data_structure['data']['test']['process_instances'],
+                preprocessor.data_structure['data']['test']['event_ids'],
+                preprocessor.data_structure['data']['test']['labels']):
 
-            utils.llprint("Process instance %i of %i \n" % (index, len(preprocessor.data_structure['data']['test']['process_instances'])))
+            utils.llprint("Process instance %i of %i \n" % (
+            index, len(preprocessor.data_structure['data']['test']['process_instances'])))
             index = index + 1
 
             # for each prefix with a length >= 2
             for prefix_size in range(2, len(process_instance)):
-
                 cropped_process_instance, cropped_process_instance_label = preprocessor.get_cropped_instance(
                     prefix_size,
                     process_instance,
                     process_instance_labels
                 )
-
 
                 ground_truth = cropped_process_instance_label
                 test_data = preprocessor.get_data_tensor_for_single_prediction(cropped_process_instance)
