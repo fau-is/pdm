@@ -15,7 +15,7 @@ def write_csv_file_to_disk(eventlog: EventLog, output_path):
     :param eventlog: Eventlog data structure to be exported
     :return: None
     """
-    file = open(output_path + "_a_log_17.csv", 'w', newline='')
+    file = open(output_path + "hb_new_try.csv", 'w', newline='')
     labels = ["case", "event", "timestamp", "conformance"]
     writer = csv.DictWriter(file, labels, dialect="excel")
     writer.writeheader()

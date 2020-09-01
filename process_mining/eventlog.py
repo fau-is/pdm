@@ -122,7 +122,8 @@ class Event(object):
         self.__violation = Violations.Type0
 
     def change_conf(self, violation):
-        self.__violation = violation
+        if self.__violation is Violations.Type0:
+            self.__violation = violation
 
     def get_violation(self):
         return self.__violation
