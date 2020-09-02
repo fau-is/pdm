@@ -82,7 +82,8 @@ class Preprocessor(object):
             self.data_structure['support']['embedding_model'] = self.create_embedding_model(args)
         else:
             utils.llprint("Load embedding model ... \n")
-            self.data_structure['support']['embedding_model'] = gensim.models.Word2Vec.load('%s%sembeddings.model' % ("outcome", args.model_dir[1:]))
+            self.data_structure['support']['embedding_model'] = gensim.models.Word2Vec.load(
+                '%s%sembeddings.model' % ("outcome", args.model_dir[1:]))
 
         if args.cross_validation:
             self.set_indices_k_fold_validation()
@@ -91,7 +92,7 @@ class Preprocessor(object):
 
     def get_classes(self):
         file = open(self.data_structure['support']['data_dir'], 'r')
-        reader = csv.reader(file, delimiter=';', quotechar='|')
+        reader = csv.reader(file, delimiter=',', quotechar='|')
         next(reader, None)
         labels = list()
         map_class_val_id = dict()
@@ -109,8 +110,9 @@ class Preprocessor(object):
         return len(list(set(labels))), list(set(labels)), map_class_val_id, map_class_id_val
 
     def create_embedding_model(self, args):
+
         file = open(self.data_structure['support']['data_dir'], 'r')
-        reader = csv.reader(file, delimiter=';', quotechar='|')
+        reader = csv.reader(file, delimiter=',', quotechar='|')
         next(reader, None)
         data_set = list()
         embedding_dim = args.embedding_dim
@@ -124,7 +126,7 @@ class Preprocessor(object):
 
         # train model
         # note each word is handled as a sentence
-        model = gensim.models.Word2Vec(data_set, alpha=0.025, size=embedding_dim, window=5)
+        model = gensim.models.Word2Vec(data_set, alpha=0.025, min_count=1, size=embedding_dim, window=5)
 
         for epoch in range(epochs):
             if epoch % 2 == 0:
@@ -136,9 +138,6 @@ class Preprocessor(object):
         # save
         model.save('./%s%sembeddings.model' % (args.task, args.model_dir[1:]), sep_limit=2000000000)
 
-        # print(model.wv.most_similar(positive="Take"))
-        # print(0)
-
         return model
 
     def get_sequences_from_event_log(self):
@@ -149,7 +148,7 @@ class Preprocessor(object):
         process_instance = []
         process_instance_labels = []
         file = open(self.data_structure['support']['data_dir'], 'r')
-        reader = csv.reader(file, delimiter=';', quotechar='|')
+        reader = csv.reader(file, delimiter=',', quotechar='|')
         next(reader, None)
 
         for event in reader:
@@ -218,10 +217,8 @@ class Preprocessor(object):
 
         return val_class
 
-
     def add_data_to_data_structure(self, values, structure):
         self.data_structure['data'][structure].append(values)
-
 
     def set_indices_k_fold_validation(self):
         """
@@ -234,7 +231,6 @@ class Preprocessor(object):
             self.data_structure['support']['train_index_per_fold'].append(train_indices)
             self.data_structure['support']['test_index_per_fold'].append(test_indices)
 
-
     def set_indices_split_validation(self, args):
         """
         Produces indices for train and test set of a split-validation.
@@ -245,7 +241,6 @@ class Preprocessor(object):
         for train_indices, test_indices in shuffle_split.split(self.data_structure['data']['process_instances']):
             self.data_structure['support']['train_index_per_fold'].append(train_indices)
             self.data_structure['support']['test_index_per_fold'].append(test_indices)
-
 
     def get_instances_of_fold(self, mode):
         """
@@ -270,7 +265,6 @@ class Preprocessor(object):
 
         return process_instances_of_fold, labels_of_fold, event_ids_of_fold
 
-
     def get_cropped_instances(self, process_instances, labels):
         """
         Crops prefixes out of instances.
@@ -281,14 +275,12 @@ class Preprocessor(object):
 
         for process_instance, labels_ in zip(process_instances, labels):
             for i in range(0, len(process_instance)):
-
                 # 0:i+1 -> get 0 up to n events of a process instance, since label is at t = n
-                cropped_process_instances.append(process_instance[0:i+1])
+                cropped_process_instances.append(process_instance[0:i + 1])
                 # label for cropped process instance
-                cropped_labels.append(labels_[0:i+1][-1])
+                cropped_labels.append(labels_[0:i + 1][-1])
 
         return cropped_process_instances, cropped_labels
-
 
     def get_cropped_instance(self, prefix_size, process_instance, process_instance_labels):
         """
@@ -297,10 +289,9 @@ class Preprocessor(object):
 
         # 0 up to prefix-size; min prefix size = 1 with 2 elements
         cropped_process_instance = process_instance[:prefix_size]
-        cropped_process_instance_label = process_instance_labels[prefix_size-1]  # -1 outcome of last act in instance
+        cropped_process_instance_label = process_instance_labels[prefix_size - 1]  # -1 outcome of last act in instance
 
         return cropped_process_instance, cropped_process_instance_label
-
 
     def get_data_tensor(self, cropped_process_instances, mode):
         """
@@ -323,10 +314,13 @@ class Preprocessor(object):
         model = self.data_structure["support"]["embedding_model"]
         for index, cropped_process_instance in enumerate(cropped_process_instances):
             for index_, activity in enumerate(cropped_process_instance):
-
                 # apply embeddings
                 # print(model.wv.vocab)
-                data_set[index, index_, :] = model.wv[activity]
+
+                try:
+                    data_set[index, index_, :] = model.wv[activity]
+                except ValueError:
+                    data_set[index, index_, :] = 32*[0]
 
         return data_set
 
@@ -337,7 +331,6 @@ class Preprocessor(object):
             'test')
 
         return data_set
-
 
     def get_label_tensor(self, cropped_process_instances, cropped_labels):
         """
@@ -360,7 +353,6 @@ class Preprocessor(object):
                     labels[index, self.data_structure['meta']['map_class_val_id'][val_class]] = 0
 
         return labels
-
 
     def get_process_instance(self):
         return self.data_structure['data']['process_instances'], self.data_structure['data']['labels']
