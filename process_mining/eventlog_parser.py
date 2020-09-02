@@ -31,6 +31,35 @@ def write_csv_file_to_disk(eventlog: EventLog, output_path):
             writer.writerow(event_dict)
 
 
+def write_csv_file_to_disk2(eventlog: EventLog, output_path):
+    """
+    Gets the EventLog class and writes it into a CSV file
+    :param eventlog: Eventlog data structure to be exported
+    :return: None
+    """
+    file = open(output_path + "hb_new_try_shift.csv", 'w', newline='')
+    labels = ["case", "event", "timestamp", "conformance"]
+    writer = csv.DictWriter(file, labels, dialect="excel")
+    writer.writeheader()
+
+    for trace in eventlog.Traces:
+        if len(trace.Events) < 3:
+            continue
+        previous = None
+        for event in iter(trace.Events):
+            if previous is None:
+                previous = event
+                continue
+            event_dict = {"case": trace.TraceId, "event": previous.EventName,
+                      "timestamp": previous.Timestamp.strftime("%d.%m.%y-%H:%M:%S"),
+                      "conformance": event.get_violation().value}
+            writer.writerow(event_dict)
+            previous = event
+            if event.EventName == "End":
+                previous = None
+
+
+
 # def write_csv_pcm2_file_to_disk(eventlog: EventLog, output_path):
 #     """
 #     Gets the EventLog class and writes it into a CSV file

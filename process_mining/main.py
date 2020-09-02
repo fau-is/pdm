@@ -71,6 +71,7 @@ def main():
     # output
     create_conformance_output(ca, event_log)
     eventlog_parser.write_csv_file_to_disk(event_log, output_pcm)
+    eventlog_parser.write_csv_file_to_disk2(event_log, output_pcm)
 #    eventlog_parser.write_csv_pcm2_file_to_disk(event_log, output_pcm)
 #    eventlog_parser.write_csv_pcm3_file_to_disk(event_log, output_pcm)
 
