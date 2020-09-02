@@ -15,7 +15,7 @@ def write_csv_file_to_disk(eventlog: EventLog, output_path):
     :param eventlog: Eventlog data structure to be exported
     :return: None
     """
-    file = open(output_path + "hb_new_try.csv", 'w', newline='')
+    file = open(output_path + "train_new_hb_pcm.csv", 'w', newline='')
     labels = ["case", "event", "timestamp", "conformance"]
     writer = csv.DictWriter(file, labels, dialect="excel")
     writer.writeheader()
@@ -37,7 +37,7 @@ def write_csv_file_to_disk2(eventlog: EventLog, output_path):
     :param eventlog: Eventlog data structure to be exported
     :return: None
     """
-    file = open(output_path + "hb_new_try_shift.csv", 'w', newline='')
+    file = open(output_path + "train_new_hb_pcm_shift.csv", 'w', newline='')
     labels = ["case", "event", "timestamp", "conformance"]
     writer = csv.DictWriter(file, labels, dialect="excel")
     writer.writeheader()
