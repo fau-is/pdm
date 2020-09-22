@@ -4,12 +4,6 @@ import tensorflow as tf
 
 
 def train(args, preprocessor):
-    """
-    config = tf.ConfigProto(allow_soft_placement=True)
-    config.gpu_options.allow_growth = True
-    config.gpu_options.per_process_gpu_memory_fraction = 0.2
-    keras.backend.tensorflow_backend.set_session(tf.Session(config=config))
-    """
 
     preprocessor.set_training_set()
 
@@ -22,6 +16,10 @@ def train(args, preprocessor):
     print('Create machine learning model ... \n')
 
     if args.dnn_architecture == 0:
+        """
+        Bi-directional long short-term neural network
+        """
+
         # input layer
         main_input = tf.keras.layers.Input(shape=(max_length_process_instance, num_features), name='main_input')
 
@@ -39,6 +37,10 @@ def train(args, preprocessor):
                                               schedule_decay=0.004, clipvalue=3)
 
     elif args.dnn_architecture == 1:
+        """
+        Multi-layer perceptron
+        """
+
         # input layer
         main_input = tf.keras.layers.Input(shape=(max_length_process_instance, num_features), name='main_input')
         input_layer_flattened = tf.keras.layers.Flatten()(main_input)
@@ -69,6 +71,7 @@ def train(args, preprocessor):
 
         optimizer = tf.keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999)
 
+
     model = tf.keras.models.Model(inputs=[main_input], outputs=[out_output])
     model.compile(loss={'out_output': 'categorical_crossentropy'}, optimizer=optimizer)
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
@@ -93,8 +96,5 @@ def train(args, preprocessor):
 
     training_time = datetime.now() - start_training_time
 
-    # test output
-    # for layer in model.layers:
-    #    print(layer.get_config(), layer.get_weights())
 
     return training_time.total_seconds()

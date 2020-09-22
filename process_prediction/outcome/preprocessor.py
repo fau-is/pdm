@@ -18,20 +18,17 @@ class Preprocessor(object):
             'iteration_cross_validation': 0,
             'elements_per_fold': 0,
             'embedding_model': ""
-
         },
-
         'meta': {
             'num_features': 0,
             'num_event_ids': 0,
             'max_length_process_instance': 0,
             'num_process_instances': 0,
-            'num_classes': 0,  # i.g., different values of the compliance attribute
+            'num_classes': 0,
             'val_classes': [],
             'map_class_val_id': [],
             'map_class_id_val': []
         },
-
         'data': {
             'process_instances': [],
             'labels': [],
@@ -66,7 +63,7 @@ class Preprocessor(object):
         self.data_structure['support']['elements_per_fold'] = \
             int(round(
                 self.data_structure['meta']['num_process_instances'] / self.data_structure['support']['num_folds']))
-        self.data_structure['meta']['num_features'] = args.embedding_dim  # dimension of embeddings
+        self.data_structure['meta']['num_features'] = args.embedding_dim
         self.data_structure['meta']['max_length_process_instance'] = max(
             map(lambda x: len(x), self.data_structure['data']['process_instances']))
 
@@ -75,7 +72,6 @@ class Preprocessor(object):
         self.data_structure['meta']['map_class_val_id'], \
         self.data_structure['meta']['map_class_id_val'], \
             = self.get_classes()
-
 
         utils.llprint("Create embedding model ... \n")
         self.data_structure['support']['embedding_model'] = self.create_embedding_model(args)
@@ -309,13 +305,15 @@ class Preprocessor(object):
         model = self.data_structure["support"]["embedding_model"]
         for index, cropped_process_instance in enumerate(cropped_process_instances):
             for index_, activity in enumerate(cropped_process_instance):
+
                 # apply embeddings
                 # print(model.wv.vocab)
 
                 try:
                     data_set[index, index_, :] = model.wv[activity]
                 except ValueError:
-                    data_set[index, index_, :] = 32*[0]
+                    # todo: get emb size form config file
+                    data_set[index, index_, :] = 32 * [0]
 
         return data_set
 
