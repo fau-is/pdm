@@ -9,7 +9,6 @@ if __name__ == '__main__':
     output = utils.load_output()
     utils.clear_measurement_file(args)
 
-
     preprocessor = Preprocessor(args)
 
     if args.cross_validation:
@@ -27,7 +26,6 @@ if __name__ == '__main__':
         utils.print_output(args, output, iteration_cross_validation + 1)
         utils.write_output(args, output, iteration_cross_validation + 1)
 
-    # split validation
     else:
         output["training_time_seconds"].append(train.train(args, preprocessor))
         predictor.test(args, preprocessor)
