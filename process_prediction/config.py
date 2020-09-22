@@ -27,16 +27,7 @@ def load():
     parser.add_argument('--batch_size_test', default=1, type=int)
 
     # data
-    parser.add_argument('--data_set_out2', default="train_hb_pcm_sample_2.csv")
-    parser.add_argument('--data_set_out1', default="hb_new_try_sample.csv")
-    parser.add_argument('--data_set_act', default="train_hb_pcm_sample.csv")
     parser.add_argument('--data_set', default="hb_new_try_sample.csv")
-
-    # explain -> train_hb_pcm
-    # outcome -> train_hb_pc_1
-    # outcome -> train_hb_pc_2
-    # nextevent -> all
-
     parser.add_argument('--data_dir', default="./data/")
     parser.add_argument('--model_dir', default="./models/")
     parser.add_argument('--result_dir', default="./results/")
