@@ -60,7 +60,7 @@ def test(args, preprocessor):
             index = index + 1
 
             # for each prefix with a length >= 2
-            for prefix_size in range(2, len(process_instance)):
+            for prefix_size in range(1, len(process_instance)):
                 cropped_process_instance, cropped_process_instance_label = preprocessor.get_cropped_instance(
                     prefix_size,
                     process_instance,
