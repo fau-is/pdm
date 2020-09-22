@@ -15,7 +15,7 @@ def load():
     parser.add_argument('--learning_rate', default=0.002, type=float)  # dnc 0.0001 #lstm 0.002
 
     # representation
-    parser.add_argument('--embedding_dim', default=32, type=int)
+    parser.add_argument('--embedding_dim', default=8, type=int)
     parser.add_argument('--embedding_epochs', default=1, type=int)
 
     # evaluation

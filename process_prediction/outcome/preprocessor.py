@@ -1,7 +1,6 @@
 from __future__ import division
 import csv
 import numpy
-import copy
 import gensim
 import process_prediction.utils as utils
 from sklearn.model_selection import KFold, ShuffleSplit

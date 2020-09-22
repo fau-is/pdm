@@ -7,7 +7,6 @@ from tensorflow.keras.models import load_model
 def predict_prefix(args, preprocessor, process_instance, labels, prefix_size, model):
 
     # todo: check this statement; remove end event
-    # remove label of outcome2
     labels = labels[0:len(labels) - 1]
     process_instance = process_instance[0:len(process_instance) - 1]
 
@@ -22,22 +21,16 @@ def predict_prefix(args, preprocessor, process_instance, labels, prefix_size, mo
 
     y = model.predict(test_data)
     y = y[0][:]
-
     y = y.tolist()
     prediction = str(y.index(max(y)))
     test_data_reshaped = test_data.reshape(-1, test_data.shape[2])
 
-    """
-    if prediction == '1':
-        prediction = '0'
-    else:
-        prediction = '1'
-    """
 
     return prediction, ground_truth, cropped_process_instance, model, test_data_reshaped
 
 
 def test(args, preprocessor):
+
     # init
     preprocessor.get_instances_of_fold('test')
     model = load_model('%s%smodel_%s.h5' % (
