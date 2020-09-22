@@ -62,7 +62,7 @@ class Preprocessor(object):
 
         utils.llprint("Initialization ... \n")
         self.data_structure['support']['num_folds'] = args.num_folds
-        self.data_structure['support']['data_dir'] = args.data_dir + args.data_set_out1
+        self.data_structure['support']['data_dir'] = args.data_dir + args.data_set
         self.get_sequences_from_event_log()
         self.data_structure['support']['elements_per_fold'] = \
             int(round(
@@ -77,13 +77,9 @@ class Preprocessor(object):
         self.data_structure['meta']['map_class_id_val'], \
             = self.get_classes()
 
-        if not args.explain:
-            utils.llprint("Create embedding model ... \n")
-            self.data_structure['support']['embedding_model'] = self.create_embedding_model(args)
-        else:
-            utils.llprint("Load embedding model ... \n")
-            self.data_structure['support']['embedding_model'] = gensim.models.Word2Vec.load(
-                '%s%sembeddings.model' % ("outcome", args.model_dir[1:]))
+
+        utils.llprint("Create embedding model ... \n")
+        self.data_structure['support']['embedding_model'] = self.create_embedding_model(args)
 
         if args.cross_validation:
             self.set_indices_k_fold_validation()

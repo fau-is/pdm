@@ -7,8 +7,7 @@ def load():
     parser = argparse.ArgumentParser()
 
     # mode
-    parser.add_argument('--explain', default=False, type=utils.str2bool)  # True + outcome2
-    parser.add_argument('--task', default="outcome")  # outcome; outcome2; nextevent
+    parser.add_argument('--task', default="outcome")
 
     # dnn
     parser.add_argument('--dnn_num_epochs', default=1, type=int)
@@ -27,7 +26,7 @@ def load():
     parser.add_argument('--batch_size_test', default=1, type=int)
 
     # data
-    parser.add_argument('--data_set', default="hb_new_try_sample.csv")
+    parser.add_argument('--data_set', default="train_new_hb_pcm_shift.csv")
     parser.add_argument('--data_dir', default="./data/")
     parser.add_argument('--model_dir', default="./models/")
     parser.add_argument('--result_dir', default="./results/")
