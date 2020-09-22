@@ -90,7 +90,7 @@ def train(args, preprocessor):
 
     start_training_time = datetime.now()
 
-    model.fit(features_data, {'out_output': labels}, validation_split=1 / args.num_folds, verbose=1,
+    model.fit(features_data, {'out_output': labels}, validation_split=args.val_split, verbose=1,
               callbacks=[early_stopping, model_checkpoint, lr_reducer], batch_size=args.batch_size_train,
               epochs=args.dnn_num_epochs)
 

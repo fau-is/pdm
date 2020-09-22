@@ -60,9 +60,11 @@ class Preprocessor(object):
         self.data_structure['support']['num_folds'] = args.num_folds
         self.data_structure['support']['data_dir'] = args.data_dir + args.data_set
         self.get_sequences_from_event_log()
-        self.data_structure['support']['elements_per_fold'] = \
-            int(round(
-                self.data_structure['meta']['num_process_instances'] / self.data_structure['support']['num_folds']))
+
+        if args.cross_validation:
+            self.data_structure['support']['elements_per_fold'] = int(round(
+                    self.data_structure['meta']['num_process_instances'] / self.data_structure['support']['num_folds']))
+
         self.data_structure['meta']['num_features'] = args.embedding_dim
         self.data_structure['meta']['max_length_process_instance'] = max(
             map(lambda x: len(x), self.data_structure['data']['process_instances']))
