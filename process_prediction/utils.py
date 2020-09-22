@@ -1,11 +1,15 @@
 import argparse
-import pickle
 import sys
-import numpy
+import numpy as np
 import csv
 import sklearn
 import arrow
 import os
+from matplotlib import pyplot
+from functools import reduce
+import seaborn as sns
+import pandas
+
 
 output = {
     "accuracy_values": [],
@@ -96,6 +100,8 @@ def get_output(args, preprocessor, _output):
     _output["f1_values_macro"].append(sklearn.metrics.f1_score(ground_truth_label, predicted_label, average='macro'))
     _output["f1_values_weighted"].append(sklearn.metrics.f1_score(ground_truth_label, predicted_label, average='weighted'))
 
+    confusion_matrix(ground_truth_label, predicted_label, args)
+
     return _output
 
 
@@ -165,7 +171,7 @@ def write_output(args, _output, index_fold):
                  "time-stamp"])
         writer.writerow([
             "%s-%s" % (args.data_set[:-4], args.dnn_architecture),
-            get_mode(index_fold, args),  # mode
+            get_mode(index_fold, args),
             "cross-validation" if args.cross_validation else "split-validation",
             get_output_value(get_mode(index_fold, args), index_fold, _output, "accuracy_values", args),
             get_output_value(get_mode(index_fold, args), index_fold, _output, "precision_values_micro", args),
@@ -180,3 +186,47 @@ def write_output(args, _output, index_fold):
             get_output_value(get_mode(index_fold, args), index_fold, _output, "training_time_seconds", args),
             arrow.now()
         ])
+
+
+def confusion_matrix(label_ground_truth, label_prediction, args):
+    """
+    Plots a confusion matrix.
+    :param label_ground_truth:
+    :param label_prediction:
+    :param args:
+    :return:
+    """
+
+    label_ground_truth = np.array(label_ground_truth)
+    label_prediction = np.array(label_prediction)
+
+    classes = sklearn.utils.multiclass.unique_labels(label_ground_truth, label_prediction)
+
+    cms = []
+    cm = sklearn.metrics.confusion_matrix(label_ground_truth, label_prediction)
+    cm_df = pandas.DataFrame(cm, index=classes, columns=classes)
+    cms.append(cm_df)
+
+    def prettify(n):
+        """
+        if n > 1000000:
+            return str(np.round(n / 1000000, 1)) + 'M'
+        elif n > 1000:
+            return str(np.round(n / 1000, 1)) + 'K'
+        else:
+        """
+        return str(n)
+
+    cm = reduce(lambda x, y: x.add(y, fill_value=0), cms)
+    annot = cm.applymap(prettify)
+    cm = (cm.T / cm.sum(axis=1)).T
+    fig, g = pyplot.subplots(figsize=(7, 4.5))
+    g = sns.heatmap(cm, annot=annot, fmt='', cmap='Blues', cbar=False, rasterized=True, linewidths=0.1)
+    _ = g.set(ylabel='Actual', xlabel='Prediction')
+
+    for _, spine in g.spines.items():
+        spine.set_visible(True)
+
+    pyplot.xticks(rotation=45)
+    fig.tight_layout()
+    fig.savefig("./outcome" + str(args.result_dir + 'cm_' + args.data_set[:-4] + '.pdf'))
