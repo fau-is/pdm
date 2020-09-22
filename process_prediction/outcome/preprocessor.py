@@ -102,27 +102,42 @@ class Preprocessor(object):
 
     def create_embedding_model(self, args):
 
-        file = open(self.data_structure['support']['data_dir'], 'r')
-        reader = csv.reader(file, delimiter=',', quotechar='|')
-        next(reader, None)
-        data_set = list()
         embedding_dim = args.embedding_dim
         epochs = args.embedding_epochs
 
-        # create data set
+        file = open(self.data_structure['support']['data_dir'], 'r')
+        reader = csv.reader(file, delimiter=',', quotechar='|')
+        next(reader, None)
+
+        act = list()
+        act_seq = list()
+        act_matrix = list()
+        idx_prev = '0'
+
         for row in reader:
-            data_set.append([row[1]])
+            act.append(row[1])
+
+            if row[0] == '0':
+                act_seq.append(row[1])
+
+            if row[0] != '0' and row[0] != idx_prev:
+                idx_prev = row[0]
+                act_matrix.append(act_seq)
+                act_seq = []
+
+            if row[0] != '0' and row[0] == idx_prev:
+                act_seq.append(row[1])
+        act_matrix.append(act_seq)
 
         file.close()
 
-        # train model
-        # note each word is handled as a sentence
-        model = gensim.models.Word2Vec(data_set, alpha=0.025, min_count=1, size=embedding_dim, window=5)
+        model = gensim.models.Word2Vec(act_matrix, alpha=0.025, min_count=1, sg=0,  # 0 = cbow; 1 = skip-gram
+                                       size=embedding_dim, window=5)
 
         for epoch in range(epochs):
             if epoch % 2 == 0:
                 print('Now training epoch %s' % epoch)
-            model.train(data_set, total_examples=len(data_set), epochs=epochs)
+            model.train(act, total_examples=len(act_matrix), epochs=epochs)
             model.alpha -= 0.002  # decrease learning rate
             model.min_alpha = model.alpha  # fix the learning rate, no decay
 

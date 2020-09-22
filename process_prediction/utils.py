@@ -68,18 +68,11 @@ def get_output(args, preprocessor, _output):
     predicted_label = list()
     ground_truth_label = list()
 
-    if not args.cross_validation:
-        result_dir_fold = \
-            args.result_dir + \
-            args.data_set.split(".csv")[0] + \
-            "_0.csv"
+    if args.cross_validation:
+        result_dir_fold = './' + args.task + args.result_dir[1:] + args.data_set.split(".csv")[0] + \
+                          "_%d" % preprocessor.data_structure['support']['iteration_cross_validation'] + ".csv"
     else:
-        result_dir_fold = \
-            './' + \
-            args.task + \
-            args.result_dir[1:] + \
-            args.data_set.split(".csv")[0] + \
-            "_%d" % preprocessor.data_structure['support']['iteration_cross_validation'] + ".csv"
+        result_dir_fold = './' + args.task + args.result_dir[1:] + args.data_set.split(".csv")[0] + "_0.csv"
 
     with open(result_dir_fold, 'r') as result_file_fold:
         result_reader = csv.reader(result_file_fold, delimiter=';', quotechar='|', quoting=csv.QUOTE_MINIMAL)
@@ -110,7 +103,7 @@ def get_output(args, preprocessor, _output):
     return _output
 
 
-def multi_class_prc_auc_score(ground_truth_label, predicted_label, average='weighted'):
+def multi_class_prc_auc_score(ground_truth_label, predicted_label, average='macro'):
     label_binarizer = sklearn.preprocessing.LabelBinarizer()
     label_binarizer.fit(ground_truth_label)
 
