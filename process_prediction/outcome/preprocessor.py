@@ -190,7 +190,7 @@ class Preprocessor(object):
 
         self.data_structure['meta']['num_process_instances'] += 1
 
-    def set_training_set(self):
+    def set_training_set(self, args):
 
         utils.llprint("Get training instances ... \n")
         process_instances_train, labels_train, _ = \
@@ -203,7 +203,7 @@ class Preprocessor(object):
                 labels_train)
 
         utils.llprint("Create training set data as tensor ... \n")
-        features_data = self.get_data_tensor(cropped_process_instances, 'train')
+        features_data = self.get_data_tensor(cropped_process_instances, 'train', args)
 
         utils.llprint("Create training set label as tensor ... \n")
         labels = self.get_label_tensor(cropped_process_instances,
@@ -301,7 +301,7 @@ class Preprocessor(object):
 
         return cropped_process_instance, cropped_process_instance_label
 
-    def get_data_tensor(self, cropped_process_instances, mode):
+    def get_data_tensor(self, cropped_process_instances, mode, args):
         """
         Produces a vector-oriented representation of data as 3-dimensional tensor.
         """
@@ -323,22 +323,18 @@ class Preprocessor(object):
         for index, cropped_process_instance in enumerate(cropped_process_instances):
             for index_, activity in enumerate(cropped_process_instance):
 
-                # apply embeddings
                 # print(model.wv.vocab)
 
                 try:
                     data_set[index, index_, :] = model.wv[activity]
                 except ValueError:
-                    # todo: get emb size form config file
-                    data_set[index, index_, :] = 32 * [0]
+                    data_set[index, index_, :] = args.embedding_dim * [0]
 
         return data_set
 
-    def get_data_tensor_for_single_prediction(self, cropped_process_instance):
+    def get_data_tensor_for_single_prediction(self, cropped_process_instance, args):
 
-        data_set = self.get_data_tensor(
-            [cropped_process_instance],
-            'test')
+        data_set = self.get_data_tensor([cropped_process_instance], 'test', args)
 
         return data_set
 

@@ -17,7 +17,7 @@ def predict_prefix(args, preprocessor, process_instance, labels, prefix_size, mo
     )
 
     ground_truth = cropped_process_instance_label
-    test_data = preprocessor.get_data_tensor_for_single_prediction(cropped_process_instance)
+    test_data = preprocessor.get_data_tensor_for_single_prediction(cropped_process_instance, args)
 
     y = model.predict(test_data)
     y = y[0][:]
@@ -68,7 +68,7 @@ def test(args, preprocessor):
                 )
 
                 ground_truth = cropped_process_instance_label
-                test_data = preprocessor.get_data_tensor_for_single_prediction(cropped_process_instance)
+                test_data = preprocessor.get_data_tensor_for_single_prediction(cropped_process_instance, args)
 
                 y = model.predict(test_data)
                 y = y[0][:]
