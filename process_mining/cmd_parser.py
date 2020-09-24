@@ -11,10 +11,10 @@ def parse_args():
     # This file contains the commandline tools for the current tool
     parser = argparse.ArgumentParser(prog='main.py', usage='main.py [options]')
 
-    parser.add_argument('--eventLog', nargs='?', default='Resources/Hospital Billing - Event Log.xes',
+    parser.add_argument('--eventLog', nargs='?', default='Resources/mobis.xes',
                         help='The path pulling the event log')
 
-    parser.add_argument('--XmlDcr', nargs="?", default='Resources/Hospital Billing.xml',
+    parser.add_argument('--XmlDcr', nargs="?", default='Resources/MoBIS.xml',
                         help='The input path for the DCR Graph xml')
 
     parser.add_argument('--outputPathPCM', nargs="?", default="./",

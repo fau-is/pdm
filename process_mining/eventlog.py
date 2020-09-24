@@ -95,8 +95,11 @@ class EventLog(object):
                     event_role = attributes.get('org:role').get_value()
                 elif 'org:resource' in attributes:
                     event_role = attributes.get('org:resource').get_value()
+
                 if 'time:timestamp' in attributes:
                     event_timestamp = attributes.get('time:timestamp').get_value()
+                elif 'end' in attributes:
+                    event_timestamp = attributes.get('end').get_value()
 
                 event_tmp = Event(event_name, event_role, event_timestamp, attributes)
                 trace_tmp.append_event(event_tmp)
