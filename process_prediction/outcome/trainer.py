@@ -47,22 +47,22 @@ def train(args, preprocessor):
 
         # layer 2
         hidden_layer_1 = tf.keras.layers.Dense(100, activation='relu')(input_layer_flattened)
-        hidden_layer_1 = tf.keras.layers.normalization.BatchNormalization()(hidden_layer_1)
+        hidden_layer_1 = tf.keras.layers.BatchNormalization()(hidden_layer_1)
         hidden_layer_1 = tf.keras.layers.Dropout(0.5)(hidden_layer_1)
 
         # layer 3
         hidden_layer_2 = tf.keras.layers.Dense(200, activation='relu')(hidden_layer_1)
-        hidden_layer_2 = tf.keras.layers.normalization.BatchNormalization()(hidden_layer_2)
+        hidden_layer_2 = tf.keras.layers.BatchNormalization()(hidden_layer_2)
         hidden_layer_2 = tf.keras.layers.Dropout(0.5)(hidden_layer_2)
 
         # layer 4
         hidden_layer_3 = tf.keras.layers.Dense(100, activation='relu')(hidden_layer_2)
-        hidden_layer_3 = tf.keras.layers.normalization.BatchNormalization()(hidden_layer_3)
+        hidden_layer_3 = tf.keras.layers.BatchNormalization()(hidden_layer_3)
         hidden_layer_3 = tf.keras.layers.Dropout(0.5)(hidden_layer_3)
 
         # layer 5
         hidden_layer_4 = tf.keras.layers.Dense(50, activation='relu')(hidden_layer_3)
-        hidden_layer_4 = tf.keras.layers.normalization.BatchNormalization()(hidden_layer_4)
+        hidden_layer_4 = tf.keras.layers.BatchNormalization()(hidden_layer_4)
         hidden_layer_4 = tf.keras.layers.Dropout(0.5)(hidden_layer_4)
 
         # output layer
@@ -70,7 +70,6 @@ def train(args, preprocessor):
                                            kernel_initializer='glorot_uniform')(hidden_layer_4)
 
         optimizer = tf.keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999)
-
 
     model = tf.keras.models.Model(inputs=[main_input], outputs=[out_output])
     model.compile(loss={'out_output': 'categorical_crossentropy'}, optimizer=optimizer)
@@ -95,6 +94,5 @@ def train(args, preprocessor):
               epochs=args.dnn_num_epochs)
 
     training_time = datetime.now() - start_training_time
-
 
     return training_time.total_seconds()
