@@ -62,6 +62,7 @@ def str2bool(v):
 
 def clear_measurement_file(args):
     open('./%s/results/output_%s.csv' % (args.task, args.data_set[:-4]), "w").close()
+    open('./%s/results/output_class%s.csv' % (args.task, args.data_set[:-4]), "w").close()
 
 
 def get_output(args, preprocessor, _output):
@@ -100,10 +101,10 @@ def get_output(args, preprocessor, _output):
     _output["f1_values_macro"].append(sklearn.metrics.f1_score(ground_truth_label, predicted_label, average='macro'))
     _output["f1_values_weighted"].append(sklearn.metrics.f1_score(ground_truth_label, predicted_label, average='weighted'))
 
-    confusion_matrix(ground_truth_label, predicted_label, args)
+    save_confusion_matrix(ground_truth_label, predicted_label, args)
+    save_classification_report(ground_truth_label, predicted_label, args)
 
     return _output
-
 
 
 def print_output(args, _output, index_fold):
@@ -188,7 +189,16 @@ def write_output(args, _output, index_fold):
         ])
 
 
-def confusion_matrix(label_ground_truth, label_prediction, args):
+def save_classification_report(ground_truth_label, predicted_label, args):
+
+    report = sklearn.metrics.classification_report(ground_truth_label, predicted_label, output_dict=True)
+
+    file = open('./%s%soutput_class_%s.csv' % (args.task, args.result_dir[1:], args.data_set[:-4]), mode='a', newline='')
+    file.write("\n" + str(report))
+    file.close()
+
+
+def save_confusion_matrix(label_ground_truth, label_prediction, args):
     """
     Plots a confusion matrix.
     :param label_ground_truth:

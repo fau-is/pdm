@@ -7,7 +7,7 @@ import process_prediction.outcome.predictor as predictor
 if __name__ == '__main__':
     args = config.load()
     output = utils.load_output()
-    utils.clear_measurement_file(args)
+    # utils.clear_measurement_file(args)
 
     preprocessor = Preprocessor(args)
 

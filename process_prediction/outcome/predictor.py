@@ -25,7 +25,6 @@ def predict_prefix(args, preprocessor, process_instance, labels, prefix_size, mo
     prediction = str(y.index(max(y)))
     test_data_reshaped = test_data.reshape(-1, test_data.shape[2])
 
-
     return prediction, ground_truth, cropped_process_instance, model, test_data_reshaped
 
 
@@ -72,7 +71,6 @@ def test(args, preprocessor):
 
                 y = model.predict(test_data)
                 y = y[0][:]
-                # print(y)
 
                 prediction = preprocessor.get_class_val(y)
 
