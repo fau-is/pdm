@@ -4,30 +4,6 @@ import process_prediction.utils as utils
 from tensorflow.keras.models import load_model
 
 
-def predict_prefix(args, preprocessor, process_instance, labels, prefix_size, model):
-
-    # todo: check this statement; remove end event
-    labels = labels[0:len(labels) - 1]
-    process_instance = process_instance[0:len(process_instance) - 1]
-
-    cropped_process_instance, cropped_process_instance_label = preprocessor.get_cropped_instance(
-        prefix_size,
-        process_instance,
-        labels
-    )
-
-    ground_truth = cropped_process_instance_label
-    test_data = preprocessor.get_data_tensor_for_single_prediction(cropped_process_instance, args)
-
-    y = model.predict(test_data)
-    y = y[0][:]
-    y = y.tolist()
-    prediction = str(y.index(max(y)))
-    test_data_reshaped = test_data.reshape(-1, test_data.shape[2])
-
-    return prediction, ground_truth, cropped_process_instance, model, test_data_reshaped
-
-
 def test(args, preprocessor):
 
     # init
