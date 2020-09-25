@@ -1,0 +1,2 @@
+
+{"b'0'": {'precision': 0.9358490566037736, 'recall': 1.0, 'f1-score': 0.9668615984405459, 'support': 496}, "b'3'": {'precision': 0.0, 'recall': 0.0, 'f1-score': 0.0, 'support': 34}, 'accuracy': 0.9358490566037736, 'macro avg': {'precision': 0.4679245283018868, 'recall': 0.5, 'f1-score': 0.48343079922027293, 'support': 530}, 'weighted avg': {'precision': 0.875813456746173, 'recall': 0.9358490566037736, 'f1-score': 0.9048365147670014, 'support': 530}}
