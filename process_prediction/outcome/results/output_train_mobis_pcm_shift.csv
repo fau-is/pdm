@@ -1,0 +1,2 @@
+experiment;mode;validation;accuracy;precision_micro;precision_macro;precision_weighted;recall_micro;recall_macro;recall_weighted;f1-score_micro;f1-score_macro;f1-score_weighted;training-time;time-stamp
+train_mobis_pcm_shift-0;split-0.8;split-validation;0.9811726492127701;0.9811726492127701;0.8711719902747864;0.9746806588785281;0.9811726492127701;0.7017946394275847;0.9811726492127701;0.9811726492127701;0.7197432833092847;0.9730104790970894;385.378221;2020-09-25T12:27:10.226866+02:00

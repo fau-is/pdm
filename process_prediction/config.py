@@ -27,7 +27,7 @@ def load():
     parser.add_argument('--batch_size_test', default=1, type=int)
 
     # data
-    parser.add_argument('--data_set', default="train_new_hb_pcm_shift_samplev2.csv")  # train_mobis_pcm_shift.csv")
+    parser.add_argument('--data_set', default="train_mobis_pcm_shift.csv")  # train_mobis_pcm_shift.csv")
     parser.add_argument('--data_dir', default="./data/")
     parser.add_argument('--model_dir', default="./models/")
     parser.add_argument('--result_dir', default="./results/")
