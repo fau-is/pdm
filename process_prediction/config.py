@@ -20,6 +20,8 @@ def load():
     parser.add_argument('--embedding_dim', default=8, type=int)
     parser.add_argument('--embedding_epochs', default=10, type=int)
 
+    parser.add_argument('--include_time_delta', default=True, type=utils.str2bool)
+
     # evaluation
     parser.add_argument('--num_folds', default=0, type=int)
     parser.add_argument('--cross_validation', default=False, type=utils.str2bool)
@@ -29,7 +31,7 @@ def load():
     parser.add_argument('--batch_size_test', default=1, type=int)
 
     # data
-    parser.add_argument('--data_set', default="train_new_hb_pcm_shift_samplev2.csv")  # train_mobis_pcm_shift.csv")
+    parser.add_argument('--data_set', default="train_new_hb_pcm_shift_samplev2.csv")  # train_mobis_pcm_shift.csv
     parser.add_argument('--data_dir', default="./data/")
     parser.add_argument('--model_dir', default="./models/")
     parser.add_argument('--result_dir', default="./results/")
@@ -38,6 +40,8 @@ def load():
     parser.add_argument('--case_id_key', default="case", type=str)
     parser.add_argument('--activity_key', default="event", type=str)
     parser.add_argument('--outcome_key', default="conformance", type=str)
+    parser.add_argument('--time_delta_key', default="time_delta", type=str)
+    parser.add_argument('--date_format', default="%d.%m.%y-%H:%M:%S", type=str)
 
     # gpu processing
     parser.add_argument('--gpu_ratio', default=0.2, type=float)

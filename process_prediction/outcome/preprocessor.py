@@ -1,12 +1,12 @@
 from __future__ import division
 import numpy
-import gensim
 import process_prediction.utils as utils
 from sklearn.model_selection import KFold, ShuffleSplit
 import pandas
 import nap.utils as utils
 import category_encoders
 from pm4py.objects.conversion.log import converter as log_converter
+import datetime
 
 
 class Preprocessor(object):
@@ -54,7 +54,6 @@ class Preprocessor(object):
         parameters = {log_converter.Variants.TO_EVENT_LOG.value.Parameters.CASE_ID_KEY: args.case_id_key}
         event_log = log_converter.apply(df, parameters=parameters, variant=log_converter.Variants.TO_EVENT_LOG)
         self.set_classes(args, event_log)
-        self.create_embedding_model(args, event_log)
 
         df_enc = self.encode_data(args, df)
         event_log_enc = log_converter.apply(df_enc, parameters=parameters, variant=log_converter.Variants.TO_EVENT_LOG)
@@ -79,9 +78,7 @@ class Preprocessor(object):
 
         utils.llprint('Load data ... \n')
 
-        df = pandas.read_csv(args.data_dir + args.data_set, sep=',',
-                             # TODO: keep string conversion below? -> strings in event_log object
-                             dtype={args.activity_key: object, args.outcome_key: object})
+        df = pandas.read_csv(args.data_dir + args.data_set, sep=',')
         self.set_context(df)
 
         return df
@@ -105,7 +102,6 @@ class Preprocessor(object):
         data_types = []
         column_names = df.columns
         for idx, attribute_name in enumerate(column_names):
-            # TODO: outcome is not considered an context attribute. Correct?
             if idx > 2 and idx < len(column_names)-1:
                 attributes.append(attribute_name)
                 data_types.append(self.get_attribute_data_type(df[attribute_name]))
@@ -186,8 +182,12 @@ class Preprocessor(object):
                 if column_index == 1:
                     encoded_column = self.encode_activities(args, df, column_name)
                 elif column_index == 2 or column_index == len(df.columns)-1:
-                    # timestamps and outcome, no encoding
+                    # timestamps and outcome, no encoding # TODO outcome no encoding?
                     encoded_df[column_name] = df[column_name]
+                    if column_index == 2:
+                        # time deltas (time difference between event and predecessor of the same case)
+                        time_deltas = self.get_time_deltas(args, df, column_name)
+                        encoded_df[args.time_delta_key] = [time_delta for sublist in time_deltas for time_delta in sublist]
                     continue
                 elif column_index > 2:
                     encoded_column = self.encode_context_attribute(args, df, column_name)
@@ -265,6 +265,133 @@ class Preprocessor(object):
             mode = args.encoding_cat
 
         return mode
+
+    def get_time_deltas(self, args, df, column_name):
+        """
+        Calculates time differences between two successive events of the same case.
+
+        Parameters
+        ----------
+        args : Namespace
+            Settings of the configuration parameters.
+        df : pandas.DataFrame
+            Dataframe representing the event log.
+        column_name : str
+            Name of the dataframe column.
+
+        Returns
+        -------
+        list (of lists) :
+            A sublist contains calculated time differences between two successive events of the same case.
+
+        """
+
+        case_ids = df[args.case_id_key]
+        timestamps = df[column_name]
+        tuples = list(zip(case_ids, timestamps))
+        time_deltas = []
+
+        current_case_id = case_ids[0]
+        predecessor_time = self.get_datetime_object(args, timestamps[0])
+        time_deltas_case = [0.0]
+
+        for case_id, timestamp in tuples[1:]:
+
+            current_time = self.get_datetime_object(args, timestamp)
+
+            if case_id == current_case_id:
+                time_delta = self.get_time_difference(predecessor_time, current_time)
+
+                if time_delta < 0:
+                    time_delta = 0.0
+
+                time_deltas_case.append(time_delta)
+            else:
+                time_deltas.append(time_deltas_case)
+                time_deltas_case = [0.0]
+                current_case_id = case_id
+
+            predecessor_time = current_time
+
+        time_deltas.append(time_deltas_case)
+
+        norm_time_deltas = self.normalize_time_deltas(time_deltas)
+
+        return norm_time_deltas
+
+    def get_datetime_object(self, args, timestamp):
+        """
+        Creates datetime objects from the timestamp of an event.
+
+        Parameters
+        ----------
+        args : Namespace
+            Settings of the configuration parameters.
+        timestamp : str
+            The timestamp of an event.
+
+        Returns
+        -------
+        datetime :
+            Datetime object from the timestamp of an event.
+
+        """
+
+        datetime_object = datetime.datetime.strptime(timestamp, args.date_format)
+
+        return datetime_object
+
+    def get_time_difference(self, predecessor_time, current_time):
+        """
+        Calculates the time difference between two (successive) events.
+
+        Parameters
+        ----------
+        predecessor_time : datetime
+            Datetime object of an event.
+        current_time : datetime
+            Datetime object of the following event.
+
+        Returns
+        -------
+        float :
+            The time difference.
+
+        """
+
+        time_difference = (current_time - predecessor_time).total_seconds()
+
+        return time_difference
+
+    def normalize_time_deltas(self, time_deltas):
+        """
+        Normalize the computed time differences so that each value is between 0 and 1.
+
+        Parameters
+        ----------
+        time_deltas : list (of lists)
+            A sublist contains the calculated time differences  between two successive events of the same case.
+
+        Returns
+        -------
+        list (of lists)
+            A sublist contains the relative/normalized time differences between two successive events of the same case.
+            The relative/normalized time difference is the absolute time difference divided by the highest time
+            difference over all cases. The resulting relative/normalized time differences are always between 0 and 1.
+
+        """
+
+        time_deltas_flat = [item for sublist in time_deltas for item in sublist]
+        max_value = max(time_deltas_flat)
+        encoded_time_deltas = [time_delta / max_value for sublist in time_deltas for time_delta in sublist]
+
+        element_idx = 0
+        for sublist_idx, sublist in enumerate(time_deltas):
+            for sublist_element_idx in range(0, len(sublist)):
+                time_deltas[sublist_idx][sublist_element_idx] = encoded_time_deltas[element_idx]
+                element_idx += 1
+
+        return time_deltas
 
     def encode_activities(self, args, df, column_name):
         """
@@ -418,6 +545,7 @@ class Preprocessor(object):
         ----------
         args : Namespace
             Settings of the configuration parameters.
+
         event_log : list of dicts, where single dict represents a case
             The event log.
 
@@ -441,75 +569,6 @@ class Preprocessor(object):
         self.classes['labels'] = list(set(labels))
         self.classes['ids_to_labels'] = map_class_labels_to_ids
         self.classes['labels_to_ids'] = map_class_ids_to_labels
-
-    def create_embedding_model(self, args, event_log):
-        """
-        Trains and stores a Word2Vec model.
-
-        Parameters
-        ----------
-        args : Namespace
-            Settings of the configuration parameters.
-        event_log : list of dicts, where single dict represents a case
-            The event log.
-
-        Returns
-        -------
-        None
-
-        """
-        utils.llprint("Create embedding model ... \n")
-
-        act = list()
-        act_seq = list()
-        act_matrix = list()
-        # idx_prev = '0'
-
-        for case in event_log:
-            for event in case._list:
-                activity = event[args.activity_key]
-                # TODO: add context
-                # if self.context_exists():
-                #     context_attributes = self.get_context_attributes()
-                #     for attr_key in context_attributes:
-
-                act.append(activity)
-                act_seq.append(activity)
-            act_matrix.append(act_seq)
-            act_seq = []
-        act_matrix.append(act_seq)
-
-        model = gensim.models.Word2Vec(act_matrix, alpha=0.025, min_count=1, sg=0,  # 0 = cbow; 1 = skip-gram
-                                       size=args.embedding_dim, window=5)
-
-        epochs = args.embedding_epochs
-        for epoch in range(epochs):
-            if epoch % 2 == 0:
-                print('Now training epoch %s' % epoch)
-            model.train(act, total_examples=len(act_matrix), epochs=epochs)
-            model.alpha -= 0.002  # decrease learning rate
-            model.min_alpha = model.alpha  # fix the learning rate, no decay
-
-        # save
-        model.save('./%s%sembeddings.model' % (args.task, args.model_dir[1:]), sep_limit=2000000000)
-
-    def load_embedding_model(self, args):
-        """
-        Returns a pre-trained Word2Vec model.
-
-        Parameters
-        ----------
-        args : Namespace
-            Settings of the configuration parameters.
-
-        Returns
-        -------
-        model : Word2Vec
-            The pre-trained Word2Vec model.
-
-        """
-        model = gensim.models.Word2Vec.load('./%s%sembeddings.model' % (args.task, args.model_dir[1:]))
-        return model
 
     def transform_encoded_attribute_columns_to_single_column(self, encoded_columns, df, column_name):
         """
@@ -569,7 +628,6 @@ class Preprocessor(object):
         self.context['encoding_lengths'].append(num_columns)
 
     def get_length_of_activity_label(self):
-        # TODO remove
         """
         Returns number of values representing an encoded activity
 
@@ -582,7 +640,6 @@ class Preprocessor(object):
         return self.activity['label_length']
 
     def get_lengths_of_context_encoding(self):
-        # TODO remove
         """
         Returns number of values representing an encoded context attribute.
 
@@ -682,12 +739,14 @@ class Preprocessor(object):
         num_attributes = 1 # activity
         if self.context_exists():
             num_attributes += len(self.context['attributes'])
+        if args.include_time_delta:
+            num_attributes += 1
 
         return num_attributes
 
     def get_num_features(self, args):
         """
-        Returns the number of feature values used to train and test the model.
+        Returns the number of features used to train and test the model.
 
         Parameters
         ----------
@@ -697,11 +756,19 @@ class Preprocessor(object):
         Returns
         -------
         int :
-            The number of feature values according to embedding.
+            The sum of the number of values of all encoded attributes' representations.
 
         """
 
-        return args.embedding_dim
+        num_features = 0
+        num_features += self.get_length_of_activity_label()
+        for len in self.get_lengths_of_context_encoding():
+            num_features += len
+
+        if args.include_time_delta:
+            num_features += 1
+
+        return num_features
 
     def get_max_case_length(self, event_log):
         """
@@ -787,8 +854,6 @@ class Preprocessor(object):
             test_indices_list.append(test_indices)
 
         return train_indices_list, test_indices_list
-
-
 
     def get_cases_of_fold(self, event_log, indices_per_fold):
         """
@@ -879,7 +944,7 @@ class Preprocessor(object):
 
         Returns
         -------
-        ndarray : shape[S, T, E], S is number of samples, T is number of time steps, E is number of embedding values.
+        ndarray : shape[S, T, F], S is number of samples, T is number of time steps, F is number of features.
             The features tensor.
 
         """
@@ -896,15 +961,39 @@ class Preprocessor(object):
                                            max_case_length,
                                            num_features), dtype=numpy.float32)
 
-        # fll structure
-        model = self.load_embedding_model(args)
-
         for idx_subseq, subseq in enumerate(subseq_cases):
+            left_pad = max_case_length - len(subseq)
+
             for timestep, event in enumerate(subseq):
-                try:
-                    features_tensor[idx_subseq, timestep, :] = model.wv[event]
-                except:
-                    features_tensor[idx_subseq, timestep, :] = args.embedding_dim * [0]
+
+                # activity
+                activity_values = event.get(args.activity_key)
+                for idx, val in enumerate(activity_values):
+                    features_tensor[idx_subseq, timestep + left_pad, idx] = val
+
+                # time delta
+                if args.include_time_delta:
+                    features_tensor[idx_subseq, timestep + left_pad, self.get_length_of_activity_label()] = event[
+                        args.time_delta_key]
+
+                # context
+                if self.context_exists():
+                    start_idx = 0
+                    if args.include_time_delta:
+                        start_idx += 1
+
+                    for attribute_idx, attribute_key in enumerate(self.context['attributes']):
+                        attribute_values = event.get(attribute_key)
+
+                        if not isinstance(attribute_values, list):
+                            features_tensor[
+                                idx_subseq, timestep + left_pad, start_idx + self.get_length_of_activity_label()] = attribute_values
+                            start_idx += 1
+                        else:
+                            for idx, val in enumerate(attribute_values, start=start_idx):
+                                features_tensor[
+                                    idx_subseq, timestep + left_pad, idx + self.get_length_of_activity_label()] = val
+                            start_idx += len(attribute_values)
         #
         return features_tensor
 
