@@ -3,15 +3,18 @@ from datetime import datetime
 import tensorflow as tf
 
 
-def train(args, preprocessor):
+def train(args, event_log, preprocessor, train_indices):
+    # TODO description
+    
+    cases_of_fold = preprocessor.get_cases_of_fold(event_log, train_indices)
+    subseq_cases_of_fold = preprocessor.get_subsequences_of_cases(cases_of_fold)
 
-    preprocessor.set_training_set(args)
+    features = preprocessor.get_features_tensor(args, 'train', event_log, subseq_cases_of_fold)
+    labels = preprocessor.get_labels_tensor(args, cases_of_fold)
 
-    features_data = preprocessor.data_structure['data']['train']['features_data']
-    labels = preprocessor.data_structure['data']['train']['labels']
-    max_length_process_instance = preprocessor.data_structure['meta']['max_length_process_instance']
-    num_features = preprocessor.data_structure['meta']['num_features']
-    num_classes = preprocessor.data_structure['meta']['num_classes']
+    max_case_length = preprocessor.get_max_case_length(event_log)
+    num_features = preprocessor.get_num_features(args)
+    num_classes = preprocessor.get_num_classes()
 
     print('Create machine learning model ... \n')
 
@@ -21,7 +24,7 @@ def train(args, preprocessor):
         """
 
         # input layer
-        main_input = tf.keras.layers.Input(shape=(max_length_process_instance, num_features), name='main_input')
+        main_input = tf.keras.layers.Input(shape=(max_case_length, num_features), name='main_input')
 
         # hidden layer
         b1 = tf.keras.layers.Bidirectional(
@@ -42,7 +45,7 @@ def train(args, preprocessor):
         """
 
         # input layer
-        main_input = tf.keras.layers.Input(shape=(max_length_process_instance, num_features), name='main_input')
+        main_input = tf.keras.layers.Input(shape=(max_case_length, num_features), name='main_input')
         input_layer_flattened = tf.keras.layers.Flatten()(main_input)
 
         # layer 2
@@ -75,8 +78,7 @@ def train(args, preprocessor):
     model.compile(loss={'out_output': 'categorical_crossentropy'}, optimizer=optimizer)
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
     model_checkpoint = tf.keras.callbacks.ModelCheckpoint('%s%smodel_%s.h5' % (args.task, args.model_dir[1:],
-                                                                               preprocessor.data_structure['support'][
-                                                                                   'iteration_cross_validation']),
+                                                                               preprocessor.iteration_cross_validation),
                                                           monitor='val_loss',
                                                           verbose=0,
                                                           save_best_only=True,
@@ -89,7 +91,7 @@ def train(args, preprocessor):
 
     start_training_time = datetime.now()
 
-    model.fit(features_data, {'out_output': labels}, validation_split=args.val_split, verbose=1,
+    model.fit(features, {'out_output': labels}, validation_split=args.val_split, verbose=1,
               callbacks=[early_stopping, model_checkpoint, lr_reducer], batch_size=args.batch_size_train,
               epochs=args.dnn_num_epochs)
 

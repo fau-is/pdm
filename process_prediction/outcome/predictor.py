@@ -4,55 +4,85 @@ import process_prediction.utils as utils
 from tensorflow.keras.models import load_model
 
 
-def test(args, preprocessor):
+def test(args, event_log, preprocessor, test_indices_per_fold):
+    # TODO description
 
     # init
-    preprocessor.get_instances_of_fold('test')
     model = load_model('%s%smodel_%s.h5' % (
-    args.task, args.model_dir[1:], preprocessor.data_structure['support']['iteration_cross_validation']))
+    args.task, args.model_dir[1:], preprocessor.iteration_cross_validation))
 
-    # output
-    data_set_name = args.data_set.split('.csv')[0]
-    result_dir_generic = './' + args.task + args.result_dir[1:] + data_set_name
-    result_dir_fold = result_dir_generic + "_%d%s" % (
-        preprocessor.data_structure['support']['iteration_cross_validation'], ".csv")
+    cases_of_fold = preprocessor.get_cases_of_fold(event_log, test_indices_per_fold)
 
     # start prediction
-    with open(result_dir_fold, 'w') as result_file_fold:
+    with open(get_result_dir_fold(args, preprocessor), 'w') as result_file_fold:
         result_writer = csv.writer(result_file_fold, delimiter=';', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        result_writer.writerow(
-            ["Case_id", "Prefix_length", "Groud_truth", "Predicted"])
+        result_writer.writerow(["Case_id", "Prefix_length", "Groud_truth", "Predicted"])
 
-        # for each process instance
-        index = 0
-        for process_instance, event_id, process_instance_labels in zip(
-                preprocessor.data_structure['data']['test']['process_instances'],
-                preprocessor.data_structure['data']['test']['event_ids'],
-                preprocessor.data_structure['data']['test']['labels']):
+        for idx_case, case in enumerate(cases_of_fold, 1):
+            utils.llprint("Case %i of %i \n" % (idx_case, len(cases_of_fold)))
 
-            utils.llprint("Process instance %i of %i \n" % (
-            index, len(preprocessor.data_structure['data']['test']['process_instances'])))
-            index = index + 1
+            # for each prefix with a length >= 2 TODO prefix size? comment and implementation differ..
+            # for prefix_size in range(1, len(process_instance) + 1):
 
-            # for each prefix with a length >= 2
-            for prefix_size in range(1, len(process_instance) + 1):
-                cropped_process_instance, cropped_process_instance_label = preprocessor.get_cropped_instance(
-                    prefix_size,
-                    process_instance,
-                    process_instance_labels
-                )
+            for prefix_size in range(1, len(case) + 1):
+                subseq = preprocessor.get_subsequence_of_case(case, prefix_size)
 
-                ground_truth = cropped_process_instance_label
-                test_data = preprocessor.get_data_tensor_for_single_prediction(cropped_process_instance, args)
+                ground_truth = subseq[-1][args.outcome_key]
+                features = preprocessor.get_features_tensor(args, 'test', event_log, [subseq])
 
-                y = model.predict(test_data)
-                y = y[0][:]
-
-                prediction = preprocessor.get_class_val(y)
+                predicted_label = predict_label(model, features, preprocessor)
 
                 result_writer.writerow([
-                    event_id,
+                    case._list[0].get(args.case_id_key),
                     prefix_size,
                     str(ground_truth).encode("utf-8"),
-                    str(prediction).encode("utf-8")
+                    str(predicted_label).encode("utf-8")
                 ])
+
+def predict_label(model, features, preprocessor):
+    """
+    Predicts and returns a label.
+
+    Parameters
+    ----------
+    model : keras.engine.training.Model
+        The model to predict classes.
+    ndarray : shape[S, T, E], S is number of samples, T is number of time steps, E is number of embedding values.
+        The features of a single sample of the test set.
+    preprocessor : nap.preprocessor.Preprocessor
+        Object to preprocess input data.
+
+    Returns
+    -------
+    tuple :
+        Represents a predicted encoded class.
+
+    """
+    y = model.predict(features)
+    y = y[0][:]
+    predicted_label = preprocessor.get_class_label(y)
+
+    return predicted_label
+
+def get_result_dir_fold(args, preprocessor):
+    """
+    Returns result directory of a fold.
+
+    Parameters
+    ----------
+    args : Namespace
+        Settings of the configuration parameters.
+    preprocessor : nap.preprocessor.Preprocessor
+        Object to preprocess input data.
+
+    Returns
+    -------
+    str :
+        Directory of the result file for the current fold.
+
+    """
+
+    result_dir_generic = './' + args.task + args.result_dir[1:] + args.data_set.split('.csv')[0]
+    result_dir_fold = result_dir_generic + "_%d%s" % (preprocessor.iteration_cross_validation, ".csv")
+
+    return result_dir_fold

@@ -15,6 +15,8 @@ def load():
     parser.add_argument('--learning_rate', default=0.002, type=float)
 
     # representation
+    parser.add_argument('--encoding_num', default="min_max_norm", type=str)  # for numerical attributes
+    parser.add_argument('--encoding_cat', default="onehot", type=str)  # for categorical attributes
     parser.add_argument('--embedding_dim', default=8, type=int)
     parser.add_argument('--embedding_epochs', default=10, type=int)
 
@@ -27,10 +29,15 @@ def load():
     parser.add_argument('--batch_size_test', default=1, type=int)
 
     # data
-    parser.add_argument('--data_set', default="train_mobis_pcm_shift.csv")  # train_mobis_pcm_shift.csv")
+    parser.add_argument('--data_set', default="train_new_hb_pcm_shift_samplev2.csv")  # train_mobis_pcm_shift.csv")
     parser.add_argument('--data_dir', default="./data/")
     parser.add_argument('--model_dir', default="./models/")
     parser.add_argument('--result_dir', default="./results/")
+
+    # event log / data format
+    parser.add_argument('--case_id_key', default="case", type=str)
+    parser.add_argument('--activity_key', default="event", type=str)
+    parser.add_argument('--outcome_key', default="conformance", type=str)
 
     # gpu processing
     parser.add_argument('--gpu_ratio', default=0.2, type=float)

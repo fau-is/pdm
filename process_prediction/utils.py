@@ -74,7 +74,7 @@ def get_output(args, preprocessor, _output):
 
     if args.cross_validation:
         result_dir_fold = './' + args.task + args.result_dir[1:] + args.data_set.split(".csv")[0] + \
-                          "_%d" % preprocessor.data_structure['support']['iteration_cross_validation'] + ".csv"
+                          "_%d" % preprocessor.iteration_cross_validation + ".csv"
     else:
         result_dir_fold = './' + args.task + args.result_dir[1:] + args.data_set.split(".csv")[0] + "_0.csv"
 
