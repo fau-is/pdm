@@ -10,3 +10,4 @@ category_encoders
 tensorflow==2.3.0
 opyenxes
 pm4py
+optuna

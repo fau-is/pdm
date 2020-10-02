@@ -3,7 +3,7 @@ import numpy
 import process_prediction.utils as utils
 from sklearn.model_selection import KFold, ShuffleSplit
 import pandas
-import nap.utils as utils
+import process_prediction.utils as utils
 import category_encoders
 from pm4py.objects.conversion.log import converter as log_converter
 import datetime
@@ -14,6 +14,7 @@ class Preprocessor(object):
     iteration_cross_validation = 0
     activity = {}
     context = {}
+    classes = {}
 
     def __init__(self):
 

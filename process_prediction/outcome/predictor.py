@@ -8,8 +8,8 @@ def test(args, event_log, preprocessor, test_indices_per_fold):
     # TODO description
 
     # init
-    model = load_model('%s%smodel_%s.h5' % (
-    args.task, args.model_dir[1:], preprocessor.iteration_cross_validation))
+    model = load_model('%s%smodel_%s.h5' % (args.task, args.model_dir[1:], preprocessor.iteration_cross_validation),
+                       custom_objects={'f1_score': utils.f1_score})
 
     cases_of_fold = preprocessor.get_cases_of_fold(event_log, test_indices_per_fold)
 

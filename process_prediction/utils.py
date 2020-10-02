@@ -9,6 +9,7 @@ from matplotlib import pyplot
 from functools import reduce
 import seaborn as sns
 import pandas
+import tensorflow.keras.backend as K
 
 
 output = {
@@ -240,3 +241,75 @@ def save_confusion_matrix(label_ground_truth, label_prediction, args):
     pyplot.xticks(rotation=45)
     fig.tight_layout()
     fig.savefig("./outcome" + str(args.result_dir + 'cm_' + args.data_set[:-4] + '.pdf'))
+
+def f1_score(y_true, y_pred):
+    """
+    Computes the f1 score - performance indicator for the prediction accuracy.
+    The F1 score is the harmonic mean of the precision and recall.
+    The evaluation metric to be optimized during hyperparameter optimization.
+
+    Parameters
+    ----------
+    y_true : Tensor, dtype=float32
+        True labels.
+    y_pred : Tensor, dtype=float32
+        Predicted labels.
+
+    Returns
+    -------
+    Tensor : dtype=float32
+        The F1-Score.
+
+    """
+
+    def recall(y_true, y_pred):
+        """
+        Computes the recall (only a batch-wise average of recall), a metric for multi-label classification of
+        how many relevant items are selected.
+
+        Parameters
+        ----------
+        y_true : Tensor, dtype=float32
+            True labels.
+        y_pred : Tensor, dtype=float32
+            Predicted labels.
+
+        Returns
+        -------
+        Tensor : dtype=float32
+            The recall.
+
+        """
+        true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+        possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+        recall = true_positives / (possible_positives + K.epsilon())
+        return recall
+
+    def precision(y_true, y_pred):
+        """
+        Computes the precision (only a batch-wise average of precision), a metric for multi-label classification of
+        how many selected items are relevant.
+
+        Parameters
+        ----------
+        y_true : Tensor, dtype=float32
+            True labels.
+        y_pred : Tensor, dtype=float32
+            Predicted labels.
+
+        Returns
+        -------
+        Tensor : dtype=float32
+            The precision.
+
+        """
+        true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+        predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+        precision = true_positives / (predicted_positives + K.epsilon())
+        return precision
+
+    precision = precision(y_true, y_pred)
+    recall = recall(y_true, y_pred)
+
+    # in order to avoid division by 0, the constant epsilon is added
+    return 2 * ((precision * recall) / (precision + recall + K.epsilon()))

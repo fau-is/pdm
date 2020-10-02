@@ -30,6 +30,16 @@ def load():
     parser.add_argument('--batch_size_train', default=128, type=int)
     parser.add_argument('--batch_size_test', default=1, type=int)
 
+    # hyperparameter optimization
+    parser.add_argument('--hpo', default=True, type=utils.str2bool)
+    parser.add_argument('--hpo_eval_runs', default=1, type=int)
+    parser.add_argument('--split_rate_test_hpo', default=0.2, type=float)
+    parser.add_argument('--hpo_LSTM', default=[50, 100, 150, 200], type=list)
+    parser.add_argument('--hpo_optimizers', default=['nadam', 'adam', 'sgd', 'rmsprop', 'adadelta', 'adagrad'], type=list)
+    parser.add_argument('--hpo_activation', default=['tanh', 'linear', 'relu', 'elu'], type=list)
+    parser.add_argument('--hpo_kernel_initializer', default=['random_normal', 'random_uniform', 'glorot_normal',
+                                                             'glorot_uniform', 'truncated_normal', 'zeros'], type=list)
+
     # data
     parser.add_argument('--data_set', default="train_new_hb_pcm_shift_samplev2.csv")  # train_mobis_pcm_shift.csv
     parser.add_argument('--data_dir', default="./data/")
