@@ -121,36 +121,6 @@ class Preprocessor(object):
         """
         return self.context['attributes']
 
-    def get_context_data_types(self):
-        """
-        Returns the data types of the context attributes in the event log.
-
-        Returns
-        -------
-        list of str :
-            Data types of the context attributes.
-
-        """
-        return self.context['data_types']
-
-    def get_attributes_data_types(self):
-        """
-        Returns the data types of all attributes in the event log.
-
-        Returns
-        -------
-        list of str :
-            Data types of all attributes.
-
-        """
-
-        dtypes_features = []
-        dtypes_features.append('cat')  # activity
-        for dtype in self.context['data_types']:
-            dtypes_features.append(dtype)  # context attribute
-
-        return dtypes_features
-
     def encode_data(self, args, df):
         """
         Encodes an event log represented by a dataframe.
@@ -665,38 +635,6 @@ class Preprocessor(object):
         """
         return self.classes['labels']
 
-    def id_to_label(self, id):
-        """
-        Maps a class id to a label (= encoded class).
-
-        Parameters
-        ----------
-        id : int
-            Integer identifying a class.
-
-        Returns
-        -------
-        tuple :
-            Corresponding label (= encoded class).
-
-        """
-        return self.classes['ids_to_labels'][id]
-
-    def label_to_id(self, label):
-        """
-        Maps a label (= encoded class) to an id.
-
-        Parameters
-        ----------
-        label : Label of a class.
-
-        Returns
-        -------
-        Corresponding id identifying the encoded class (= label).
-
-        """
-        return self.classes['labels_to_ids'][label]
-
     def get_num_classes(self):
         """
         Returns the number of prediction classes occurring in the event log.
@@ -720,30 +658,6 @@ class Preprocessor(object):
 
         """
         return len(self.get_context_attributes()) > 0
-
-    def get_num_attributes(self, args):
-        """
-        Returns the number of attributes of an event in an even log.
-
-        Parameters
-        ----------
-        args : Namespace
-            Settings of the configuration parameters.
-
-        Returns
-        -------
-        int :
-            Number of attributes.
-
-        """
-
-        num_attributes = 1 # activity
-        if self.context_exists():
-            num_attributes += len(self.context['attributes'])
-        if args.include_time_delta:
-            num_attributes += 1
-
-        return num_attributes
 
     def get_num_features(self, args):
         """

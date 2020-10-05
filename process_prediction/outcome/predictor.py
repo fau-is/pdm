@@ -5,7 +5,25 @@ from tensorflow.keras.models import load_model
 
 
 def test(args, event_log, preprocessor, test_indices_per_fold):
-    # TODO description
+    """
+    Executes outcome prediction to evaluate trained model.
+
+    Parameters
+    ----------
+    args : Namespace
+        Settings of the configuration parameters.
+    event_log : list of dicts, where single dict represents a case
+        pm4py.objects.log.log.EventLog object representing an event log.
+    preprocessor : nap.preprocessor.Preprocessor
+        Object to preprocess input data.
+    test_indices_per_fold : list of arrays consisting of ints
+        Indices of test cases from event log per fold.
+
+    Returns
+    -------
+    None
+
+    """
 
     # init
     model = load_model('%s%smodel_%s.h5' % (args.task, args.model_dir[1:], preprocessor.iteration_cross_validation),
@@ -20,9 +38,6 @@ def test(args, event_log, preprocessor, test_indices_per_fold):
 
         for idx_case, case in enumerate(cases_of_fold, 1):
             utils.llprint("Case %i of %i \n" % (idx_case, len(cases_of_fold)))
-
-            # for each prefix with a length >= 2 TODO prefix size? comment and implementation differ..
-            # for prefix_size in range(1, len(process_instance) + 1):
 
             for prefix_size in range(1, len(case) + 1):
                 subseq = preprocessor.get_subsequence_of_case(case, prefix_size)

@@ -7,7 +7,28 @@ import process_prediction.utils as utils
 
 
 def train(args, event_log, preprocessor, train_indices):
-    # TODO description
+    """
+    Trains a model for outcome prediction.
+
+    Parameters
+    ----------
+    args : Namespace
+        Settings of the configuration parameters.
+    event_log : list of dicts, where single dict represents a case
+        pm4py.objects.log.log.EventLog object representing an event log.
+    preprocessor : nap.preprocessor.Preprocessor
+        Object to preprocess input data.
+    train_indices_per_fold : list of arrays consisting of ints
+        Indices of training cases from event log per fold.
+
+    Returns
+    -------
+    timedelta :
+        Time passed while training a model.
+    int :
+        Trial ID which identifies the best trial, if hyperparameter optimization is performed. Otherwise is -1.
+
+    """
 
     cases_of_fold = preprocessor.get_cases_of_fold(event_log, train_indices)
     subseq_cases_of_fold = preprocessor.get_subsequences_of_cases(cases_of_fold)
@@ -30,7 +51,7 @@ def train(args, event_log, preprocessor, train_indices):
         for key, value in trial.params.items():
             print("    {}: {}".format(key, value))
 
-        return training_time.total_seconds()
+        return training_time.total_seconds() # TODO add return value study.best_trial.number
     else:
         return train_model(args, event_log, preprocessor, cases_of_fold, subseq_cases_of_fold)
 
@@ -146,8 +167,28 @@ def find_best_model(trial):
     return score[2]
 
 def train_model(args, event_log, preprocessor, cases_of_fold, subseq_cases_of_fold):
-    # TODO Trains model without use of hyperparameter optimization
+    """
+    Trains a model for outcome prediction without HPO.
 
+    Parameters
+    ----------
+    args : Namespace
+        Settings of the configuration parameters.
+    event_log : list of dicts, where single dict represents a case
+        pm4py.objects.log.log.EventLog object representing an event log.
+    preprocessor : nap.preprocessor.Preprocessor
+        Object to preprocess input data.
+    cases_of_fold : list of dicts, where single dict represents a case
+        Cases of the training set.
+    subseq_cases_of_fold : list of dicts, where single dict represents a subsequence of a case
+        Subsequences of the training cases.
+
+    Returns
+    -------
+    timedelta :
+        Time passed while training a model.
+
+    """
     features = preprocessor.get_features_tensor(args, 'train', event_log, subseq_cases_of_fold)
     labels = preprocessor.get_labels_tensor(args, cases_of_fold)
 
