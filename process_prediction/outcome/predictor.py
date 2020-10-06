@@ -4,7 +4,7 @@ import process_prediction.utils as utils
 from tensorflow.keras.models import load_model
 
 
-def test(args, event_log, preprocessor, test_indices_per_fold):
+def test(args, event_log, preprocessor, test_indices_per_fold, best_model_id):
     """
     Executes outcome prediction to evaluate trained model.
 
@@ -18,6 +18,8 @@ def test(args, event_log, preprocessor, test_indices_per_fold):
         Object to preprocess input data.
     test_indices_per_fold : list of arrays consisting of ints
         Indices of test cases from event log per fold.
+    best_model_id : int
+        ID of the best trained model.
 
     Returns
     -------
@@ -25,9 +27,13 @@ def test(args, event_log, preprocessor, test_indices_per_fold):
 
     """
 
-    # init
-    model = load_model('%s%smodel_%s.h5' % (args.task, args.model_dir[1:], preprocessor.iteration_cross_validation),
-                       custom_objects={'f1_score': utils.f1_score})
+    if args.hpo:
+        model_name = '%s%smodel_%s_trial%s.h5' % (args.task, args.model_dir[1:], preprocessor.iteration_cross_validation,
+                                                  best_model_id)
+    else:
+        model_name = '%s%smodel_%s.h5' % (args.task, args.model_dir[1:], preprocessor.iteration_cross_validation)
+
+    model = load_model(model_name, custom_objects={'f1_score': utils.f1_score})
 
     cases_of_fold = preprocessor.get_cases_of_fold(event_log, test_indices_per_fold)
 
@@ -51,7 +57,7 @@ def test(args, event_log, preprocessor, test_indices_per_fold):
                     case._list[0].get(args.case_id_key),
                     prefix_size,
                     str(ground_truth).encode("utf-8"),
-                    str(predicted_label).encode("utf-8")
+                    str(list(predicted_label)).encode("utf-8")
                 ])
 
 def predict_label(model, features, preprocessor):
@@ -75,7 +81,7 @@ def predict_label(model, features, preprocessor):
     """
     y = model.predict(features)
     y = y[0][:]
-    predicted_label = preprocessor.get_class_label(y)
+    predicted_label = preprocessor.get_outcome_label(y)
 
     return predicted_label
 

@@ -57,7 +57,7 @@ def create_data(arguments, event_log, preprocessor, cases_of_fold):
     args = arguments
     max_case_length = preprocessor.get_max_case_length(event_log)
     num_features = preprocessor.get_num_features(args)
-    num_classes = preprocessor.get_num_classes()
+    num_classes = preprocessor.get_num_outcome_classes()
     iteration_cross_validation = preprocessor.iteration_cross_validation
 
     # preprocess data

@@ -34,7 +34,6 @@ def train(args, event_log, preprocessor, train_indices):
     subseq_cases_of_fold = preprocessor.get_subsequences_of_cases(cases_of_fold)
 
     if args.hpo:
-
         hpo.create_data(args, event_log, preprocessor, cases_of_fold)
 
         sampler = optuna.samplers.TPESampler(seed=10)  # Make the sampler behave in a deterministic way.
@@ -51,9 +50,9 @@ def train(args, event_log, preprocessor, train_indices):
         for key, value in trial.params.items():
             print("    {}: {}".format(key, value))
 
-        return training_time.total_seconds() # TODO add return value study.best_trial.number
+        return training_time.total_seconds(), study.best_trial.number
     else:
-        return train_model(args, event_log, preprocessor, cases_of_fold, subseq_cases_of_fold)
+        return train_model(args, event_log, preprocessor, cases_of_fold, subseq_cases_of_fold), -1
 
 def find_best_model(trial):
     """
@@ -95,7 +94,8 @@ def find_best_model(trial):
 
         # hidden layer
         b1 = tf.keras.layers.Bidirectional(
-                tf.keras.layers.LSTM(100, use_bias=True, implementation=1, activation="tanh",
+                tf.keras.layers.LSTM(trial.suggest_categorical("number_of_neurons", args.hpo_LSTM), use_bias=True, implementation=1,
+                                     activation=trial.suggest_categorical("activation", args.hpo_activation),
                                      kernel_initializer='glorot_uniform', return_sequences=False, dropout=0.2))(
                 main_input)
 
@@ -116,22 +116,22 @@ def find_best_model(trial):
         input_layer_flattened = tf.keras.layers.Flatten()(main_input)
 
         # layer 2
-        hidden_layer_1 = tf.keras.layers.Dense(100, activation=trial.suggest_categorical("activation", args.hpo_activation))(input_layer_flattened)
+        hidden_layer_1 = tf.keras.layers.Dense(trial.suggest_categorical("number_of_neurons", args.hpo_LSTM), activation=trial.suggest_categorical("activation", args.hpo_activation))(input_layer_flattened)
         hidden_layer_1 = tf.keras.layers.BatchNormalization()(hidden_layer_1)
         hidden_layer_1 = tf.keras.layers.Dropout(0.5)(hidden_layer_1)
 
         # layer 3
-        hidden_layer_2 = tf.keras.layers.Dense(200, activation='relu')(hidden_layer_1)
+        hidden_layer_2 = tf.keras.layers.Dense(trial.suggest_categorical("number_of_neurons", args.hpo_LSTM), activation=trial.suggest_categorical("activation", args.hpo_activation))(hidden_layer_1)
         hidden_layer_2 = tf.keras.layers.BatchNormalization()(hidden_layer_2)
         hidden_layer_2 = tf.keras.layers.Dropout(0.5)(hidden_layer_2)
 
         # layer 4
-        hidden_layer_3 = tf.keras.layers.Dense(100, activation='relu')(hidden_layer_2)
+        hidden_layer_3 = tf.keras.layers.Dense(trial.suggest_categorical("number_of_neurons", args.hpo_LSTM), activation=trial.suggest_categorical("activation", args.hpo_activation))(hidden_layer_2)
         hidden_layer_3 = tf.keras.layers.BatchNormalization()(hidden_layer_3)
         hidden_layer_3 = tf.keras.layers.Dropout(0.5)(hidden_layer_3)
 
         # layer 5
-        hidden_layer_4 = tf.keras.layers.Dense(50, activation='relu')(hidden_layer_3)
+        hidden_layer_4 = tf.keras.layers.Dense(trial.suggest_categorical("number_of_neurons", args.hpo_LSTM), activation=trial.suggest_categorical("activation", args.hpo_activation))(hidden_layer_3)
         hidden_layer_4 = tf.keras.layers.BatchNormalization()(hidden_layer_4)
         hidden_layer_4 = tf.keras.layers.Dropout(0.5)(hidden_layer_4)
 
@@ -145,8 +145,9 @@ def find_best_model(trial):
     model.compile(loss={'out_output': 'categorical_crossentropy'}, optimizer=optimizer, metrics=['accuracy',
                                                                                                  utils.f1_score])
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
-    model_checkpoint = tf.keras.callbacks.ModelCheckpoint('%s%smodel_%s.h5' % (args.task, args.model_dir[1:],
-                                                                               iteration_cross_validation),
+    model_checkpoint = tf.keras.callbacks.ModelCheckpoint('%s%smodel_%s_trial%s.h5' % (args.task, args.model_dir[1:],
+                                                                                       iteration_cross_validation,
+                                                                                       trial.number),
                                                           monitor='val_loss',
                                                           verbose=0,
                                                           save_best_only=True,
@@ -168,7 +169,7 @@ def find_best_model(trial):
 
 def train_model(args, event_log, preprocessor, cases_of_fold, subseq_cases_of_fold):
     """
-    Trains a model for outcome prediction without HPO.
+    Trains a model for outcome prediction without hyperparameter optimization.
 
     Parameters
     ----------
@@ -194,7 +195,7 @@ def train_model(args, event_log, preprocessor, cases_of_fold, subseq_cases_of_fo
 
     max_case_length = preprocessor.get_max_case_length(event_log)
     num_features = preprocessor.get_num_features(args)
-    num_classes = preprocessor.get_num_classes()
+    num_classes = preprocessor.get_num_outcome_classes()
 
     print('Create machine learning model ... \n')
 

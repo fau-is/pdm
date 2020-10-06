@@ -3,36 +3,36 @@ import numpy
 import process_prediction.utils as utils
 from sklearn.model_selection import KFold, ShuffleSplit
 import pandas
-import process_prediction.utils as utils
 import category_encoders
 from pm4py.objects.conversion.log import converter as log_converter
 import datetime
 
 
 class Preprocessor(object):
+    """
+    Preprocessor class used to preprocess data from an event log for next outcome prediction.
+    """
 
     iteration_cross_validation = 0
     activity = {}
     context = {}
-    classes = {}
+    outcome = {}
 
     def __init__(self):
 
         utils.llprint("Initialization ... \n")
         self.activity = {
-            'label_length': 0
+            'encoding_length': 0
         }
         self.context = {
             'attributes': [],
-            'data_types': [],
             'encoding_lengths': []
         }
-        self.classes = {
-            'labels': {},
+        self.outcome = {
+            'label_length': 0,
             'ids_to_labels': {},
             'labels_to_ids': {},
         }
-
 
     def get_event_log(self, args):
         """
@@ -51,11 +51,7 @@ class Preprocessor(object):
         """
 
         df = self.load_data(args)
-
         parameters = {log_converter.Variants.TO_EVENT_LOG.value.Parameters.CASE_ID_KEY: args.case_id_key}
-        event_log = log_converter.apply(df, parameters=parameters, variant=log_converter.Variants.TO_EVENT_LOG)
-        self.set_classes(args, event_log)
-
         df_enc = self.encode_data(args, df)
         event_log_enc = log_converter.apply(df_enc, parameters=parameters, variant=log_converter.Variants.TO_EVENT_LOG)
 
@@ -78,7 +74,6 @@ class Preprocessor(object):
         """
 
         utils.llprint('Load data ... \n')
-
         df = pandas.read_csv(args.data_dir + args.data_set, sep=',')
         self.set_context(df)
 
@@ -103,11 +98,10 @@ class Preprocessor(object):
         data_types = []
         column_names = df.columns
         for idx, attribute_name in enumerate(column_names):
-            if idx > 2 and idx < len(column_names)-1:
+            if 2 < idx < len(column_names)-1:
                 attributes.append(attribute_name)
                 data_types.append(self.get_attribute_data_type(df[attribute_name]))
         self.context['attributes'] = attributes
-        self.context['data_types'] = data_types
 
     def get_context_attributes(self):
         """
@@ -140,9 +134,7 @@ class Preprocessor(object):
         """
 
         utils.llprint('Encode data ... \n')
-
         encoded_df = pandas.DataFrame(df.iloc[:, 0])
-
         for column_name in df:
             column_index = df.columns.get_loc(column_name)
 
@@ -152,18 +144,19 @@ class Preprocessor(object):
             else:
                 if column_index == 1:
                     encoded_column = self.encode_activities(args, df, column_name)
-                elif column_index == 2 or column_index == len(df.columns)-1:
-                    # timestamps and outcome, no encoding # TODO outcome no encoding?
+                elif column_index == 2:
+                    # timestamps, no encoding
                     encoded_df[column_name] = df[column_name]
-                    if column_index == 2:
-                        # time deltas (time difference between event and predecessor of the same case)
-                        time_deltas = self.get_time_deltas(args, df, column_name)
-                        encoded_df[args.time_delta_key] = [time_delta for sublist in time_deltas for time_delta in sublist]
+                    # time deltas (time difference between event and predecessor of the same case)
+                    time_deltas = self.get_time_deltas(args, df, column_name)
+                    encoded_df[args.time_delta_key] = [time_delta for sublist in time_deltas for time_delta in sublist]
                     continue
                 elif column_index > 2:
-                    encoded_column = self.encode_context_attribute(args, df, column_name)
+                    if column_index == len(df.columns)-1:
+                        encoded_column = self.encode_outcomes(args, df, column_name)
+                    else:
+                        encoded_column = self.encode_context_attribute(args, df, column_name)
                 encoded_df = encoded_df.join(encoded_column)
-
         self.export_encoded_data(args, encoded_df)
 
         return encoded_df
@@ -184,7 +177,6 @@ class Preprocessor(object):
         None
 
         """
-
         encoded_df.to_csv(r'%s' % args.data_dir + r'encoded_%s' % args.data_set, sep=';', index=False)
 
     def get_attribute_data_type(self, attribute_column):
@@ -204,7 +196,6 @@ class Preprocessor(object):
         """
 
         column_type = str(attribute_column.dtype)
-
         if column_type.startswith('float'):
             attribute_type = 'num'
         else:
@@ -232,7 +223,7 @@ class Preprocessor(object):
 
         if data_type == 'num':
             mode = args.encoding_num
-        elif data_type == 'cat':
+        else:  # data_type == 'cat'
             mode = args.encoding_cat
 
         return mode
@@ -267,25 +258,20 @@ class Preprocessor(object):
         time_deltas_case = [0.0]
 
         for case_id, timestamp in tuples[1:]:
-
             current_time = self.get_datetime_object(args, timestamp)
 
             if case_id == current_case_id:
                 time_delta = self.get_time_difference(predecessor_time, current_time)
-
                 if time_delta < 0:
                     time_delta = 0.0
-
                 time_deltas_case.append(time_delta)
             else:
                 time_deltas.append(time_deltas_case)
                 time_deltas_case = [0.0]
                 current_case_id = case_id
-
             predecessor_time = current_time
 
         time_deltas.append(time_deltas_case)
-
         norm_time_deltas = self.normalize_time_deltas(time_deltas)
 
         return norm_time_deltas
@@ -307,10 +293,7 @@ class Preprocessor(object):
             Datetime object from the timestamp of an event.
 
         """
-
-        datetime_object = datetime.datetime.strptime(timestamp, args.date_format)
-
-        return datetime_object
+        return datetime.datetime.strptime(timestamp, args.date_format)
 
     def get_time_difference(self, predecessor_time, current_time):
         """
@@ -329,10 +312,7 @@ class Preprocessor(object):
             The time difference.
 
         """
-
-        time_difference = (current_time - predecessor_time).total_seconds()
-
-        return time_difference
+        return (current_time - predecessor_time).total_seconds()
 
     def normalize_time_deltas(self, time_deltas):
         """
@@ -395,6 +375,40 @@ class Preprocessor(object):
         df = self.transform_encoded_attribute_columns_to_single_column(encoding_columns, df, column_name)
 
         return df[column_name]
+
+    def encode_outcomes(self, args, df, column_name):
+        """
+        Encodes the outcome for each event in an event log.
+
+        Parameters
+        ----------
+        args : Namespace
+            Settings of the configuration parameters.
+        df : pandas.DataFrame
+            Dataframe representing the event log.
+        column_name : str
+            Name of the dataframe column / attribute to be encoded.
+
+        Returns
+        -------
+        pandas.Series :
+            Each entry is a list which represents an encoded outcome (= label).
+
+        """
+
+        encoding_mode = args.encoding_cat
+        encoding_columns = self.encode_column(df, column_name, encoding_mode)
+        self.save_mapping_of_outcome_classes(df[column_name], encoding_columns)
+
+        if isinstance(encoding_columns, pandas.DataFrame):
+            self.set_length_of_outcome_encoding(len(encoding_columns.columns))
+        elif isinstance(encoding_columns, pandas.Series):
+            self.set_length_of_outcome_encoding(1)
+
+        df = self.transform_encoded_attribute_columns_to_single_column(encoding_columns, df, column_name)
+
+        return df[column_name]
+
 
     def encode_context_attribute(self, args, df, column_name):
         """
@@ -508,38 +522,40 @@ class Preprocessor(object):
 
         return encoded_column
 
-    def set_classes(self, args, event_log):
+    def save_mapping_of_outcome_classes(self, column, encoded_column):
         """
-        Creates a mapping for classes (ids + labels).
+        Creates a mapping for outcome classes (id + label (= encoded class)).
 
         Parameters
         ----------
-        args : Namespace
-            Settings of the configuration parameters.
-
-        event_log : list of dicts, where single dict represents a case
-            The event log.
+        column : pandas.Series
+            An initial column of a dataframe.
+        encoded_column : pandas.Dataframe
+            Encoding of the initial column.
 
         Returns
         -------
         None
 
         """
-        labels = list()
-        map_class_labels_to_ids = dict()
-        map_class_ids_to_labels = dict()
 
-        for case in event_log:
-            for event in case._list:
-                labels.append(event[args.outcome_key])
+        self.outcome['ids'] = range(0, len(column.unique()))
+        encoded_column_tuples = []
+        for entry in encoded_column.values.tolist():
+            if type(entry) != list:
+                encoded_column_tuples.append((entry,))
+            else:
+                encoded_column_tuples.append(tuple(entry))
 
-        for index, value in enumerate(list(set(labels))):
-            map_class_labels_to_ids[value] = index
-            map_class_ids_to_labels[index] = value
+        tuple_all_rows = list(zip(self.outcome['ids'], encoded_column_tuples))
 
-        self.classes['labels'] = list(set(labels))
-        self.classes['ids_to_labels'] = map_class_labels_to_ids
-        self.classes['labels_to_ids'] = map_class_ids_to_labels
+        tuple_unique_rows = []
+        for tuple_row in tuple_all_rows:
+            if tuple_row not in tuple_unique_rows:
+                tuple_unique_rows.append(tuple_row)
+
+        self.outcome['ids_to_labels'] = dict(tuple_unique_rows)
+        self.outcome['labels_to_ids'] = dict([(t[1], t[0]) for t in tuple_unique_rows])
 
     def transform_encoded_attribute_columns_to_single_column(self, encoded_columns, df, column_name):
         """
@@ -568,7 +584,7 @@ class Preprocessor(object):
 
     def set_length_of_activity_encoding(self, num_columns):
         """
-        Saves number of values representing an encoded activity (= label).
+        Saves number of values representing an encoded activity.
 
         Parameters
         ----------
@@ -580,7 +596,23 @@ class Preprocessor(object):
         None
 
         """
-        self.activity['label_length'] = num_columns
+        self.activity['encoding_length'] = num_columns
+
+    def set_length_of_outcome_encoding(self, num_columns):
+        """
+        Saves number of values representing an encoded outcome class (= label).
+
+        Parameters
+        ----------
+        num_columns : int
+            The number of columns / values used to represent an encoded outcome class.
+
+        Returns
+        -------
+        None
+
+        """
+        self.outcome['label_length'] = num_columns
 
     def set_length_of_context_encoding(self, num_columns):
         """
@@ -600,7 +632,7 @@ class Preprocessor(object):
 
     def get_length_of_activity_label(self):
         """
-        Returns number of values representing an encoded activity
+        Returns number of values representing an encoded activity.
 
         Returns
         -------
@@ -608,7 +640,19 @@ class Preprocessor(object):
             The number of values used to represent an encoded activity (= label)
 
         """
-        return self.activity['label_length']
+        return self.activity['encoding_length']
+
+    def get_length_of_outcome_label(self):
+        """
+        Returns number of values representing an encoded outcome class.
+
+        Returns
+        -------
+        int :
+            The number of values used to represent an encoded outcome class (= label)
+
+        """
+        return self.outcome['label_length']
 
     def get_lengths_of_context_encoding(self):
         """
@@ -623,21 +667,21 @@ class Preprocessor(object):
         """
         return self.context['encoding_lengths']
 
-    def get_class_labels(self):
+    def get_outcome_labels(self):
         """
-        Returns labels representing encoded classes of an event log.
+        Returns labels representing encoded outcome classes of an event log.
 
         Returns
         -------
         list of tuples :
-            Tuples represent labels (= encoded classes).
+            Tuples represent labels (= encoded outcome classes).
 
         """
-        return self.classes['labels']
+        return list(self.outcome['labels_to_ids'].keys())
 
-    def get_num_classes(self):
+    def get_num_outcome_classes(self):
         """
-        Returns the number of prediction classes occurring in the event log.
+        Returns the number of prediction outcome classes occurring in the event log.
 
         Returns
         -------
@@ -645,7 +689,7 @@ class Preprocessor(object):
             Number of classes.
 
         """
-        return len(self.get_class_labels())
+        return len(self.get_outcome_labels())
 
     def context_exists(self):
         """
@@ -789,7 +833,6 @@ class Preprocessor(object):
         """
 
         cases_of_fold = []
-
         for index in indices_per_fold[self.iteration_cross_validation]:
             cases_of_fold.append(event_log[index])
 
@@ -813,12 +856,10 @@ class Preprocessor(object):
         """
 
         subseq = []
-
         for case in cases:
             for idx_event in range(0, len(case._list)):
                 # 0:i+1 -> get 0 up to n events of a process instance, since label is at t = n
                 subseq.append(case._list[0:idx_event+1])
-
 
         return subseq
 
@@ -931,13 +972,13 @@ class Preprocessor(object):
         """
 
         subseq_cases = self.get_subsequences_of_cases(cases_of_fold)
-        num_classes = self.get_num_classes()
-        class_labels = self.get_class_labels()
+        num_classes = self.get_num_outcome_classes()
+        class_labels = self.get_outcome_labels()
 
         labels_tensor = numpy.zeros((len(subseq_cases), num_classes), dtype=numpy.float64)
 
         for idx_subseq, subseq in enumerate(subseq_cases):
-            for label in self.classes['labels']:
+            for label in class_labels:
                 if label == subseq[-1][args.outcome_key]:
                     labels_tensor[idx_subseq, class_labels.index(label)] = 1.0
                 else:
@@ -945,22 +986,23 @@ class Preprocessor(object):
 
         return labels_tensor
 
-    def get_class_label(self, predictions):
+    def get_outcome_label(self, predictions):
         """
-        Returns label of a predicted class.
+        Returns label of a predicted outcome class.
 
         Parameters
         ----------
         predictions : list of floats
-            A float represents the probability for a class.
+            A float represents the probability for a outcome class.
 
         Returns
         -------
         tuple :
-            The label of the predicted class.
+            The label of the predicted outcome class.
 
         """
-        labels = self.get_class_labels()
+
+        labels = self.get_outcome_labels()
         max_prediction = 0
         class_id = 0
 
