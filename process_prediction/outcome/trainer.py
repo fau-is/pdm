@@ -52,7 +52,7 @@ def train(args, event_log, preprocessor, train_indices):
 
         return training_time.total_seconds(), study.best_trial.number
     else:
-        return train_model(args, event_log, preprocessor, cases_of_fold, subseq_cases_of_fold), -1
+        return train_model(args, event_log, preprocessor, subseq_cases_of_fold), -1
 
 def find_best_model(trial):
     """
@@ -176,7 +176,7 @@ def find_best_model(trial):
     score = model.evaluate(x_test, y_test, verbose=0)
     return score[2]
 
-def train_model(args, event_log, preprocessor, cases_of_fold, subseq_cases_of_fold):
+def train_model(args, event_log, preprocessor, subseq_cases_of_fold):
     """
     Trains a model for outcome prediction without hyperparameter optimization.
 
@@ -188,8 +188,6 @@ def train_model(args, event_log, preprocessor, cases_of_fold, subseq_cases_of_fo
         pm4py.objects.log.log.EventLog object representing an event log.
     preprocessor : nap.preprocessor.Preprocessor
         Object to preprocess input data.
-    cases_of_fold : list of dicts, where single dict represents a case
-        Cases of the training set.
     subseq_cases_of_fold : list of dicts, where single dict represents a subsequence of a case
         Subsequences of the training cases.
 
@@ -200,7 +198,7 @@ def train_model(args, event_log, preprocessor, cases_of_fold, subseq_cases_of_fo
 
     """
     features = preprocessor.get_features_tensor(args, 'train', event_log, subseq_cases_of_fold)
-    labels = preprocessor.get_labels_tensor(args, cases_of_fold)
+    labels = preprocessor.get_labels_tensor(args, subseq_cases_of_fold)
 
     max_case_length = preprocessor.get_max_case_length(event_log)
     num_features = preprocessor.get_num_features(args)
