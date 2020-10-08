@@ -29,14 +29,13 @@ class Preprocessor(object):
             'encoding_lengths': []
         }
         self.outcome = {
-            'label_length': 0,
-            'ids_to_labels': {},
-            'labels_to_ids': {},
+            'encoding_length': 0,
+            'labels': []
         }
 
     def get_event_log(self, args):
         """
-        Constructs an event log from a csv file using PM4PY
+        Constructs an event log from a csv file using PM4PY.
 
         Parameters
         ----------
@@ -378,7 +377,7 @@ class Preprocessor(object):
 
     def encode_outcomes(self, args, df, column_name):
         """
-        Encodes the outcome for each event in an event log.
+        Encodes outcome for each event in an event log.
 
         Parameters
         ----------
@@ -398,7 +397,6 @@ class Preprocessor(object):
 
         encoding_mode = args.encoding_cat
         encoding_columns = self.encode_column(df, column_name, encoding_mode)
-        self.save_mapping_of_outcome_classes(df[column_name], encoding_columns)
 
         if isinstance(encoding_columns, pandas.DataFrame):
             self.set_length_of_outcome_encoding(len(encoding_columns.columns))
@@ -406,6 +404,7 @@ class Preprocessor(object):
             self.set_length_of_outcome_encoding(1)
 
         df = self.transform_encoded_attribute_columns_to_single_column(encoding_columns, df, column_name)
+        self.set_outcome_labels(df[column_name])
 
         return df[column_name]
 
@@ -522,14 +521,13 @@ class Preprocessor(object):
 
         return encoded_column
 
-    def save_mapping_of_outcome_classes(self, column, encoded_column):
+    def set_outcome_labels(self, encoded_column):
         """
-        Creates a mapping for outcome classes (id + label (= encoded class)).
+        Retrieves the labels from the encoded outcome column.
 
         Parameters
         ----------
-        column : pandas.Series
-            An initial column of a dataframe.
+
         encoded_column : pandas.Dataframe
             Encoding of the initial column.
 
@@ -539,23 +537,10 @@ class Preprocessor(object):
 
         """
 
-        self.outcome['ids'] = range(0, len(column.unique()))
-        encoded_column_tuples = []
         for entry in encoded_column.values.tolist():
-            if type(entry) != list:
-                encoded_column_tuples.append((entry,))
-            else:
-                encoded_column_tuples.append(tuple(entry))
-
-        tuple_all_rows = list(zip(self.outcome['ids'], encoded_column_tuples))
-
-        tuple_unique_rows = []
-        for tuple_row in tuple_all_rows:
-            if tuple_row not in tuple_unique_rows:
-                tuple_unique_rows.append(tuple_row)
-
-        self.outcome['ids_to_labels'] = dict(tuple_unique_rows)
-        self.outcome['labels_to_ids'] = dict([(t[1], t[0]) for t in tuple_unique_rows])
+            label = tuple(entry)
+            if label not in self.outcome['labels']:
+                self.outcome['labels'].append(label)
 
     def transform_encoded_attribute_columns_to_single_column(self, encoded_columns, df, column_name):
         """
@@ -612,7 +597,7 @@ class Preprocessor(object):
         None
 
         """
-        self.outcome['label_length'] = num_columns
+        self.outcome['encoding_length'] = num_columns
 
     def set_length_of_context_encoding(self, num_columns):
         """
@@ -642,18 +627,6 @@ class Preprocessor(object):
         """
         return self.activity['encoding_length']
 
-    def get_length_of_outcome_label(self):
-        """
-        Returns number of values representing an encoded outcome class.
-
-        Returns
-        -------
-        int :
-            The number of values used to represent an encoded outcome class (= label)
-
-        """
-        return self.outcome['label_length']
-
     def get_lengths_of_context_encoding(self):
         """
         Returns number of values representing an encoded context attribute.
@@ -677,7 +650,7 @@ class Preprocessor(object):
             Tuples represent labels (= encoded outcome classes).
 
         """
-        return list(self.outcome['labels_to_ids'].keys())
+        return self.outcome['labels']
 
     def get_num_outcome_classes(self):
         """
@@ -880,7 +853,7 @@ class Preprocessor(object):
             Subsequence / subset of a case whose length is prefix_size.
 
         """
-        # 0 up to prefix-size; min prefix size = 1 with 2 elements
+        # 0 up to prefix_size; min prefix size = 1 with 2 elements
         return case._list[:prefix_size]
 
     def get_features_tensor(self, args, mode, event_log, subseq_cases):
@@ -953,7 +926,7 @@ class Preprocessor(object):
         #
         return features_tensor
 
-    def get_labels_tensor(self, args, cases_of_fold):
+    def get_labels_tensor(self, args, subseq_cases):
         """
         Produces a vector-oriented representation of labels as a 2-dimensional tensor.
 
@@ -961,8 +934,8 @@ class Preprocessor(object):
         ----------
         args : Namespace
             Settings of the configuration parameters.
-        cases_of_fold : list of dicts, where single dict represents a case
-            Cases of the current fold.
+        subseq_cases : list of lists
+            A sublist contains dicts, each of which represents a subset of a case.
 
         Returns
         -------
@@ -971,7 +944,6 @@ class Preprocessor(object):
 
         """
 
-        subseq_cases = self.get_subsequences_of_cases(cases_of_fold)
         num_classes = self.get_num_outcome_classes()
         class_labels = self.get_outcome_labels()
 
@@ -979,7 +951,7 @@ class Preprocessor(object):
 
         for idx_subseq, subseq in enumerate(subseq_cases):
             for label in class_labels:
-                if label == subseq[-1][args.outcome_key]:
+                if label == tuple(subseq[-1][args.outcome_key]):
                     labels_tensor[idx_subseq, class_labels.index(label)] = 1.0
                 else:
                     labels_tensor[idx_subseq, class_labels.index(label)] = 0.0
@@ -1004,12 +976,12 @@ class Preprocessor(object):
 
         labels = self.get_outcome_labels()
         max_prediction = 0
-        class_id = 0
+        class_idx = 0
 
         for prediction in predictions:
             if prediction >= max_prediction:
                 max_prediction = prediction
-                label = labels[class_id]
-            class_id += 1
+                label = labels[class_idx]
+            class_idx += 1
 
         return label

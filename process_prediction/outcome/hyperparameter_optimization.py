@@ -66,10 +66,10 @@ def create_data(arguments, event_log, preprocessor, cases_of_fold):
     train_subseq_cases, test_subseq_cases = retrieve_train_test_subsequences(train_cases, test_cases, preprocessor)
 
     x_train = preprocessor.get_features_tensor(args, 'train', event_log, train_subseq_cases)
-    y_train = preprocessor.get_labels_tensor(args, train_cases)
+    y_train = preprocessor.get_labels_tensor(args, train_subseq_cases)
 
     x_test = preprocessor.get_features_tensor(args, 'train', event_log, test_subseq_cases)
-    y_test = preprocessor.get_labels_tensor(args, test_cases)
+    y_test = preprocessor.get_labels_tensor(args, test_subseq_cases)
 
 
 def train_test_split_for_hyperparameter_optimization(cases):

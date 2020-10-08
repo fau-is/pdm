@@ -19,7 +19,7 @@ def test(args, event_log, preprocessor, test_indices_per_fold, best_model_id):
     test_indices_per_fold : list of arrays consisting of ints
         Indices of test cases from event log per fold.
     best_model_id : int
-        ID of the best trained model.
+        ID which identifies the best trained model, if hyperparameter optimization is performed. Otherwise is -1.
 
     Returns
     -------
@@ -40,7 +40,7 @@ def test(args, event_log, preprocessor, test_indices_per_fold, best_model_id):
     # start prediction
     with open(get_result_dir_fold(args, preprocessor), 'w') as result_file_fold:
         result_writer = csv.writer(result_file_fold, delimiter=';', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        result_writer.writerow(["Case_id", "Prefix_length", "Groud_truth", "Predicted"])
+        result_writer.writerow(["Case_ID", "Prefix_length", "Groud_truth", "Predicted"])
 
         for idx_case, case in enumerate(cases_of_fold, 1):
             utils.llprint("Case %i of %i \n" % (idx_case, len(cases_of_fold)))

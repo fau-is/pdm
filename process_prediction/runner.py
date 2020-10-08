@@ -13,7 +13,6 @@ if __name__ == '__main__':
     event_log = preprocessor.get_event_log(args)
 
     if args.cross_validation:
-
         train_indices_per_fold, test_indices_per_fold = preprocessor.get_indices_k_fold_validation(args, event_log)
 
         for iteration_cross_validation in range(0, args.num_folds):
@@ -40,4 +39,3 @@ if __name__ == '__main__':
         output = utils.get_output(args, preprocessor, output)
         utils.print_output(args, output, -1)
         utils.write_output(args, output, -1)
-

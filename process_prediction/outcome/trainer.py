@@ -94,7 +94,8 @@ def find_best_model(trial):
 
         # hidden layer
         b1 = tf.keras.layers.Bidirectional(
-                tf.keras.layers.LSTM(trial.suggest_categorical("number_of_neurons", args.hpo_LSTM), use_bias=True, implementation=1,
+                tf.keras.layers.LSTM(trial.suggest_categorical("number_of_neurons", args.hpo_LSTM),
+                                     use_bias=True, implementation=1,
                                      activation=trial.suggest_categorical("activation", args.hpo_activation),
                                      kernel_initializer='glorot_uniform', return_sequences=False, dropout=0.2))(
                 main_input)
@@ -116,22 +117,30 @@ def find_best_model(trial):
         input_layer_flattened = tf.keras.layers.Flatten()(main_input)
 
         # layer 2
-        hidden_layer_1 = tf.keras.layers.Dense(trial.suggest_categorical("number_of_neurons", args.hpo_LSTM), activation=trial.suggest_categorical("activation", args.hpo_activation))(input_layer_flattened)
+        hidden_layer_1 = tf.keras.layers.Dense(trial.suggest_categorical("number_of_neurons", args.hpo_LSTM),
+                                               activation=trial.suggest_categorical("activation", args.hpo_activation)
+                                               )(input_layer_flattened)
         hidden_layer_1 = tf.keras.layers.BatchNormalization()(hidden_layer_1)
         hidden_layer_1 = tf.keras.layers.Dropout(0.5)(hidden_layer_1)
 
         # layer 3
-        hidden_layer_2 = tf.keras.layers.Dense(trial.suggest_categorical("number_of_neurons", args.hpo_LSTM), activation=trial.suggest_categorical("activation", args.hpo_activation))(hidden_layer_1)
+        hidden_layer_2 = tf.keras.layers.Dense(trial.suggest_categorical("number_of_neurons", args.hpo_LSTM),
+                                               activation=trial.suggest_categorical("activation", args.hpo_activation)
+                                               )(hidden_layer_1)
         hidden_layer_2 = tf.keras.layers.BatchNormalization()(hidden_layer_2)
         hidden_layer_2 = tf.keras.layers.Dropout(0.5)(hidden_layer_2)
 
         # layer 4
-        hidden_layer_3 = tf.keras.layers.Dense(trial.suggest_categorical("number_of_neurons", args.hpo_LSTM), activation=trial.suggest_categorical("activation", args.hpo_activation))(hidden_layer_2)
+        hidden_layer_3 = tf.keras.layers.Dense(trial.suggest_categorical("number_of_neurons", args.hpo_LSTM),
+                                               activation=trial.suggest_categorical("activation", args.hpo_activation)
+                                               )(hidden_layer_2)
         hidden_layer_3 = tf.keras.layers.BatchNormalization()(hidden_layer_3)
         hidden_layer_3 = tf.keras.layers.Dropout(0.5)(hidden_layer_3)
 
         # layer 5
-        hidden_layer_4 = tf.keras.layers.Dense(trial.suggest_categorical("number_of_neurons", args.hpo_LSTM), activation=trial.suggest_categorical("activation", args.hpo_activation))(hidden_layer_3)
+        hidden_layer_4 = tf.keras.layers.Dense(trial.suggest_categorical("number_of_neurons", args.hpo_LSTM),
+                                               activation=trial.suggest_categorical("activation", args.hpo_activation)
+                                               )(hidden_layer_3)
         hidden_layer_4 = tf.keras.layers.BatchNormalization()(hidden_layer_4)
         hidden_layer_4 = tf.keras.layers.Dropout(0.5)(hidden_layer_4)
 
