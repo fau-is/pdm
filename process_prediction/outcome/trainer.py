@@ -18,7 +18,7 @@ def train(args, event_log, preprocessor, train_indices):
         pm4py.objects.log.log.EventLog object representing an event log.
     preprocessor : nap.preprocessor.Preprocessor
         Object to preprocess input data.
-    train_indices_per_fold : list of arrays consisting of ints
+    train_indices : list of arrays consisting of ints
         Indices of training cases from event log per fold.
 
     Returns
