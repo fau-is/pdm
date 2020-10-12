@@ -237,7 +237,7 @@ def train_model(args, event_log, preprocessor, subseq_cases_of_fold):
         input_layer_flattened = tf.keras.layers.Flatten()(main_input)
 
         # layer 2
-        hidden_layer_1 = tf.keras.layers.Dense(100, activation='relu')(input_layer_flattened)
+        hidden_layer_1 = tf.keras.layers.Dense(300, activation='relu')(input_layer_flattened)
         hidden_layer_1 = tf.keras.layers.BatchNormalization()(hidden_layer_1)
         hidden_layer_1 = tf.keras.layers.Dropout(0.5)(hidden_layer_1)
 
@@ -259,6 +259,34 @@ def train_model(args, event_log, preprocessor, subseq_cases_of_fold):
         # output layer
         out_output = tf.keras.layers.Dense(num_classes, activation='softmax', name='out_output',
                                            kernel_initializer='glorot_uniform')(hidden_layer_4)
+
+        optimizer = tf.keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999)
+
+    elif args.dnn_architecture == 2:
+
+        # CNN according to Abdulrhman et al. (2019)
+        main_input = tf.keras.layers.Input(shape=(max_length_process_instance, num_features), name='input_layer')
+        layer_1 = tf.keras.layers.Conv1D(filters=128, kernel_size=16, padding='same', strides=1, activation='relu')(
+            main_input)
+        layer_2 = tf.keras.layers.MaxPool1D()(layer_1)
+        layer_2 = tf.keras.layers.Conv1D(filters=128, kernel_size=16, padding='same', strides=1, activation='relu')(
+            layer_2)
+        layer_3 = tf.keras.layers.MaxPool1D()(layer_2)
+        layer_3 = tf.keras.layers.Conv1D(filters=128, kernel_size=16, padding='same', strides=1, activation='relu')(
+            layer_3)
+        layer_4 = tf.keras.layers.MaxPool1D()(layer_3)
+        layer_4 = tf.keras.layers.Conv1D(filters=128, kernel_size=16, padding='same', strides=1, activation='relu')(
+            layer_4)
+        layer_4 = tf.keras.layers.MaxPool1D()(layer_4)
+        layer_5 = tf.keras.layers.Conv1D(filters=128, kernel_size=16, padding='same', strides=1, activation='relu')(
+            layer_4)
+        layer_5 = tf.keras.layers.MaxPool1D()(layer_5)
+        layer_6 = tf.keras.layers.Flatten()(layer_5)
+        layer_7 = tf.keras.layers.Dense(100, activation='relu')(layer_6)
+
+        # output layer
+        out_output = tf.keras.layers.Dense(num_classes, activation='softmax', name='out_output',
+                                           kernel_initializer='glorot_uniform')(layer_7)
 
         optimizer = tf.keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999)
 

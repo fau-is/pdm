@@ -11,7 +11,7 @@ def load():
 
     # dnn
     parser.add_argument('--dnn_num_epochs', default=100, type=int)
-    parser.add_argument('--dnn_architecture', default=0, type=int)
+    parser.add_argument('--dnn_architecture', default=2, type=int)
     parser.add_argument('--learning_rate', default=0.002, type=float)
 
     # representation
