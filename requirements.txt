@@ -1,0 +1,17 @@
+pandas
+csv
+numpy
+scikit-learn~=0.23.2
+category_encoders~=2.0.0
+tensorflow~=2.3.0
+opyenxes
+pm4py~=1.3.2
+optuna~=2.0.0
+datetime
+argparse
+os
+threading
+enum
+Etree
+abc
+numbers
