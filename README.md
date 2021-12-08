@@ -7,7 +7,7 @@ PDM is an outcome-oriented predictive business process monitoring method for pre
 If you use our code or fragments of it, please cite our paper:
 
 ```
-@proceedings{weinzierl2020pdm,
+@proceedings{weinzierl2021pdm,
     title={Predictive Business Process Deviation Monitoring},
     author={Sven Weinzierl and Sebastian Dunzer and Johannes Tenschert and Sandra Zilker and Martin Matzner},
     booktitle={Proceedings of the 29th European Conference on Information Systems (ECIS2021)},
